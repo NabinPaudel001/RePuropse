@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Sheet,
   SheetContent,

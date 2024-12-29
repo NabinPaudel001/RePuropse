@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Items from "../components/items";
+import Items from "../../components/ui/Items";
 
 export default function Home() {
   return (
