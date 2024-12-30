@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 
 interface ItemProps {
-  imageUrl?: string; // Made optional to handle missing values
+  imageUrl?: string; 
   name: string;
   description: string;
   originalPrice?: number;
