@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import Link from "next/link";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,9 +74,11 @@ const Navbar = () => {
         <li className="hover:text-primary cursor-pointer hover:underline transition duration-300">
           Home
         </li>
+        <Link href="/shop">
         <li className="hover:text-primary cursor-pointer hover:underline transition duration-300">
-          Sell
+          Shop
         </li>
+        </Link>
         <li className="hover:text-primary cursor-pointer hover:underline transition duration-300">
           About
         </li>

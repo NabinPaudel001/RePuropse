@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Items from "../../components/ui/Items";
+import Link from "next/link";
 
 const ShopPage: React.FC = () => {
   const sampleProducts = [
@@ -79,7 +80,10 @@ const ShopPage: React.FC = () => {
           <h1 className="text-4xl font-bold">Shop</h1>
           <nav className="mt-2">
             <ol className="flex space-x-2 text-sm">
+              <Link href="/">
               <li>Home</li>
+              </Link>
+              
               <li>{">"}</li>
               <li className="font-bold">Shop</li>
             </ol>
