@@ -13,6 +13,16 @@ const ShopPage: React.FC = () => {
     { id: 6, name: "Product 6", price: 90, category: "Women", imageUrl: "/assets/bg.png" },
     { id: 7, name: "Product 7", price: 200, category: "Toys", imageUrl: "/assets/bg.png" },
     { id: 8, name: "Product 8", price: 250, category: "Fashion", imageUrl: "/assets/bg.png" },
+    { id: 9, name: "Product 8", price: 250, category: "Fashion", imageUrl: "/assets/bg.png" },
+    { id: 10, name: "Product 8", price: 250, category: "Fashion", imageUrl: "/assets/bg.png" },
+    { id: 11, name: "Product 1", price: 50, category: "Electronics", imageUrl: "/assets/bg.png" },
+    { id: 12, name: "Product 2", price: 150, category: "Fashion", imageUrl: "/assets/bg.png" },
+    { id: 13, name: "Product 3", price: 300, category: "Home", imageUrl: "/assets/bg.png" },
+    { id: 14, name: "Product 4", price: 20, category: "Toys", imageUrl: "/assets/bg.png" },
+    { id: 15, name: "Product 5", price: 400, category: "Men", imageUrl: "/assets/bg.png" },
+    { id: 16, name: "Product 6", price: 90, category: "Women", imageUrl: "/assets/bg.png" },
+    { id: 17, name: "Product 7", price: 200, category: "Toys", imageUrl: "/assets/bg.png" },
+    { id: 18, name: "Product 8", price: 250, category: "Fashion", imageUrl: "/assets/bg.png" },
     // Add more products as needed...
   ];
 
