@@ -5,12 +5,13 @@ import { Button } from "../components/ui/Button";
 import ImageCard from "../components/ui/ImageCard";
 import TitleSection from "../components/ui/TitleSection";
 import Gallary from "../components/ui/Gallary";
+import Footer from "../components/ui/Footer";
 
 export default function Home() {
   return (
     <div>
       <Navbar />
-      <section className="relative flex items-center justify-center bg-gray-50 py-6 md:py-6">
+      <section className="relative flex items-center justify-center bg-gray-50 py-6 md:py-6 px-6 md:px-8">
         <div className="container mx-auto flex flex-col md:flex-row items-center gap-8">
           {/* Left Side: Image */}
           <div className="w-full md:w-1/2">
@@ -40,7 +41,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className=" px-6 md:px-8 py-6 md:py-6">
+      <div className="px-6 md:px-8 py-6 md:py-6">
         <div className="text-center">
           <TitleSection
             title="Browse The Range"
@@ -53,31 +54,34 @@ export default function Home() {
           <ImageCard src="/images/OIP.jpeg" alt="Bedroom" label="Bedroom" />
         </div>
       </div>
-      
-      <div className="font-[family-name:var(--font-geist-sans)]">
-        <TitleSection
-                          title="Our Products"
-                          subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                        />
-        <main className="grid grid-cols- sm:grid-cols-4 lg:grid-cols-4 gap-2 items-center justify-items-center">
-          <Items
-            imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
-            name="Sample Product"
-            description="This is a sample product description."
-            originalPrice={129.99}
-            discount={20} // 20% discount
+      {/* product section */}
+      <div className="px-6 md:px-8 py-6 md:py-6">
+        <div className="font-[family-name:var(--font-geist-sans)]">
+          <TitleSection
+            title="Our Products"
+            subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
           />
-          <Items
-            imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
-            name="Sample Product"
-            description="This is a sample product description."
-            originalPrice={500}
-            discount={40} // 20% discount
-          />
-        </main>
+          <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 items-center justify-items-center">
+            <Items
+              imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
+              name="Sample Product"
+              description="This is a sample product description."
+              originalPrice={129.99}
+              discount={20} // 20% discount
+            />
+            <Items
+              imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
+              name="Sample Product"
+              description="This is a sample product description."
+              originalPrice={500}
+              discount={40} // 20% discount
+            />
+          </main>
+        </div>
       </div>
 
       <Gallary />
+      <Footer />
     </div>
   );
 }
