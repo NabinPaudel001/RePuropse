@@ -6,79 +6,122 @@ import ImageCard from "../components/ui/ImageCard";
 import TitleSection from "../components/ui/TitleSection";
 import Gallary from "../components/ui/Gallary";
 import Footer from "../components/ui/Footer";
+import HeroSection from "@/components/ui/HeroSection";
+import FeatureCard from "@/components/ui/FeatureCard";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
+
+
+const features = [
+  {
+    title: "Enjoy on your TV",
+    description: "Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.",
+    icon: "📺",
+  },
+  {
+    title: "Download your shows to watch offline",
+    description: "Save your favorites easily and always have something to watch.",
+    icon: "⬇️",
+  },
+  {
+    title: "Watch everywhere",
+    description: "Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.",
+    icon: "📱",
+  },
+  {
+    title: "Create profiles for kids",
+    description: "Send kids on adventures with their favorite characters in a space made just for them — free with your membership.",
+    icon: "👶",
+  },
+];
+
+// Question
+const faqItems = [
+  { question: "What is Netflix?", answer: "Netflix is a streaming service offering a wide variety of TV shows, movies, anime, documentaries, and more." },
+  { question: "How much does Netflix cost?", answer: "Plans range from USD 8.99 to USD 17.99 a month. No extra costs, no contracts." },
+  { question: "Where can I watch?", answer: "Watch anywhere, anytime, on an unlimited number of devices. Sign in with your account to watch instantly on the web." },
+  { question: "How do I cancel?", answer: "Cancel anytime online in two clicks. There are no cancellation fees – start or stop your account at any time." },
+  { question: "What can I watch on Netflix?", answer: "Netflix has an extensive library of feature films, documentaries, TV shows, anime, award-winning Netflix originals, and more." },
+  { question: "Is Netflix good for kids?", answer: "The Netflix Kids experience is included in your membership to give parents control while kids enjoy family-friendly TV shows and movies." },
+];
 
 export default function Home() {
   return (
     <div>
       <Navbar />
-      <section className="relative flex items-center justify-center bg-gray-50 py-6 md:py-6 px-6 md:px-8">
-        <div className="container mx-auto flex flex-col md:flex-row items-center gap-8">
-          {/* Left Side: Image */}
-          <div className="w-full md:w-1/2">
-            <img
-              src="https://th.bing.com/th/id/OIP.2vGFSP1gZf02rEitVtgsGwHaEK?rs=1&pid=ImgDetMain" // Replace with your image path
-              alt="Interior Design"
-              className="rounded-lg shadow-md w-full h-auto"
-            />
-          </div>
-
-          {/* Right Side: Content */}
-          <div className="w-full md:w-1/2 bg-secondary py-6 md:py-8 px-6 md:px-8 rounded-lg shadow-lg">
-            <h3 className="text-sm font-medium text-secondary-foreground uppercase">
-              New Arrival
-            </h3>
-            <h1 className="text-3xl md:text-5xl font-bold text-primary mt-2">
-              Discover Our New Collection
-            </h1>
-            <p className="text-secondary-foreground mt-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
-              tellus, luctus nec ullamcorper mattis.
-            </p>
-            <div className="mt-8">
-              <Button>Explore us</Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="px-6 md:px-8 py-6 md:py-6">
-        <div className="text-center">
-          <TitleSection
-            title="Browse The Range"
-            subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-          />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          <ImageCard src="/images/OIP.jpeg" alt="Dining" label="Dining" />
-          <ImageCard src="/images/R.jpeg" alt="Living" label="Living" />
-          <ImageCard src="/images/OIP.jpeg" alt="Bedroom" label="Bedroom" />
-        </div>
+      <div>
+      <HeroSection />
       </div>
+
+      
+    
       {/* product section */}
-      <div className="px-6 md:px-8 py-6 md:py-6">
+      <div className="px-6 md:px-8 py-3 md:py-3">
         <div className="font-[family-name:var(--font-geist-sans)]">
           <TitleSection
-            title="Our Products"
+            title="Trending Products"
             subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            variant="left"
           />
+
           <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 items-center justify-items-center">
             <Items
               imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
               name="Sample Product"
-              description="This is a sample product description."
-              originalPrice={129.99}
-              discount={20} // 20% discount
+              // 20% discount
             />
             <Items
               imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
               name="Sample Product"
-              description="This is a sample product description."
-              originalPrice={500}
-              discount={40} // 20% discount
+              
             />
           </main>
         </div>
       </div>
+
+     {/* Why to choose us */}
+
+      <div className="px-10 md:px-12 py-3 md:py-3">
+        <TitleSection
+          title="More Reasons to Join"
+          subtitle=""
+          variant="left"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={index}
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+            />
+          ))}
+        </div>
+      </div>
+
+          {/* FAQ section */}
+         {/* FAQ section */}
+<div className="px-8 md:px-8 py-3 md:py-3 border-primary">
+  <TitleSection
+    title="Frequently Asked Questions"
+    subtitle=""
+    variant="left"
+  />
+  <Accordion type="single" collapsible className="w-full max-w-4xl">
+    {faqItems.map((item, index) => (
+      <AccordionItem key={index} value={`item-${index}`} className="border-primary">
+        <AccordionTrigger className=" px-6 py-4 text-2xl">{item.question}</AccordionTrigger>
+        <AccordionContent className="text-primary px-6 py-4 text-xl">{item.answer}</AccordionContent>
+      </AccordionItem>
+    ))}
+  </Accordion>
+</div>
+
 
       <Gallary />
       <Footer />
