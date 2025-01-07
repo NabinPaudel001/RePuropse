@@ -65,7 +65,7 @@ const Navbar = () => {
       {/* Logo */}
       <div className="flex h-15">
         <a href="/">
-          <img src="/head_logo.png" alt="Logo" className="w-18 h-12" />
+          <img src="#" alt="Logo" className="w-18 h-12" />
         </a>
       </div>
 

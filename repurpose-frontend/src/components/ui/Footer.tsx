@@ -65,13 +65,13 @@ const Footer = () => {
             <div className="w-full h-16 mb-4 flex items-center justify-center rounded-md">
               <Link href="/">
                 <img
-                  src="/head_logo.png"
+                  src="#"
                   alt="Logo"
                   className="w-full h-full"
                 />
               </Link>
             </div>
-          </div>
+          </div>  
 
           {/* Links Column 1 */}
           <div>
