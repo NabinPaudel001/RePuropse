@@ -5,29 +5,13 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import Sidebar from '@/components/ui/Sidebar';
 
 const ProfilePage = () => {
   return (
     <div className="flex">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white h-screen p-6">
-        <div className="mb-6">
-          <Image src="/logo.png" alt="Logo" width={150} height={50} />
-        </div>
-        <ul className="space-y-4">
-          <li>
-            <Link href="/dashboard" className="text-gray-300 hover:text-white">
-              Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link href="/dashboard/profile" className="text-gray-300 hover:text-white">
-              Profile
-            </Link>
-          </li>
-        </ul>
-      </div>
-
+    <Sidebar />
       {/* Main Content */}
       <div className="flex-1 bg-gray-100 min-h-screen">
         <div className="max-w-4xl mx-auto p-6">
