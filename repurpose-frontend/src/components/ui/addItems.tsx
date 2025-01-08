@@ -57,7 +57,7 @@ export default function AddItems() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center w-full">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
         <h1 className="text-2xl font-bold mb-6">Add Product</h1>
         <form onSubmit={handleAddProduct} className="flex space-x-6">

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { MdList, MdPerson, MdSettings, MdBarChart, MdNotifications, MdMessage, MdAdd, MdEdit } from "react-icons/md";
 
 /**
  * A React functional component that represents the sidebar of the dashboard.
@@ -16,86 +17,61 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-64 bg-gray-800 text-white h-screen p-6 fixed">
-      <div className="mb-6">
+    <div className="w-64 bg-white text-gray-800 h-screen p-6 fixed shadow-lg">
+      <div className="mb-6 flex justify-center">
         <Image src="/logo.png" alt="Logo" width={150} height={50} />
       </div>
       <div>
-        <h3 className="text-gray-500 text-xs uppercase mb-2">Menu</h3>
+        <h3 className="text-gray-500 text-xs uppercase mb-2">Dashboard</h3>
         <ul className="space-y-2">
           <li>
-            <button
-              className="flex items-center justify-between w-full text-gray-300 hover:text-white"
-              onClick={() => toggleMenu("Dashboard")}
-            >
-              <span className="flex items-center">
-                <span className="material-icons mr-2"></span> Dashboard
-              </span>
-              <span>{openMenu === "Dashboard" ? "-" : "+"}</span>
-            </button>
-            {openMenu === "Dashboard" && (
-              <ul className="ml-4 mt-2 space-y-1 text-sm">
-                <li>
-                  <Link href="/seller/dashboard/analytics" className="text-gray-300 hover:text-white">
-                    Product Analytics
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/seller/dashboard/notifications" className="text-gray-300 hover:text-white">
-                    Notifications
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/seller/dashboard/messages" className="text-gray-300 hover:text-white">
-                    Messages
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-          <li>
-            <Link href="/seller/dashboard/listings" className="flex items-center text-gray-300 hover:text-white">
-              <span className="material-icons mr-2"></span> My Listings
+            <Link href="/seller/dashboard/profile" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdPerson className="mr-2" /> Profile
             </Link>
           </li>
           <li>
-            <Link href="/seller/dashboard/profile" className="flex items-center text-gray-300 hover:text-white">
-              <span className="material-icons mr-2"></span> Profile
+            <Link href="/seller/dashboard/listings" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdList className="mr-2" /> My Listings
             </Link>
           </li>
           <li>
             <button
-              className="flex items-center justify-between w-full text-gray-300 hover:text-white"
+              className="flex items-center justify-between w-full text-gray-600 hover:text-blue-500"
               onClick={() => toggleMenu("ManageItems")}
             >
               <span className="flex items-center">
-                <span className="material-icons mr-2"></span> Manage Items
+                <MdEdit className="mr-2" /> Manage Items
               </span>
               <span>{openMenu === "ManageItems" ? "-" : "+"}</span>
             </button>
             {openMenu === "ManageItems" && (
               <ul className="ml-4 mt-2 space-y-1 text-sm">
                 <li>
-                  <Link href="/seller/dashboard/add-items" className="text-gray-300 hover:text-white">
-                    Add Items
+                  <Link href="/seller/dashboard/add-items" className="flex items-center text-gray-600 hover:text-blue-500">
+                    <MdAdd className="mr-2" /> Add Items
                   </Link>
                 </li>
                 <li>
-                  <Link href="/seller/dashboard/modify-items" className="text-gray-300 hover:text-white">
-                    Modify Items
+                  <Link href="/seller/dashboard/modify-items" className="flex items-center text-gray-600 hover:text-blue-500">
+                    <MdEdit className="mr-2" /> Modify Items
                   </Link>
                 </li>
               </ul>
             )}
           </li>
           <li>
-            <Link href="/seller/dashboard/tables" className="flex items-center text-gray-300 hover:text-white">
-              <span className="material-icons mr-2"></span> Tables
+            <Link href="/seller/dashboard/notifications" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdNotifications className="mr-2" /> Notifications
             </Link>
           </li>
           <li>
-            <Link href="/seller/dashboard/settings" className="flex items-center text-gray-300 hover:text-white">
-              <span className="material-icons mr-2"></span> Settings
+            <Link href="/seller/dashboard/messages" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdMessage className="mr-2" /> Messages
+            </Link>
+          </li>
+          <li>
+            <Link href="/seller/dashboard/settings" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdSettings className="mr-2" /> Settings
             </Link>
           </li>
         </ul>
@@ -103,33 +79,9 @@ const Sidebar = () => {
         <h3 className="text-gray-500 text-xs uppercase mt-6 mb-2">Others</h3>
         <ul className="space-y-2">
           <li>
-            <Link href="/seller/dashboard/charts" className="flex items-center text-gray-300 hover:text-white">
-              <span className="material-icons mr-2"></span> Chart
+            <Link href="/seller/dashboard/analytics" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdBarChart className="mr-2" /> Product Analytics
             </Link>
-          </li>
-          <li>
-            <button
-              className="flex items-center justify-between w-full text-gray-300 hover:text-white"
-              onClick={() => toggleMenu("Authentication")}
-            >
-              <span className="flex items-center">
-                <span className="material-icons mr-2"></span> Sign Out
-              </span>
-            </button>
-            {openMenu === "Authentication" && (
-              <ul className="ml-4 mt-2 space-y-1 text-sm">
-                <li>
-                  <Link href="/login" className="text-gray-300 hover:text-white">
-                    Login
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/register" className="text-gray-300 hover:text-white">
-                    Register
-                  </Link>
-                </li>
-              </ul>
-            )}
           </li>
         </ul>
       </div>
