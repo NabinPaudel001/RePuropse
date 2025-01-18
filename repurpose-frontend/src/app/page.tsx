@@ -75,34 +75,6 @@ export default function Home() {
       <HeroSection />
       </div>
 
-      
-    
-      {/* product section */}
-      <div className="px-6 md:px-8 py-3 md:py-3">
-        <div className="font-[family-name:var(--font-geist-sans)]">
-          <TitleSection
-            title="Trending Products"
-            subtitle="Discover the most sought-after items helping to promote sustainability and reduce waste."
-            variant="left"
-          />
-
-          <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 items-center justify-items-center">
-            <Items
-              imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
-              name="Sample Product"
-              // 20% discount
-            />
-            <Items
-              imageUrl="/assets/bg.png" // Ensure this path is correct and the image is in the public directory
-              name="Sample Product"
-              
-            />
-          </main>
-        </div>
-      </div>
-
-     {/* Why to choose us */}
-
       <div className="px-10 md:px-12 py-3 md:py-3">
         <TitleSection
           title="More Reasons to Join"
@@ -123,13 +95,13 @@ export default function Home() {
 
           {/* FAQ section */}
          {/* FAQ section */}
-<div className="px-8 md:px-8 py-3 md:py-3 border-primary">
+<div className="px-8 md:px-8 py- md:py-3 border-primary">
   <TitleSection
     title="Frequently Asked Questions"
     subtitle=""
     variant="left"
   />
-  <Accordion type="single" collapsible className="w-full max-w-4xl">
+  <Accordion type="single" collapsible className="w-full max-w-4xl py-4">
     {faqItems.map((item, index) => (
       <AccordionItem key={index} value={`item-${index}`} className="border-primary">
         <AccordionTrigger className=" px-6 py-4 text-2xl">{item.question}</AccordionTrigger>
@@ -138,9 +110,6 @@ export default function Home() {
     ))}
   </Accordion>
 </div>
-
-
-      <Gallary />
       <Footer />
     </div>
   );
