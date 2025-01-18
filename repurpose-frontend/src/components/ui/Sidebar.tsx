@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MdList, MdPerson, MdSettings, MdBarChart, MdNotifications, MdMessage, MdAdd, MdEdit } from "react-icons/md";
+import { MdList, MdPerson, MdSettings, MdBarChart, MdNotifications, MdMessage, MdAdd, MdEdit, MdHome } from "react-icons/md";
 
 /**
  * A React functional component that represents the sidebar of the dashboard.
@@ -24,6 +24,11 @@ const Sidebar = () => {
       <div>
         <h3 className="text-gray-500 text-xs uppercase mb-2">Dashboard</h3>
         <ul className="space-y-2">
+        <li>
+            <Link href="/seller/dashboard/home" className="flex items-center text-gray-600 hover:text-blue-500">
+              <MdHome className="mr-2" /> Home
+            </Link>
+          </li>
           <li>
             <Link href="/seller/dashboard/profile" className="flex items-center text-gray-600 hover:text-blue-500">
               <MdPerson className="mr-2" /> Profile

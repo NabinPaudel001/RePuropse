@@ -143,7 +143,7 @@ const Navbar = () => {
                   <Link href="/login">
                     <Button className="w-full"> </Button>
                   </Link>
-                  <Link href="/">
+                  <Link href="/signup">
                   <Button className="w-full"></Button>
                   </Link>
                   <div className="flex justify-around mt-2">

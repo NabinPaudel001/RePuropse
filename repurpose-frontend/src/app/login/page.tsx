@@ -64,21 +64,7 @@ export default function LoginPage() {
             Login
           </Button>
         </form>
-        <div className="mt-6">
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={() => console.log('Google login error')}
-          />
-          <FacebookLogin
-            appId="YOUR_FACEBOOK_APP_ID"
-            callback={handleFacebookLoginSuccess}
-            render={(renderProps: any) => (
-              <button type="button" onClick={renderProps.onClick} className="w-full mt-4 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all">
-                Login with Facebook
-              </button>
-            )}
-          />
-        </div>
+        
       </div>
     </div>
   );

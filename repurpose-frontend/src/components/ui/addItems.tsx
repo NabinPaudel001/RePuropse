@@ -11,6 +11,9 @@ export default function AddItems() {
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [proposedPrice, setProposedPrice] = useState("");
+  const [partName, setPartName] = useState("Interior");
+  const [materialName, setMaterialName] = useState("Cotton");
+  const [ecoFriendly, setEcoFriendly] = useState("Yes");
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const viewNames = ["Front View", "Side View", "Back View", "Top View", "Bottom View"];
@@ -53,7 +56,7 @@ export default function AddItems() {
       return;
     }
     // Implement logic to add product
-    console.log("Product added:", { productName, description, proposedPrice, images });
+    console.log("Product added:", { productName, description, proposedPrice, partName, materialName, ecoFriendly, images });
   };
 
   return (
@@ -100,6 +103,49 @@ export default function AddItems() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="partName" className="block text-gray-700 font-medium mb-2">
+                Part Name
+              </label>
+              <select
+                id="partName"
+                value={partName}
+                onChange={(e) => setPartName(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Interior">Interior</option>
+                <option value="Exterior">Exterior</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="materialName" className="block text-gray-700 font-medium mb-2">
+                Material Name
+              </label>
+              <select
+                id="materialName"
+                value={materialName}
+                onChange={(e) => setMaterialName(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {["Elastane", "Viscose", "Acrylic", "Cotton", "Lyocell", "Polyamide", "Nylon", "Fiber", "Modal", "Camel", "Linen", "Wool", "Cupro"].map((material) => (
+                  <option key={material} value={material}>{material}</option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="ecoFriendly" className="block text-gray-700 font-medium mb-2">
+                Eco-Friendly
+              </label>
+              <select
+                id="ecoFriendly"
+                value={ecoFriendly}
+                onChange={(e) => setEcoFriendly(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
             </div>
             <button
               type="submit"
