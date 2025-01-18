@@ -5,6 +5,7 @@ import { FaStore, FaUserTie } from "react-icons/fa"; // Import icons from react-
 import PhoneInput from 'react-phone-input-2'; // Import the phone input library
 import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone input
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons for password visibility
+import { Button } from "@/components/ui/Button";
 
 export default function SignupPage() {
   const [role, setRole] = useState("");
@@ -316,12 +317,12 @@ export default function SignupPage() {
                 )}
               </>
             )}
-            <button
+            <Button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white font-medium rounded-full hover:from-red-600 hover:to-blue-600 shadow-lg hover:shadow-xl transition-all"
+              className="w-full py-3 bg-gradient-to-r shadow-lg hover:shadow-xl transition-all"
             >
               Sign Up
-            </button>
+            </Button>
           </form>
           <button
             onClick={() => setRole("")}

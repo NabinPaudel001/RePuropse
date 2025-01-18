@@ -4,11 +4,7 @@ import { MdNotifications, MdMessage, MdExitToApp } from "react-icons/md";
 import Image from "next/image";
 import Link from "next/link";
 
-/**
- * A React functional component that represents the header of the dashboard.
- * 
- * @returns {JSX.Element} A JSX element containing the dashboard header.
- */
+
 const Header = () => {
   return (
     <div className="flex justify-end items-center bg-white text-gray-800 h-16 pl-64 pr-6 w-full shadow-md z-10">

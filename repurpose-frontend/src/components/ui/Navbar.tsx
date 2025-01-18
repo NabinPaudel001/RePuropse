@@ -93,9 +93,13 @@ const Navbar = () => {
       {/* Cart Icon and Dialog */}
       <div className="relative">
       <div className="hidden md:flex space-x-7 text-gray-800">
+        <Link href="/login">
         <Button>Login</Button>
+        </Link>
+        <Link href="/signup">
         <Button variant="outline">Join Us</Button>
-        <button className="hover:text-gray-600">
+        </Link>
+        <button className="hover:text-gray-600" title="User Profile">
           <i className="fas fa-user"></i>
         </button>
       
@@ -136,8 +140,12 @@ const Navbar = () => {
                   </li>
                 </ul>
                 <div className="mt-4 space-y-2">
-                  <Button className="w-full">Login</Button>
-                  <Button className="w-full">Signup</Button>
+                  <Link href="/login">
+                    <Button className="w-full"> </Button>
+                  </Link>
+                  <Link href="/signup">
+                  <Button className="w-full"></Button>
+                  </Link>
                   <div className="flex justify-around mt-2">
                     <button className="hover:text-gray-600">
                       <i className="fas fa-user"></i>
