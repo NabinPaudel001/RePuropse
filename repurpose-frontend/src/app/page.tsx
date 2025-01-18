@@ -19,36 +19,53 @@ import {
 
 const features = [
   {
-    title: "Enjoy on your TV",
-    description: "Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.",
-    icon: "📺",
+    title: "Bridging the Gap Between Sellers and Stores",
+    description: "RePurpose provides a streamlined platform where individuals can easily donate unused items with stores or directly with users, ensuring these goods find meaningful purposes.",
+    icon: "🤝",
   },
   {
-    title: "Download your shows to watch offline",
-    description: "Save your favorites easily and always have something to watch.",
-    icon: "⬇️",
+    title: "Reducing Waste Through Extended Resource Utilization",
+    description: "By channeling unused items into a shared system, RePurpose minimizes waste, reducing the strain on the environment and contributing to a circular economy.",
+    icon: "♻️",
   },
   {
-    title: "Watch everywhere",
-    description: "Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.",
-    icon: "📱",
+    title: "Encouraging Participation Through Rewards",
+    description: "The platform incentivizes individuals to contribute by offering a point-based rewards system, fostering sustained engagement and a culture of giving.",
+    icon: "🎁",
   },
   {
-    title: "Create profiles for kids",
-    description: "Send kids on adventures with their favorite characters in a space made just for them — free with your membership.",
-    icon: "👶",
+    title: "Streamlining Logistics with Intelligent Features",
+    description: "RePurpose simplifies the interaction between donors, stores, and potential users, making the process efficient and user-friendly.",
+    icon: "📦",
   },
+  
 ];
 
 // Question
 const faqItems = [
-  { question: "What is Netflix?", answer: "Netflix is a streaming service offering a wide variety of TV shows, movies, anime, documentaries, and more." },
-  { question: "How much does Netflix cost?", answer: "Plans range from USD 8.99 to USD 17.99 a month. No extra costs, no contracts." },
-  { question: "Where can I watch?", answer: "Watch anywhere, anytime, on an unlimited number of devices. Sign in with your account to watch instantly on the web." },
-  { question: "How do I cancel?", answer: "Cancel anytime online in two clicks. There are no cancellation fees – start or stop your account at any time." },
-  { question: "What can I watch on Netflix?", answer: "Netflix has an extensive library of feature films, documentaries, TV shows, anime, award-winning Netflix originals, and more." },
-  { question: "Is Netflix good for kids?", answer: "The Netflix Kids experience is included in your membership to give parents control while kids enjoy family-friendly TV shows and movies." },
+  { 
+    question: "Who can join the platform?", 
+    answer: "Anyone who wishes to contribute to sustainability by donating, selling, or purchasing old clothes can join RePurpose. Whether you're an individual seller or a store, the platform is open to all." 
+  },
+  { 
+    question: "On what basis does a seller get reward points?", 
+    answer: "Sellers earn reward points based on the quantity and quality of items they donate or sell. Points are also influenced by demand for the items and positive feedback from buyers." 
+  },
+  { 
+    question: "What is the minimum reward that can be redeemed?", 
+    answer: "The minimum reward points required for redemption is 1000. Points can be redeemed for discounts, gift cards, or other perks available on the platform." 
+  },
+  { 
+    question: "What is the criteria to become a seller?", 
+    answer: "To become a seller, you must create an account, verify your identity, and list items that meet the platform's quality and usability standards." 
+  },
+  { 
+    question: "What is the criteria to become a store?", 
+    answer: "Stores must register with a valid business license, agree to the platform's sustainability guidelines, and commit to purchasing or accepting items from sellers." 
+  },
+  
 ];
+
 
 export default function Home() {
   return (
@@ -65,7 +82,7 @@ export default function Home() {
         <div className="font-[family-name:var(--font-geist-sans)]">
           <TitleSection
             title="Trending Products"
-            subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            subtitle="Discover the most sought-after items helping to promote sustainability and reduce waste."
             variant="left"
           />
 

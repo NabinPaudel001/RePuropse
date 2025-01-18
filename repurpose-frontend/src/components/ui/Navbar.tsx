@@ -69,7 +69,7 @@ const Navbar = () => {
         </a>
       </div>
 
-      {/* Navigation Links */}
+      {/* Navigation Links
       <ul className="hidden md:flex space-x-10 text-gray-800 font-medium justify-center">
         <li className="hover:text-primary cursor-pointer hover:underline transition duration-300">
           Home
@@ -88,7 +88,7 @@ const Navbar = () => {
         <li className="hover:text-primary cursor-pointer hover:underline transition duration-300">
           Contact
         </li>
-      </ul>
+      </ul> */}
 
       {/* Cart Icon and Dialog */}
       <div className="relative">
