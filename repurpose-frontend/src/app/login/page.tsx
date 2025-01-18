@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp' // Import your OTPInput component
 
 export default function LoginPage() {

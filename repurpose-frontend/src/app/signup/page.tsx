@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { FaStore, FaUserTie, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons from react-icons
 import PhoneInput from 'react-phone-input-2'; // Import the phone input library
 import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone input
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp' // Import your OTPInput component
 
 export default function SignupPage() {
   const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
@@ -49,6 +50,8 @@ export default function SignupPage() {
     // Simulate an API call to send OTP to the user's email
     return new Promise((resolve) => setTimeout(resolve, 1000));
   };
+
+  console.log("password", password);
 
   const validatePassword = (password: string) => {
     const errors = [];
@@ -143,6 +146,8 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
                         required
                       />
