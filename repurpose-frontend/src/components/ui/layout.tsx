@@ -12,9 +12,9 @@ import Header from '@/components/ui/Header';
  */
 const Layout = ({ children }) => {
   return (
-    <div className="flex">
+    <div className="flex z-20" >
       <Sidebar />
-      <div className="flex-1 ml-64">
+      <div className="flex z-10 ml-64">
         <Header />
         <div className="p-10 mt-16">
           {children}
