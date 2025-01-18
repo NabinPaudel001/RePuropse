@@ -6,18 +6,18 @@ import React, { useState, useEffect } from "react";
  * 
  * @returns {JSX.Element} A JSX element containing the product modification form.
  */
-const ModifyItems = () => {
+const ModifyItems: React.FC = (): JSX.Element => {
   // State to hold product data
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState<{ id: number; name: string; description: string; price: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<{ id: number; name: string; description: string; price: string; partName: string; materialName: string; ecoFriendly: string; images: string[] } | null>(null);
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [proposedPrice, setProposedPrice] = useState("");
   const [partName, setPartName] = useState("Interior");
   const [materialName, setMaterialName] = useState("Cotton");
   const [ecoFriendly, setEcoFriendly] = useState("Yes");
-  const [images, setImages] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [images, setImages] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const viewNames = ["Front View", "Side View", "Back View", "Top View", "Bottom View"];
 
   // Simulate fetching data from a backend
@@ -35,7 +35,7 @@ const ModifyItems = () => {
     fetchData();
   }, []);
 
-  const handleEditProduct = (product) => {
+  const handleEditProduct = (product: { id: number; name: string; description: string; price: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }) => {
     setSelectedProduct(product);
     setProductName(product.name);
     setDescription(product.description);
@@ -47,7 +47,7 @@ const ModifyItems = () => {
     setImagePreviews(product.images);
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files);
     if (files.length + images.length > 5) {
       alert("You can upload a maximum of 5 images.");
@@ -55,30 +55,30 @@ const ModifyItems = () => {
     }
 
     const newImages = [...images, ...files];
-    setImages(newImages);
+    setImages(newImages as string[]);
 
     const newImagePreviews = newImages.map((file) => {
       if (typeof file === 'string') {
         return file; // If it's already a URL, return it
       }
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file as Blob);
       return new Promise((resolve) => {
         reader.onloadend = () => resolve(reader.result);
       });
     });
 
-    Promise.all(newImagePreviews).then((previews) => setImagePreviews(previews));
+    Promise.all(newImagePreviews).then((previews) => setImagePreviews(previews as string[]));
   };
 
-  const handleDeleteImage = (index) => {
+  const handleDeleteImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
     const newImagePreviews = imagePreviews.filter((_, i) => i !== index);
     setImages(newImages);
     setImagePreviews(newImagePreviews);
   };
 
-  const handleModifyProduct = (event) => {
+  const handleModifyProduct = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (images.length < 2) {
       alert("Please upload at least 2 images.");
@@ -86,7 +86,7 @@ const ModifyItems = () => {
     }
     // Update the product in the products array
     const updatedProducts = products.map((product) =>
-      product.id === selectedProduct.id
+      product.id === selectedProduct?.id
         ? { ...product, name: productName, description, price: `$${proposedPrice}`, partName, materialName, ecoFriendly, images }
         : product
     );
@@ -138,7 +138,7 @@ const ModifyItems = () => {
                 />
               </td>
               <td className="py-2 px-4 border-b">
-                <button
+                <button type="button"
                   onClick={() => handleEditProduct(product)}
                   className="text-blue-500 hover:text-blue-700"
                 >
@@ -160,7 +160,7 @@ const ModifyItems = () => {
                   <label htmlFor="productName" className="block text-gray-700 font-medium mb-2">
                     Product Name
                   </label>
-                  <input
+                  <input title="Upload Images" placeholder="Upload Images"
                     type="text"
                     id="productName"
                     value={productName}
@@ -178,7 +178,7 @@ const ModifyItems = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="4"
+                    rows={4}
                     required
                   ></textarea>
                 </div>
@@ -268,7 +268,7 @@ const ModifyItems = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => document.getElementById('imageUpload').click()}
+                  onClick={() => document.getElementById('imageUpload')?.click()}
                   className="mt-4 py-2 px-4 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-all"
                 >
                   + Add Image

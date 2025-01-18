@@ -9,7 +9,7 @@ const DashboardHome = () => {
   const [donatedItems, setDonatedItems] = useState(0);
   const [environmentEarnings, setEnvironmentEarnings] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Simulate fetching data with dummy data
@@ -51,51 +51,51 @@ const DashboardHome = () => {
   }
 
   return (
-    <div className="dashboard-home p-6  bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-bold text-center mb-8 text-blue-900">Dashboard</h1>
+    <div className="dashboard-home p-6 bg-[hsl(var(--background))] min-h-screen">
+      <h1 className="text-4xl font-bold text-center mb-8 mt-0 text-[hsl(var(--primary))]">Dashboard</h1>
       <div className="dashboard-stats grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="stat-item bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="flex items-center">
-            <FaStar className="text-yellow-500 text-3xl mr-4" />
+            <FaStar className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Reward Points</h2>
-              <p className="text-2xl text-gray-700">{rewardPoints}</p>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Reward Points</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{rewardPoints}</p>
             </div>
           </div>
         </div>
-        <div className="stat-item bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="flex items-center">
-            <FaShoppingCart className="text-green-500 text-3xl mr-4" />
+            <FaShoppingCart className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Sold Items</h2>
-              <p className="text-2xl text-gray-700">{soldItems}</p>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Sold Items</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{soldItems}</p>
             </div>
           </div>
         </div>
-        <div className="stat-item bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="flex items-center">
-            <FaClock className="text-red-500 text-3xl mr-4" />
+            <FaClock className="text-[hsl(var(--destructive))] text-3xl mr-4" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Pending Items</h2>
-              <p className="text-2xl text-gray-700">{pendingItems}</p>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Pending Items</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{pendingItems}</p>
             </div>
           </div>
         </div>
-        <div className="stat-item bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="flex items-center">
-            <FaGift className="text-purple-500 text-3xl mr-4" />
+            <FaGift className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Donated Items</h2>
-              <p className="text-2xl text-gray-700">{donatedItems}</p>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Donated Items</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{donatedItems}</p>
             </div>
           </div>
         </div>
-        <div className="stat-item bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="flex items-center">
-            <FaLeaf className="text-teal-500 text-3xl mr-4" />
+            <FaLeaf className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Earnings Contributed to Environment</h2>
-              <p className="text-2xl text-gray-700">${environmentEarnings}</p>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Earnings Contributed to Environment</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">${environmentEarnings}</p>
             </div>
           </div>
         </div>

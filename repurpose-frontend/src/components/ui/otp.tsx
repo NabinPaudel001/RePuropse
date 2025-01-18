@@ -8,7 +8,7 @@ const OTPInput = () => {
   const [isResendActive, setIsResendActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
   
-//   const router = useRouter(); // Initialize useRouter
+  const router = useRouter(); // Initialize useRouter
 
   const correctOtp = "456589"; // Correct OTP for demo
 
@@ -28,7 +28,7 @@ const OTPInput = () => {
   }, [isResendActive]);
 
   const handleChange = (element, index) => {
-    if (isNaN(element.value)) return;
+    if (isNaN(Number(element.value))) return;
     const newOtp = [...otp.map((d, idx) => (idx === index ? element.value : d))];
     setOtp(newOtp);
 
@@ -67,7 +67,9 @@ const OTPInput = () => {
             className="w-12 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             name="otp"
-            maxLength="1"
+            maxLength={1}
+            title={`OTP digit ${index + 1}`}
+            placeholder="0"
             key={index}
             value={data}
             onChange={(e) => handleChange(e.target, index)}

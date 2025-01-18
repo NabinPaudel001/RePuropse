@@ -1,21 +1,17 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from 'react';
 import Navbar from "../components/ui/Navbar";
-import Items from "../components/ui/Items";
-import { Button } from "../components/ui/Button";
-import ImageCard from "../components/ui/ImageCard";
-import TitleSection from "../components/ui/TitleSection";
-import Gallary from "../components/ui/Gallary";
-import Footer from "../components/ui/Footer";
 import HeroSection from "@/components/ui/HeroSection";
+import TitleSection from "../components/ui/TitleSection";
 import FeatureCard from "@/components/ui/FeatureCard";
+import Footer from "../components/ui/Footer";
+import LoginPage from "@/components/ui/login"; // Import the LoginPage component
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-
-
+} from "@/components/ui/accordion";
 
 const features = [
   {
@@ -38,10 +34,8 @@ const features = [
     description: "RePurpose simplifies the interaction between donors, stores, and potential users, making the process efficient and user-friendly.",
     icon: "📦",
   },
-  
 ];
 
-// Question
 const faqItems = [
   { 
     question: "Who can join the platform?", 
@@ -63,54 +57,48 @@ const faqItems = [
     question: "What is the criteria to become a store?", 
     answer: "Stores must register with a valid business license, agree to the platform's sustainability guidelines, and commit to purchasing or accepting items from sellers." 
   },
-  
 ];
 
-
 export default function Home() {
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+
+  const openLoginPopup = () => setIsLoginPopupOpen(true);
+  const closeLoginPopup = () => setIsLoginPopupOpen(false);
+
   return (
     <div>
-      <Navbar />
-      <div>
+      <Navbar onLoginClick={openLoginPopup} />
       <HeroSection />
-      </div>
-
       <div className="px-10 md:px-12 py-3 md:py-3">
-        <TitleSection
-          title="More Reasons to Join"
-          subtitle=""
-          variant="left"
-        />
+        <TitleSection title="More Reasons to Join" subtitle="" variant="left" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              title={feature.title}
-              description={feature.description}
-              icon={feature.icon}
-            />
+            <FeatureCard key={index} title={feature.title} description={feature.description} icon={feature.icon} />
           ))}
         </div>
       </div>
 
-          {/* FAQ section */}
-         {/* FAQ section */}
-<div className="px-8 md:px-8 py- md:py-3 border-primary">
-  <TitleSection
-    title="Frequently Asked Questions"
-    subtitle=""
-    variant="left"
-  />
-  <Accordion type="single" collapsible className="w-full max-w-4xl py-4">
-    {faqItems.map((item, index) => (
-      <AccordionItem key={index} value={`item-${index}`} className="border-primary">
-        <AccordionTrigger className=" px-6 py-4 text-2xl">{item.question}</AccordionTrigger>
-        <AccordionContent className="text-primary px-6 py-4 text-xl">{item.answer}</AccordionContent>
-      </AccordionItem>
-    ))}
-  </Accordion>
-</div>
+      <div className="px-8 md:px-8 py- md:py-3 border-primary">
+        <TitleSection title="Frequently Asked Questions" subtitle="" variant="left" />
+        <Accordion type="single" collapsible className="w-full max-w-4xl py-4">
+          {faqItems.map((item, index) => (
+            <AccordionItem key={index} value={`item-${index}`} className="border-primary">
+              <AccordionTrigger className="px-6 py-4 text-2xl">{item.question}</AccordionTrigger>
+              <AccordionContent className="text-primary px-6 py-4 text-xl">{item.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
       <Footer />
+
+      {isLoginPopupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <button onClick={closeLoginPopup} className="text-red-500 float-right">Close</button>
+            <LoginPage />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

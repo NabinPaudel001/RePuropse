@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import OTPInput from '@/components/ui/otp' // Import your OTPInput component
+import { Button } from "@/components/ui/button";
+import OTPInput from '@/components/ui/otp'; // Import your OTPInput component
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -23,8 +23,12 @@ export default function LoginPage() {
     }
   };
 
+  const handleSignupRedirect = () => {
+    router.push("/signup"); // Redirect to the signup page
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-full max-w-lg bg-white p-10 rounded-2xl shadow-2xl border border-gray-200">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Login</h1>
         {showOTPInput ? (
@@ -57,11 +61,22 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Button>
+            <Button className="px-6 py-4">
               Login
             </Button>
           </form>
         )}
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">
+            Don't have an account?{" "}
+            <button
+              onClick={handleSignupRedirect}
+              className="text-primary hover:underline"
+            >
+              Signup
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { FaStore, FaUserTie, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons from react-icons
 import PhoneInput from 'react-phone-input-2'; // Import the phone input library
 import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone input
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp' // Import your OTPInput component
 
 export default function SignupPage() {
@@ -79,24 +79,24 @@ export default function SignupPage() {
               <div className="flex space-x-16">
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <FaUserTie className="text-9xl text-red-500 mb-8 transition-transform transform hover:scale-110" />
-                    <div className="absolute top-0 left-0 bg-red-200 rounded-full w-28 h-28 blur-lg opacity-40"></div>
+                    <FaUserTie className="text-9xl text-[hsl(var(--destructive))] mb-8 transition-transform transform hover:scale-110" />
+                    <div className="absolute top-0 left-0 bg-[hsl(var(--destructive-foreground))] rounded-full w-28 h-28 blur-lg opacity-40"></div>
                   </div>
                   <button type="button"
                     onClick={() => handleRoleSelection("seller")}
-                    className="px-10 py-5 bg-red-500 text-white rounded-full hover:bg-red-600 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="px-10 py-5 bg-[hsl(var(--destructive))] text-white rounded-full hover:bg-red-400 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     Seller
                   </button>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <FaStore className="text-9xl text-blue-500 mb-8 transition-transform transform hover:scale-110" />
-                    <div className="absolute top-0 left-0 bg-blue-200 rounded-full w-28 h-28 blur-lg opacity-40"></div>
+                    <FaStore className="text-9xl text-[hsl(var(--primary))] mb-8 transition-transform transform hover:scale-110" />
+                    <div className="absolute top-0 left-0 bg-[hsl(var(--primary-foreground))] rounded-full w-28 h-28 blur-lg opacity-40"></div>
                   </div>
                   <button
                     onClick={() => handleRoleSelection("store")}
-                    className="px-10 py-5 bg-blue-500 text-white rounded-full hover:bg-blue-600 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="px-10 py-5 bg-[hsl(var(--primary))] text-white rounded-full hover:bg-green-500 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     Store
                   </button>
@@ -118,7 +118,7 @@ export default function SignupPage() {
                           type="text"
                           id="firstName"
                           placeholder="First Name"
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
                       </div>
@@ -130,7 +130,7 @@ export default function SignupPage() {
                           type="text"
                           id="lastName"
                           placeholder="Last Name"
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
                       </div>
@@ -143,7 +143,7 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                         required
                       />
                     </div>
@@ -155,7 +155,7 @@ export default function SignupPage() {
                         country={'np'} // Default to Nepal
                         value={contact}
                         onChange={setContact}
-                        inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                        inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                       />
                     </div>
                     <div className="mb-4 relative">
@@ -168,7 +168,7 @@ export default function SignupPage() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                         required
                       />
                       <button
@@ -189,7 +189,7 @@ export default function SignupPage() {
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                         required
                       />
                       <button
@@ -218,7 +218,7 @@ export default function SignupPage() {
                         type="text"
                         id="storeName"
                         placeholder="Store Name"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
                     </div>
@@ -231,7 +231,7 @@ export default function SignupPage() {
                           type="text"
                           id="ownerFirstName"
                           placeholder="First Name"
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
                       </div>
@@ -243,7 +243,7 @@ export default function SignupPage() {
                           type="text"
                           id="ownerLastName"
                           placeholder="Last Name"
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
                       </div>
@@ -256,7 +256,7 @@ export default function SignupPage() {
                         type="text"
                         id="address"
                         placeholder="Address"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
                     </div>
@@ -268,7 +268,7 @@ export default function SignupPage() {
                         country={'np'} // Default to Nepal
                         value={contact}
                         onChange={setContact}
-                        inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                       />
                     </div>
                     <div className="mb-4">
@@ -279,7 +279,7 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
                     </div>
@@ -293,7 +293,7 @@ export default function SignupPage() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
                       <button
@@ -314,7 +314,7 @@ export default function SignupPage() {
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
                       <button
@@ -343,7 +343,7 @@ export default function SignupPage() {
               </form>
               <button
                 onClick={() => setRole("")}
-                className="mt-6 w-full py-2 text-gray-500 hover:text-gray-700 underline transition-colors"
+                className="mt-6 w-full py-2 text-primary hover:text-gray-700 underline transition-colors"
               >
                 Back to Role Selection
               </button>

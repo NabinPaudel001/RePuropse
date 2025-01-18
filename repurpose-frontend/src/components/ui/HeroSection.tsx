@@ -1,4 +1,5 @@
-import { Button } from "./Button";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
     return (
@@ -19,7 +20,9 @@ export default function HeroSection() {
                     RePurpose connects sellers and stores to promote the reuse of old clothes, reducing waste and saving the environment. Join us in making a sustainable impact today.
                 </p>
                 <div className="mt-10 flex justify-center space-x-4">
-                    <Button className="px-6 py-6">Get Started</Button>
+                    <Link href="/login">
+                    <Button className="px-6 py-6" >Get Started</Button>
+                    </Link>
                     <Button className="px-6 py-6 border border-primary text-primary" variant={"outline"}>Learn More</Button>
                 </div>
             </div>
