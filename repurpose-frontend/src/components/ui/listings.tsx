@@ -1,26 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Items from './Items'; // Import the Items component
 
-/**
- * A React functional component that represents the "My Listings" section of the dashboard.
- * 
- * @returns {JSX.Element} A JSX element containing the product listings in a table format.
- */
 const MyListings = () => {
-  // State to hold product data
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Simulate fetching data from a backend
   useEffect(() => {
-    // Mock data for demonstration purposes
     const fetchData = async () => {
       const mockData = [
-        { id: 1, name: "Product 1", description: "Description 1", price: "$10", images: ["/path/to/image1.jpg", "/path/to/image2.jpg"], status: "Sold" },
-        { id: 2, name: "Product 2", description: "Description 2", price: "$20", images: ["/path/to/image3.jpg"], status: "Pending" },
-        // Add more products with multiple images as needed
+        { id: 1, name: "Product 1", description: "Description 1", price: 10, images: ["/path/to/image1.jpg", "/path/to/image2.jpg"], status: "Sold", discount: 10 },
+        { id: 2, name: "Product 2", description: "Description 2", price: 20, images: ["/path/to/image3.jpg"], status: "Pending", discount: 5 },
+        // Add more products as needed
       ];
       setProducts(mockData);
     };
@@ -50,37 +43,17 @@ const MyListings = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">My Listings</h1>
-      <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">S.N</th>
-            <th className="py-2 px-4 border-b">Name</th>
-            <th className="py-2 px-4 border-b">Description</th>
-            <th className="py-2 px-4 border-b">Price</th>
-            <th className="py-2 px-4 border-b">Image</th>
-            <th className="py-2 px-4 border-b">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <tr key={product.id}>
-              <td className="py-2 px-4 border-b text-center">{index + 1}</td>
-              <td className="py-2 px-4 border-b">{product.name}</td>
-              <td className="py-2 px-4 border-b">{product.description}</td>
-              <td className="py-2 px-4 border-b">{product.price}</td>
-              <td className="py-2 px-4 border-b">
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="h-16 w-16 object-cover cursor-pointer"
-                  onClick={() => openModal(product)}
-                />
-              </td>
-              <td className="py-2 px-4 border-b">{product.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <Items
+            key={product.id}
+            imageUrl={product.images[0]}
+            name={product.name}
+            originalPrice={product.price}
+            discount={product.discount}
+          />
+        ))}
+      </div>
 
       {isModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">

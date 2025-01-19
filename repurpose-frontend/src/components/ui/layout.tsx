@@ -2,21 +2,15 @@
 import React from 'react';
 import Sidebar from '@/components/ui/Sidebar';
 import Header from '@/components/ui/Header';
+import { ReactNode } from 'react';
 
-/**
- * A React functional component that provides a layout with a sidebar and header for dashboard pages.
- * 
- * @param {Object} props - The component props.
- * @param {JSX.Element} props.children - The main content to be displayed alongside the sidebar and below the header.
- * @returns {JSX.Element} A JSX element containing the layout with a sidebar and header.
- */
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex z-20" >
+    <div className="flex">
       <Sidebar />
-      <div className="flex z-10 ml-64">
+      <div className="flex flex-col flex-grow ml-64">
         <Header />
-        <div className="p-10 mt-16">
+        <div className="flex justify-center items-center p-10 mt-16 min-h-[calc(100vh-4rem)]">
           {children}
         </div>
       </div>

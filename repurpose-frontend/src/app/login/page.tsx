@@ -3,8 +3,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp'; // Import your OTPInput component
+import { FaTimes } from 'react-icons/fa'; // Import an icon for the close button
 
-export default function LoginPage() {
+interface LoginPageProps {
+  onClose: () => void;
+}
+
+export default function LoginPage({ onClose }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showOTPInput, setShowOTPInput] = useState(false); // State to show OTP input
@@ -29,7 +34,10 @@ export default function LoginPage() {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="w-full max-w-lg bg-white p-10 rounded-2xl shadow-2xl border border-gray-200">
+      <div className="w-full max-w-lg bg-white p-10 rounded-2xl shadow-2xl border border-gray-200 relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-red-500">
+          <FaTimes size={24} /> {/* Use an icon for the close button */}
+        </button>
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Login</h1>
         {showOTPInput ? (
           <OTPInput /> // Render OTPInput component when OTP input should be shown
