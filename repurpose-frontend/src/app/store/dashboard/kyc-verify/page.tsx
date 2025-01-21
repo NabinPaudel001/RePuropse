@@ -17,12 +17,25 @@ export default function KYCVerify() {
     passportPhoto: null,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
-    if (files) {
-      setFormData({ ...formData, [name]: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
+    let updatedValue = files ? files[0] : value;
+    setFormData({ ...formData, [name]: updatedValue });
+
+    // Send updated value to backend
+    try {
+      const response = await fetch('/api/updateField', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ [name]: updatedValue }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update field');
+      }
+    } catch (error) {
+      console.error('Error updating field:', error);
     }
   };
 
