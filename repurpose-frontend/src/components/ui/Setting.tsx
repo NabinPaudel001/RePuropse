@@ -27,16 +27,19 @@ const SettingsPage = () => {
     setPassword(e.target.value);
     setPasswordStrength(calculatePasswordStrength(e.target.value));
   };
-  const handleNewPasswordChange = (e) => {
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
   };
 
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
+        if (typeof reader.result === 'string') {
+          setProfileImage(reader.result);
+        }
         setUploadProgress(100);
       };
       reader.onprogress = (event) => {
