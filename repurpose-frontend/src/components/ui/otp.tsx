@@ -1,16 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router'; // Import useRouter for navigation
+import { useRouter } from "next/navigation";
+import { apiRequest } from "../../middleware/errorInterceptor";
+import { setAccessToken } from "@/utils/tokens";
 
-const OTPInput = () => {
+const OTPInput = ({ userID }: { userID: string }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const [isResendActive, setIsResendActive] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  
-  const router = useRouter(); // Initialize useRouter
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const correctOtp = "456589"; // Correct OTP for demo
+  const router = useRouter();
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -27,7 +28,7 @@ const OTPInput = () => {
     return () => clearInterval(countdown);
   }, [isResendActive]);
 
-  const handleChange = (element, index) => {
+  const handleChange = (element: any, index: number) => {
     if (isNaN(Number(element.value))) return;
     const newOtp = [...otp.map((d, idx) => (idx === index ? element.value : d))];
     setOtp(newOtp);
@@ -36,27 +37,71 @@ const OTPInput = () => {
     if (element.nextSibling) {
       element.nextSibling.focus();
     }
+  };
 
-    // Check if OTP is complete
-    if (newOtp.every((digit) => digit !== "")) {
-      validateOtp(newOtp.join(""));
+  const handleSubmit = async () => {
+    const enteredOtp = otp.join("");
+    if (enteredOtp.length !== 6) {
+      setErrorMessage("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await apiRequest("/api/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ userID, otp: enteredOtp }),
+      });
+
+      console.log("response", response)
+      setAccessToken(response.data.token)
+
+      if (response.code === 200) {
+        if (response.data.role === "seller") {
+          router.push("/seller/dashboard/home"); // Redirect to dashboard on success
+        }
+        if (response.data.role === "store") {
+          router.push("/store/dashboard/home"); // Redirect to dashboard on success
+        }
+      } else {
+        setErrorMessage(response.message || "Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while verifying the OTP.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const validateOtp = (enteredOtp) => {
-    if (enteredOtp === correctOtp) {
-      router.push('/seller/dashboard'); // Redirect to dashboard
-    } else {
-      setErrorMessage("Please provide a valid OTP sent to your email address.");
-    }
-  };
-
-  const handleResend = () => {
+  const handleResend = async () => {
     setOtp(new Array(6).fill(""));
     setTimer(60);
     setIsResendActive(false);
     setErrorMessage(""); // Clear error message on resend
+    
+    // Call the resend OTP API
+    try {
+      const response = await apiRequest("/api/auth/resend-otp", {
+        method: "POST",
+        body: JSON.stringify({ userID }), // Sending the userID for OTP resend
+      });
+  
+      if (response.code === 200) {
+        // OTP successfully resent
+        setTimer(60); // Reset timer
+        setIsResendActive(false); // Reset resend button to inactive until timer is done
+        setErrorMessage("OTP has been resent. Please check your email.");
+      } else {
+        // Handle any error responses
+        setErrorMessage(response.message || "An error occurred while resending OTP.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while resending the OTP.");
+    }
   };
+  
 
   return (
     <div className="otp-container flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -68,7 +113,6 @@ const OTPInput = () => {
             type="text"
             name="otp"
             maxLength={1}
-            title={`OTP digit ${index + 1}`}
             placeholder="0"
             key={index}
             value={data}
@@ -78,6 +122,13 @@ const OTPInput = () => {
         ))}
       </div>
       {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
+      <button
+        className="submit-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-4"
+        onClick={handleSubmit}
+        disabled={isLoading}
+      >
+        {isLoading ? "Verifying..." : "Submit"}
+      </button>
       <div className="timer text-gray-600 mb-4">
         Resend OTP in: {timer} seconds
       </div>

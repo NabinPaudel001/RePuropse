@@ -2,25 +2,63 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import OTPInput from '@/components/ui/otp'; // Import your OTPInput component
+import OTPInput from '@/components/ui/otp'; 
+import { apiRequest } from '../../middleware/errorInterceptor';
+import { setAccessToken } from "@/utils/tokens";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const [showOTPInput, setShowOTPInput] = useState(false); // State to show OTP input
+  const [userID, setUserID] = useState("")
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleLogin = (event: React.FormEvent) => {
-    event.preventDefault();
-    const role = "seller";
+  // const handleLogin = (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   const role = "seller";
 
-    // Mock verification logic
-    if (email === "nabin@nabin.com" && password === "1245") {
-      setShowOTPInput(true); // Show OTP input if email is registered but not verified
-    } else {
-      console.log(`Logging in as ${role}`);
-      router.push(`/${role}/dashboard`);
-    }
+  //   // Mock verification logic
+  //   if (email === "nabin@nabin.com" && password === "1245") {
+  //     setShowOTPInput(true); // Show OTP input if email is registered but not verified
+  //   } else {
+  //     console.log(`Logging in as ${role}`);
+  //     router.push(`/${role}/dashboard`);
+  //   }
+  // };
+
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+  
+      try {
+        console.log("formData", formData)
+        // Call the backend API to register the user
+        const response = await apiRequest("/api/auth/login", {
+          method: "POST", body: JSON.stringify(formData)
+        });
+  
+        console.log("Registration successful:", response);
+        if (response.code === 403) {
+          setUserID(response.data.id)
+          console.log("I am here");
+          setShowOTPInput(true); // Show OTP input after successful registration
+        }
+        if (response.code === 200) {
+          console.log("res ma token", response.data.token)
+                setAccessToken(response.data.token)
+                router.push(`/${response.data.role}/dashboard/home`);
+        }
+  
+      } catch (error) {
+        console.error("Error during signup:", error);
+      }
+    };
+
+  const handleInput = (event: any) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
   const handleSignupRedirect = () => {
@@ -32,7 +70,7 @@ export default function LoginPage() {
       <div className="w-full max-w-lg bg-white p-10 rounded-2xl shadow-2xl border border-gray-200">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Login</h1>
         {showOTPInput ? (
-          <OTPInput /> // Render OTPInput component when OTP input should be shown
+          <OTPInput userID={userID} />
         ) : (
           <form onSubmit={handleLogin}>
             <div className="mb-4">
@@ -42,8 +80,9 @@ export default function LoginPage() {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                // value={email}
+                name="email"
+                onChange={handleInput}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                 required
               />
@@ -55,8 +94,9 @@ export default function LoginPage() {
               <input
                 type="password"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                // value={password}
+                onChange={handleInput}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                 required
               />

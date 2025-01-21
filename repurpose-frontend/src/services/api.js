@@ -3,31 +3,31 @@
 import { getAccessToken } from "../utils/tokens";
 import refreshAccessToken from "./auth"; // Auth utility
 
-// const BASE_URL = "http://localhost:5000";
-const BASE_URL = "https://project-repurpose-backend.onrender.com";
+const BASE_URL =  "http://localhost:5000"
+// const BASE_URL = "https://project-repurpose-backend.onrender.com";
 
 export async function customFetch(url, options = {}) {
   const accessToken = getAccessToken();
 
-  // Add Authorization header
+  // Add Authorization and default Content-Type headers
   const headers = {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
     "Content-Type": "application/json",
   };
 
-  // Prepend the base URL
   const fullUrl = `${BASE_URL}${url}`;
 
   try {
-    // Initial fetch request
+    // Make the initial API request
     let response = await fetch(fullUrl, { ...options, headers });
 
     if (response.status === 401) {
-      // Access token expired, try refreshing
+      console.warn("Access token expired. Attempting to refresh token...");
       const newTokens = await refreshAccessToken();
+
       if (newTokens) {
-        // Retry the request with the new access token
+        // Retry the request with the refreshed token
         response = await fetch(fullUrl, {
           ...options,
           headers: {
@@ -35,27 +35,32 @@ export async function customFetch(url, options = {}) {
             Authorization: `Bearer ${newTokens.accessToken}`,
           },
         });
+      } else {
+        throw new Error("Token refresh failed. Please log in again.");
       }
     }
 
-    // Check if the response is successful
+    // Handle non-successful responses
     if (!response.ok) {
-      const errorData = await response.json();
-      return Promise.reject({
+      const errorData = await response.json().catch(() => null); // Fallback for non-JSON responses
+      throw {
         status: response.status,
-        message: errorData.message || "Request failed",
-      });
+        message: errorData?.message || "An error occurred while processing the request.",
+        data: errorData,
+      };
     }
 
-    return await response.json(); // Parse and return JSON response
+    // Return the successful response as JSON
+    return await response.json();
   } catch (error) {
-    // Catch network errors or other unexpected errors
-    console.error("Network or server error:", error.message);
-    return Promise.reject({
-      message:
-        error.message === "Failed to fetch"
-          ? "Unable to connect to the server. Please try again later."
-          : error.message,
-    });
+    // Handle unexpected errors (e.g., network issues)
+    console.error("CustomFetch Error:", error);
+
+    const defaultMessage = "A network or server error occurred. Please try again later.";
+    throw {
+      status: error?.status || "unknown",
+      message: error?.message || defaultMessage,
+      data: error?.data || null,
+    };
   }
 }

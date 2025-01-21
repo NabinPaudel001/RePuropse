@@ -6,51 +6,87 @@ import PhoneInput from 'react-phone-input-2'; // Import the phone input library
 import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone input
 import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp' // Import your OTPInput component
+import { apiRequest } from '../../middleware/errorInterceptor';
 
 
 export default function SignupPage() {
   const [role, setRole] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [contact, setContact] = useState(""); 
+  // const [contact, setContact] = useState(""); 
   const [showOTPInput, setShowOTPInput] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  // const [firstName, setFirstName] = useState<String[]>([]);
+  // const [lastName, setLastName] = useState("");
   const [storeName, setStoreName] = useState("");
-  const [ownerFirstName, setOwnerFirstName] = useState("");
-  const [ownerLastName, setOwnerLastName] = useState("");
-  const [address, setAddress] = useState("");
+  // const [address, setAddress] = useState("");
+  const [userID, setUserID] = useState("")
+
+  const [formData, setFormData] = useState({
+    role: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    address: "",
+    storeName: "",
+  });
+
 
   const router = useRouter();
 
+  // const handleRoleSelection = (selectedRole: string) => {
+  //   setRole(selectedRole);
+  // };
+
   const handleRoleSelection = (selectedRole: string) => {
-    setRole(selectedRole);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      role: selectedRole,
+    }));
+  };
+
+
+  const handleInput = (event: any) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const errors = validatePassword(password);
+
+    // Validate passwords
+    const errors = validatePassword(formData.password);
     if (errors.length > 0) {
       setPasswordErrors(errors);
       return;
     }
-    if (password !== confirmPassword) {
+    if (formData.password !== confirmPassword) {
       setPasswordErrors(["Passwords do not match"]);
       return;
     }
-    console.log(`Signing up as ${role}`);
-    // Implement signup logic here
-    // Simulate sending OTP and show OTP input
+
     try {
-      // Simulate API call to send OTP
-      await sendOTPToEmail();
-      setShowOTPInput(true); // Show OTP input after sending OTP
+      console.log(`Signing up as ${formData.role}`);
+      console.log("formData", formData)
+      // Call the backend API to register the user
+      const response = await apiRequest("/api/auth/register", {
+        method: "POST", body: JSON.stringify(formData)
+      });
+
+      console.log("Registration successful:", response);
+      if (response.code === 201) {
+        setUserID(response.data.id)
+        console.log("I am here");
+        setShowOTPInput(true); // Show OTP input after successful registration
+        await sendOTPToEmail();
+      }
+
     } catch (error) {
-      console.error("Error sending OTP:", error);
+      console.error("Error during signup:", error);
     }
   };
 
@@ -59,7 +95,7 @@ export default function SignupPage() {
     return new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
-  console.log("password", password);
+  console.log("formdata herr", formData);
 
   const validatePassword = (password: string) => {
     const errors = [];
@@ -81,10 +117,10 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       {showOTPInput ? (
-        <OTPInput /> // Render OTPInput component when OTP input should be shown
+        <OTPInput userID={userID}/>
       ) : (
         <>
-          {role === "" ? (
+          {formData.role === "" ? (
             <div className="text-center bg-white p-12 rounded-3xl shadow-2xl max-w-3xl border border-gray-300">
               <h1 className="text-4xl font-extrabold text-gray-800 mb-10">Select Your Role</h1>
               <div className="flex space-x-16">
@@ -118,7 +154,7 @@ export default function SignupPage() {
             <div className="w-full max-w-lg bg-white p-8 rounded-3xl shadow-2xl border border-gray-300">
               <h1 className="text-3xl font-bold text-gray-800 mb-8">Sign Up as {role.charAt(0).toUpperCase() + role.slice(1)}</h1>
               <form onSubmit={handleSignup}>
-                {role === "seller" ? (
+                {formData.role === "seller" ? (
                   <>
                     <div className="flex space-x-4 mb-4">
                       <div className="w-1/2">
@@ -129,8 +165,9 @@ export default function SignupPage() {
                           type="text"
                           id="firstName"
                           placeholder="First Name"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          name="firstName"
+                          // value={firstName}
+                          onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
@@ -143,8 +180,10 @@ export default function SignupPage() {
                           type="text"
                           id="lastName"
                           placeholder="Last Name"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
+                          name="lastName"
+
+                          // value={lastName}
+                          onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
@@ -158,8 +197,10 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        name="email"
+
+                        // value={email}
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
                         required
                       />
@@ -170,8 +211,12 @@ export default function SignupPage() {
                       </label>
                       <PhoneInput
                         country={'np'} // Default to Nepal
-                        value={contact}
-                        onChange={setContact}
+                        value={formData.phoneNumber} // Bind the input value to formData.phoneNumber
+                        onChange={(value) => setFormData(prevFormData => ({
+                          ...prevFormData,
+                          phoneNumber: value.startsWith('+') ? value : `+${value}`, // Ensure the '+' sign is included
+                        }))}
+
                         inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                       />
                     </div>
@@ -182,9 +227,10 @@ export default function SignupPage() {
                       <input
                         type={showPassword ? "text" : "password"}
                         id="password"
+                        name="password"
                         placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        // value={password}
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                         required
                       />
@@ -203,6 +249,7 @@ export default function SignupPage() {
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         id="confirmPassword"
+                        name="confirmPassword"
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -235,8 +282,9 @@ export default function SignupPage() {
                         type="text"
                         id="storeName"
                         placeholder="Store Name"
-                        value={storeName}
-                        onChange={(e) => setStoreName(e.target.value)}
+                        // value={storeName}
+                        name="storeName"
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
@@ -250,8 +298,9 @@ export default function SignupPage() {
                           type="text"
                           id="ownerFirstName"
                           placeholder="First Name"
-                          value={ownerFirstName}
-                          onChange={(e) => setOwnerFirstName(e.target.value)}
+                          name="firstName"
+                          // value={ownerFirstName}
+                          onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
@@ -264,8 +313,9 @@ export default function SignupPage() {
                           type="text"
                           id="ownerLastName"
                           placeholder="Last Name"
-                          value={ownerLastName}
-                          onChange={(e) => setOwnerLastName(e.target.value)}
+                          name="lastName"
+                          // value={ownerLastName}
+                          onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
@@ -279,8 +329,9 @@ export default function SignupPage() {
                         type="text"
                         id="address"
                         placeholder="Address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        name="address"
+                        // value={address}
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
@@ -291,8 +342,11 @@ export default function SignupPage() {
                       </label>
                       <PhoneInput
                         country={'np'} // Default to Nepal
-                        value={contact}
-                        onChange={setContact}
+                        value={formData.phoneNumber} // Bind the input value to formData.phoneNumber
+                        onChange={(value) => setFormData(prevFormData => ({
+                          ...prevFormData,
+                          phoneNumber: value.startsWith('+') ? value : `+${value}`, // Ensure the '+' sign is included
+                        }))}
                         inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                       />
                     </div>
@@ -304,8 +358,9 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        name="email"
+                        // value={email}
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
@@ -318,8 +373,9 @@ export default function SignupPage() {
                         type={showPassword ? "text" : "password"}
                         id="password"
                         placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        // value={password}
+                        name="password"
+                        onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
