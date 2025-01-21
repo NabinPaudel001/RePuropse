@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Items from './Items'; // Import the Items component
 
-const MyListings = () => {
+const MyListings = (props) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +42,7 @@ const MyListings = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">My Listings</h1>
+      <h1 className="text-2xl font-bold mb-4">{props.name}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <Items

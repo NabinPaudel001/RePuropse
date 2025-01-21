@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MdList, MdPerson, MdSettings, MdBarChart, MdNotifications, MdMessage, MdAdd, MdEdit, MdHome } from "react-icons/md";
+import { MdList, MdPerson, MdSettings, MdBarChart, MdNotifications, MdMessage, MdAdd, MdEdit, MdHome, MdShoppingBasket } from "react-icons/md";
 
 const Sidebar_store = () => {
   const [openMenu, setOpenMenu] = useState("");
@@ -32,33 +32,13 @@ const Sidebar_store = () => {
             </li>
             <li>
               <Link href="/store/dashboard/listings" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
-                <MdList className="mr-3" /> Verify KYC
+                <MdShoppingBasket className="mr-3" /> Available Items
               </Link>
             </li>
             <li>
-              <button
-                className="flex items-center justify-between w-full text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
-                onClick={() => toggleMenu("ManageItems")}
-              >
-                <span className="flex items-center">
-                  <MdEdit className="mr-3" /> Manage Items
-                </span>
-                <span>{openMenu === "ManageItems" ? "-" : "+"}</span>
-              </button>
-              {openMenu === "ManageItems" && (
-                <ul className="ml-6 mt-2 space-y-2 text-base">
-                  <li>
-                    <Link href="/store/dashboard/add-items" className="flex items-center hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
-                      <MdAdd className="mr-2" /> Add Items
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/store/dashboard/modify-items" className="flex items-center hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
-                      <MdEdit className="mr-2" /> Modify Items
-                    </Link>
-                  </li>
-                </ul>
-              )}
+              <Link href="/store/dashboard/my-items" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
+                <MdList className="mr-3" /> My Items
+              </Link>
             </li>
             <li>
               <Link href="/store/dashboard/notifications" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">

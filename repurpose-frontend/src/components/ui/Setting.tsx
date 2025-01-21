@@ -19,11 +19,11 @@ const SettingsPage = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [notification, setNotification] = useState(null);
 
-  const handleUsernameChange = (e) => setUsername(e.target.value);
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handlePhoneChange = (value) => setPhone(value);
-  const handleAddressChange = (e) => setAddress(e.target.value);
-  const handlePasswordChange = (e) => {
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
+  const handlePhoneChange = (value: string) => setPhone(value);
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value);
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     setPasswordStrength(calculatePasswordStrength(e.target.value));
   };

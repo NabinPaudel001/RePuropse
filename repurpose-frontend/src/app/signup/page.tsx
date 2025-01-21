@@ -146,13 +146,9 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
-<<<<<<< HEAD
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
-=======
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
->>>>>>> ba452fe2f17c5e577ef38cd414649a5a298b6531
                         required
                       />
                     </div>
