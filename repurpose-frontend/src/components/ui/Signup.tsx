@@ -15,8 +15,15 @@ export default function SignupPage() {
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [contact, setContact] = useState(""); // State for contact number
-  const [showOTPInput, setShowOTPInput] = useState(false); // State to show OTP input
+  const [contact, setContact] = useState(""); 
+  const [showOTPInput, setShowOTPInput] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [storeName, setStoreName] = useState("");
+  const [ownerFirstName, setOwnerFirstName] = useState("");
+  const [ownerLastName, setOwnerLastName] = useState("");
+  const [address, setAddress] = useState("");
+
   const router = useRouter();
 
   const handleRoleSelection = (selectedRole: string) => {
@@ -121,6 +128,8 @@ export default function SignupPage() {
                           type="text"
                           id="firstName"
                           placeholder="First Name"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
@@ -133,6 +142,8 @@ export default function SignupPage() {
                           type="text"
                           id="lastName"
                           placeholder="Last Name"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
                         />
@@ -223,6 +234,8 @@ export default function SignupPage() {
                         type="text"
                         id="storeName"
                         placeholder="Store Name"
+                        value={storeName}
+                        onChange={(e) => setStoreName(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
@@ -236,6 +249,8 @@ export default function SignupPage() {
                           type="text"
                           id="ownerFirstName"
                           placeholder="First Name"
+                          value={ownerFirstName}
+                          onChange={(e) => setOwnerFirstName(e.target.value)}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
@@ -248,6 +263,8 @@ export default function SignupPage() {
                           type="text"
                           id="ownerLastName"
                           placeholder="Last Name"
+                          value={ownerLastName}
+                          onChange={(e) => setOwnerLastName(e.target.value)}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
                         />
@@ -261,6 +278,8 @@ export default function SignupPage() {
                         type="text"
                         id="address"
                         placeholder="Address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
@@ -284,6 +303,8 @@ export default function SignupPage() {
                         type="email"
                         id="email"
                         placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
                       />
