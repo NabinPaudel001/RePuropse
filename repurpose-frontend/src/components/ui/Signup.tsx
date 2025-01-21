@@ -7,6 +7,7 @@ import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone i
 import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp' // Import your OTPInput component
 
+
 export default function SignupPage() {
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
