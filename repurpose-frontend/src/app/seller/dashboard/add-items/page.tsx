@@ -10,7 +10,7 @@ import AddItems from '@/components/ui/addItems';
  */
 const Page = () => {
   return (
-    <Layout children={null}>
+    <Layout>
       <AddItems />
     </Layout>
   );

@@ -13,7 +13,6 @@ export async function customFetch(url, options = {}) {
   const headers = {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
   };
 
   const fullUrl = `${BASE_URL}${url}`;
