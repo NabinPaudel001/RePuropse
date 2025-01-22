@@ -2,9 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "../../middleware/errorInterceptor";
-import { setAccessToken } from "@/utils/tokens";
+import { setAccessToken, setRefreshToken, setUserId } from "@/utils/tokens";
+import { useSocket } from '../../contexts/SocketContext'
+import { useUser } from '@/contexts/UserContext';
 
 const OTPInput = ({ userID }: { userID: string }) => {
+  const { user, setUser } = useUser();
+  
+  const { socket, isConnected, setIsLoggedIn } = useSocket();
+  const [role, setRole] = useState(""); // Add role state
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const [isResendActive, setIsResendActive] = useState(false);
@@ -12,6 +19,14 @@ const OTPInput = ({ userID }: { userID: string }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+
+  useEffect(() => {
+    if (socket && isConnected && userID && role) {
+      console.log('Socket connected vayo:', socket.id);
+      socket.emit("register", userID, role); // Emit the 'register' event to backend
+    }
+  }, [socket, isConnected, userID, role]); 
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -59,9 +74,19 @@ const OTPInput = ({ userID }: { userID: string }) => {
       });
 
       console.log("response", response)
-      setAccessToken(response.data.token)
 
+      
       if (response.code === 200) {
+                setUserId(response.data.id);
+                setRole(response.data.role);
+                setAccessToken(response.data.token); // Save token in localStorage
+                setRefreshToken(response.data.refreshToken)
+                setUser(response.data);
+                console.log("her vai user", user)
+        
+                // Set login status to true, which triggers socket connection
+                setIsLoggedIn(true);
+        setAccessToken(response.data.token)
         if (response.data.role === "seller") {
           router.push("/seller/dashboard/home"); // Redirect to dashboard on success
         }

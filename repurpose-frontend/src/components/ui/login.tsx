@@ -4,10 +4,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp';
 import { apiRequest } from '../../middleware/errorInterceptor';
-import { setAccessToken, setUserId } from "@/utils/tokens";
+import { setAccessToken, setRefreshToken, setUserId } from "@/utils/tokens";
 import { useSocket } from '../../contexts/SocketContext'
+import { useUser } from '@/contexts/UserContext';
 
 export default function LoginPage() {
+  const { user, setUser } = useUser();
+
   const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [role, setRole] = useState(""); // Add role state
@@ -54,6 +57,9 @@ export default function LoginPage() {
         setUserId(response.data.id);
         setRole(response.data.role);
         setAccessToken(response.data.token); // Save token in localStorage
+        setRefreshToken(response.data.refreshToken)
+        setUser(response.data);
+        console.log("her vai user", user)
 
         // Set login status to true, which triggers socket connection
         setIsLoggedIn(true);

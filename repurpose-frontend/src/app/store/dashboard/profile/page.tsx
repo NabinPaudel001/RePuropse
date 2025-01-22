@@ -12,7 +12,7 @@ import StoreProfile from '@/components/ui/StoreProfile';
  */
 const Page = () => {
   return (
-    <Layout_store children={null}>
+    <Layout_store >
       <StoreProfile />
     </Layout_store>
   );

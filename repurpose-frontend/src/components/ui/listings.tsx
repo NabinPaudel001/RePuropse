@@ -2,12 +2,29 @@
 
 import React, { useEffect, useState } from "react";
 import Items from './Items'; // Import the Items component
+import { apiRequest } from '../../middleware/errorInterceptor'; // Assuming apiRequest is your helper function for making requests
+import { getUserId } from "@/utils/tokens";
 
-const MyListings = (props) => {
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+// Define types for the product and the props of the MyListings component
+interface Product {
+  _id: number;
+  name: string;
+  description: string;
+  price: number;
+  images: string[];
+  status: string;
+  discount: number;
+}
+
+const MyListings: React.FC = () => {
+  const sellerId = getUserId(); // Get the sellerId from a utility function (JWT or other storage)
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sellerId) {
@@ -33,9 +50,9 @@ const MyListings = (props) => {
     };
 
     fetchData();
-  }, []);
+  }, [sellerId]); // Fetch products whenever the sellerId changes
 
-  const openModal = (product) => {
+  const openModal = (product: Product) => {
     setSelectedProduct(product);
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + (selectedProduct?.images.length || 1)) % (selectedProduct?.images.length || 1));
     setIsModalOpen(true);
@@ -53,7 +70,9 @@ const MyListings = (props) => {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length);
+    if (selectedProduct) {
+      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length);
+    }
   };
 
   if (loading) {

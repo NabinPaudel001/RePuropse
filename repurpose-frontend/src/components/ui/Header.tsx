@@ -1,44 +1,60 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { MdNotifications, MdMessage, MdExitToApp } from "react-icons/md";
 import Image from "next/image";
 import Link from "next/link";
 import { useSocket } from "../../contexts/SocketContext";
 import { logoutUser } from "../../utils/auth";
 import { useNotification } from "../../contexts/NotificationContext";
+import { useUser } from "@/contexts/UserContext";
 
 const Header = () => {
   const { socket } = useSocket();
+  const listenerAdded = useRef(false);
+  const previousProducts = useRef(new Set<string>()); // To track existing products
   const { notifications, unreadCount, addNotification } = useNotification();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || listenerAdded.current) return;
 
     const handleNotification = (data: { message: string; productId: string }) => {
+      console.log("New productId received:", data.productId);
+
+      // Check if the productId already exists in previousProducts
+      if (previousProducts.current.has(data.productId)) {
+        console.log("Duplicate productId detected, skipping:", data.productId);
+        return;
+      }
+
+      // Add to previousProducts to avoid future duplicates
+      previousProducts.current.add(data.productId);
+
+      // Add new notification
       addNotification({
         id: Date.now(),
-        name: "New Notification", // Assuming the name is static, modify as needed
-        profileImg: "/profile-pic.png", // Assuming a default profile image, modify as needed
-        timeNotified: new Date().toLocaleTimeString(), // Current time
-        event: { message: data.message, product: data.productId }, // Assuming event has product and message fields
-        notif: data.message, // Notification text
-        read: false, // Mark as unread initially
+        name: "New Notification",
+        profileImg: "/profile-pic.png",
+        timeNotified: new Date().toLocaleTimeString(),
+        event: { message: data.message, product: data.productId },
+        notif: data.message,
+        read: false,
       });
-
-      console.log("ley herr",notifications);
     };
 
-    // Listen for notifications
     socket.on("receiveNotification", handleNotification);
+    listenerAdded.current = true;
 
-    // Cleanup on unmount
     return () => {
       socket.off("receiveNotification", handleNotification);
+      listenerAdded.current = false;
     };
   }, [socket, addNotification]);
 
-  // console.log(notifications);
+  useEffect(() => {
+    console.log("Updated notifications:", notifications);
+  }, [notifications]);
 
   return (
     <div className="fixed top-0 left-0 right-0 text-[hsl(var(--primary-foreground))] h-16 pl-64 pr-6 w-full shadow-md z-10">
@@ -51,7 +67,7 @@ const Header = () => {
         >
           <MdMessage size={24} />
         </button>
-        <Link href="/notifications">
+        <Link href={`/${user?.role}/dashboard/notifications`}>
           <button
             type="button"
             title="Notifications"

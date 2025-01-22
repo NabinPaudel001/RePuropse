@@ -4,8 +4,8 @@ import { useNotification } from "@/contexts/NotificationContext";
 import NotificationCards from "@/components/ui/NotificationCards";
 import NotificationHeader from "@/components/ui/NotificationHeader";
 
-export default function NotificationsPage() {
-  const { notifications, unreadCount, markAllAsRead, markAsRead } = useNotification();
+const NotificationPage = () => {
+    const { notifications, unreadCount, markAllAsRead, markAsRead } = useNotification();
 
   return (
     <main className="flex w-full h-full justify-center bg-gray-100 md:py-8">
@@ -26,3 +26,4 @@ export default function NotificationsPage() {
     </main>
   );
 }
+export default NotificationPage;

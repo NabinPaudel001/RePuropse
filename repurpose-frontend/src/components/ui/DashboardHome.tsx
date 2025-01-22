@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaStar, FaShoppingCart, FaClock, FaGift, FaLeaf, FaCloud } from 'react-icons/fa'; // Importing icons from Font Awesome
+import { useUser } from '@/contexts/UserContext';
+
 
 const DashboardHome = () => {
   const [rewardPoints, setRewardPoints] = useState(0);
@@ -11,6 +13,10 @@ const DashboardHome = () => {
   const [environmentEarnings, setEnvironmentEarnings] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { user } = useUser();
+  console.log("ya her user", user)
+
 
   useEffect(() => {
     // Simulate fetching data with dummy data

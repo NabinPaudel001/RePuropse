@@ -1,16 +1,60 @@
 "use client";
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import PhoneInput from 'react-phone-input-2';
 
 const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
+  const [username, setUsername] = useState("Nabin Paudel");
+  const [profilePicture, setProfilePicture] = useState("/profile-picture.jpg");
+  const [status, setStatus] = useState("unverified"); // Status can be 'verified', 'unverified', or 'pending'
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [address, setAddress] = useState("");
+  const [legalDocument, setLegalDocument] = useState<File | null>(null);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const toggleEditModal = () => {
+    setIsEditModalOpen(!isEditModalOpen);
+  };
+
+  const toggleKYCModal = () => {
+    setIsKYCModalOpen(!isKYCModalOpen);
+  };
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setProfilePicture(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
+
+  const handleKYCSubmit = () => {
+    // Handle KYC submission logic here
+    console.log("KYC Submitted:", { phoneNumber, fullName, address, legalDocument });
+    toggleKYCModal();
+  };
+
+  const handlePhoneChange = (phone: string) => {
+    setPhoneNumber(phone);
   };
 
   return (
@@ -20,34 +64,42 @@ const ProfilePage = () => {
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
             {/* Profile Picture */}
-            <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden mt-8">
+            <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
               <Image
-                src="/profile-picture.jpg" // Placeholder path, replace with actual image path
+                src={profilePicture}
                 alt="Profile"
                 layout="fill"
                 objectFit="cover"
                 onClick={toggleModal}
                 className="cursor-pointer"
               />
+              
               <div className="absolute inset-0 bg-black bg-opacity-25 flex justify-center items-center cursor-pointer">
                 <FontAwesomeIcon icon={faCamera} className="text-white text-lg" />
               </div>
             </div>
-
           </div>
 
           {/* Profile Info */}
-          <div className="text-center mt-16 p-4">
-            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">Nabin Paudel</h2>
+          <div className="text-center p-4 -mt-6">
+            
+        {/* Status Section */}
+        <div className="mt-4 text-center">
+          <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
+            Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+          </p>
+        </div>
+
+            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{username}</h2>
             <p className="text-[hsl(var(--muted-foreground))]">Cloth Seller</p>
 
             <div className="flex justify-center space-x-8 ">
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">{userData?.postsCount || 259}</p>
+                <p className="text-[hsl(var(--foreground))] font-bold">259</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Posts</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">{userData?.soldCount || 129}</p>
+                <p className="text-[hsl(var(--foreground))] font-bold">129</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
@@ -83,7 +135,7 @@ const ProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">About Me</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            {userData?.about || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque posuere fermentum urna, eu condimentum mauris tempus ut. Donec fermentum blandit aliquet. Etiam dictum dapibus ultricies. Sed vel aliquet libero. Nunc a augue fermentum, pharetra ligula sed, aliquam lacus.'}
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque posuere fermentum urna, eu condimentum mauris tempus ut. Donec fermentum blandit aliquet. Etiam dictum dapibus ultricies. Sed vel aliquet libero. Nunc a augue fermentum, pharetra ligula sed, aliquam lacus.
           </p>
         </div>
 
@@ -91,10 +143,10 @@ const ProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Email: {userData?.email || 'contact@store.com'}
+            Email: contact@store.com
           </p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: {userData?.phone || '+123 456 7890'}
+            Phone: +123 456 7890
           </p>
         </div>
 
@@ -102,16 +154,16 @@ const ProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-4">Follow me on</h3>
           <div className="flex space-x-4 justify-center">
-            <a href="#" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href="#" title="Facebook" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faFacebook} className="text-2xl" />
             </a>
-            <a href="#" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href="#" title="Twitter" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
             </a>
-            <a href="#" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href="#" title="Dribbble" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faDribbble} className="text-2xl" />
             </a>
-            <a href="#" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href="#" title="GitHub" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faGithub} className="text-2xl" />
             </a>
           </div>
@@ -123,7 +175,7 @@ const ProfilePage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-4 rounded-lg shadow-lg">
             <Image
-              src="/profile-picture.jpg" // Placeholder path, replace with actual image path
+              src={profilePicture}
               alt="Profile"
               width={300}
               height={300}
