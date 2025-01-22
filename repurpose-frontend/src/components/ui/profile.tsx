@@ -64,7 +64,6 @@ const ProfilePage = () => {
           </p>
         </div>
 
-       
         {/* Contact Information */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
@@ -76,7 +75,6 @@ const ProfilePage = () => {
           </p>
         </div>
 
-   
         {/* Social Links */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-4">Follow me on</h3>
