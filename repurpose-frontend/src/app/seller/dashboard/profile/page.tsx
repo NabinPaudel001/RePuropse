@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import Layout from '../../../../components/ui/layout';
+import Layout from '@/components/ui/Layout';
 import ProfilePage from '@/components/ui/profile';
 
 
@@ -11,7 +11,7 @@ import ProfilePage from '@/components/ui/profile';
  */
 const Page = () => {
   return (
-    <Layout children={null}>
+    <Layout>
       <ProfilePage/>
     </Layout>
   );

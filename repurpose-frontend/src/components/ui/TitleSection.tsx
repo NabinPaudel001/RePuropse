@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function TitleSection({ title, subtitle, variant = "center" }) {
+interface TitleSectionProps {
+  title: string;
+  subtitle?: string;
+  variant?: "center" | "left";
+}
+
+export default function TitleSection({ title, subtitle, variant = "center" }: TitleSectionProps) {
   const alignmentClass = variant === "left" ? "text-left" : "text-center";
 
   return (

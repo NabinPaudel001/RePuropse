@@ -218,6 +218,7 @@ export default function AddItems() {
               multiple
               onChange={handleImageUpload}
               className="w-full px-4 py-2 border rounded-lg mb-4"
+              title="Upload product images"
             />
             <div className="flex space-x-4">
               {imagePreviews.map((preview, index) => (

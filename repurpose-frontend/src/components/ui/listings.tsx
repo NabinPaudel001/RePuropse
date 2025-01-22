@@ -2,9 +2,23 @@
 import React, { useEffect, useState } from "react";
 import Items from './Items'; // Import the Items component
 
-const MyListings = (props) => {
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  images: string[]; // Corrected to string[]
+  status: string;
+  discount: number;
+}
+
+interface MyListingsProps {
+  name: string;
+}
+
+const MyListings: React.FC<MyListingsProps> = (props) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<{ id: number; name: string; description: string; price: number; images: string[]; status: string; discount: number } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -19,11 +33,12 @@ const MyListings = (props) => {
     };
 
     fetchData();
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % (selectedProduct?.images.length || 1));
   }, []);
 
-  const openModal = (product) => {
+  const openModal = (product: { id: number; name: string; description: string; price: number; images: string[]; status: string; discount: number }) => {
     setSelectedProduct(product);
-    setCurrentImageIndex(0);
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + (selectedProduct?.images.length || 1)) % (selectedProduct?.images.length || 1));
     setIsModalOpen(true);
   };
 
@@ -33,11 +48,13 @@ const MyListings = (props) => {
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % selectedProduct.images.length);
+    if (selectedProduct) {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % selectedProduct.images.length);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length);
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + (selectedProduct?.images.length || 1)) % (selectedProduct?.images.length || 1));
   };
 
   return (
