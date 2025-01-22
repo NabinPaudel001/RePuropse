@@ -17,7 +17,7 @@ const SettingsPage = () => {
   const [profileImage, setProfileImage] = useState('/profile-picture.jpg'); // Placeholder path
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState<{ type: string; message: string } | null>(null);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
@@ -26,17 +26,20 @@ const SettingsPage = () => {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     setPasswordStrength(calculatePasswordStrength(e.target.value));
-  };
-  const handleNewPasswordChange = (e) => {
+  }
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
   };
 
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
+        if (typeof reader.result === 'string') {
+          setProfileImage(reader.result);
+        }
         setUploadProgress(100);
       };
       reader.onprogress = (event) => {
@@ -46,7 +49,7 @@ const SettingsPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission logic here
     console.log('Updated Username:', username);
@@ -58,7 +61,7 @@ const SettingsPage = () => {
     setNotification({ type: 'success', message: 'Settings updated successfully!' });
   };
 
-  const calculatePasswordStrength = (password) => {
+  const calculatePasswordStrength = (password: string): number => {
     let strength = 0;
     if (password.length >= 8) strength += 20;
     if (password.match(/[a-z]/)) strength += 20;
@@ -87,6 +90,8 @@ const SettingsPage = () => {
                   <FontAwesomeIcon icon={faCamera} className="text-white text-lg" />
                 </label>
                 <input
+                  title="Profile Image"
+                  placeholder="Upload Profile Image"
                   id="profileImageInput"
                   type="file"
                   accept="image/*"
@@ -103,7 +108,8 @@ const SettingsPage = () => {
             <label className="block text-[hsl(var(--foreground))] mb-2">Username</label>
             <input
               type="text"
-              value={username}
+              title="Username"
+              placeholder="Enter your username"
               onChange={handleUsernameChange}
               className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
             />
@@ -119,18 +125,17 @@ const SettingsPage = () => {
       type="email"
       value={email}
       onChange={handleEmailChange}
-      className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
-      style={{ width: '100%' }} // Ensure full width for email input
+      className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))] email-input"
+      placeholder="Enter your email"
     />
   </div>
   <div className="flex-1">
     <label className="block text-[hsl(var(--foreground))] mb-2">Phone</label>
     <PhoneInput
-      country={'np'} // Set default country code to Nepal
+      inputStyle={{ width: '90%' }} // Make phone input slightly smaller
       value={phone}
       onChange={handlePhoneChange}
-      inputClass="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
-      style={{ width: '90%' }} // Make phone input slightly smaller
+      containerClass="phone-input-container" // Make phone input slightly smaller
     />
   </div>
 </div>
@@ -141,6 +146,7 @@ const SettingsPage = () => {
             <input
               type="text"
               value={address}
+              placeholder='Address'
               onChange={handleAddressChange}
               className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
             />
@@ -151,6 +157,7 @@ const SettingsPage = () => {
             <label className="block text-[hsl(var(--foreground))] mb-2">Current Password</label>
             <input
               type="password"
+              placeholder='Current Password'
               value={password}
               onChange={handlePasswordChange}
               className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
@@ -167,6 +174,7 @@ const SettingsPage = () => {
             <input
               type="password"
               value={newPassword}
+              placeholder='New Password'
               onChange={handleNewPasswordChange}
               className="w-full px-3 py-2 border rounded-lg bg-[hsl(var(--input))] text-[hsl(var(--foreground))]"
             />
@@ -179,8 +187,8 @@ const SettingsPage = () => {
           >
             Save Changes
           </button>
-        </form>
-
+          <div className={`mt-4 p-2 text-center text-white rounded-lg ${notification?.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+            {notification?.message}
         {/* Notification */}
         {notification && (
           <div className={`mt-4 p-2 text-center text-white rounded-lg ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
@@ -188,7 +196,9 @@ const SettingsPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </form>
+  </div>
+</div>
   );
 };
 

@@ -1,5 +1,11 @@
 // components/FeatureCard.js
-export default function FeatureCard({ title, description, icon }) {
+interface FeatureCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+export default function FeatureCard({ title, description, icon }: FeatureCardProps) {
     return (
       <div className="flex flex-col items-center text-center p-6 bg-primary rounded-lg shadow-md">
         <div className="text-4xl mb-4">{icon}</div>

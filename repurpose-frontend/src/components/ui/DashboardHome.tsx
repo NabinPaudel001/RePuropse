@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaStar, FaShoppingCart, FaClock, FaGift, FaLeaf } from 'react-icons/fa'; // Importing icons from Font Awesome
+import { FaStar, FaShoppingCart, FaClock, FaGift, FaLeaf, FaCloud } from 'react-icons/fa'; // Importing icons from Font Awesome
 
 const DashboardHome = () => {
   const [rewardPoints, setRewardPoints] = useState(0);
+  const [carbonCredits, setCarbonCredits] = useState(0); // New state for carbon credits
   const [soldItems, setSoldItems] = useState(0);
   const [pendingItems, setPendingItems] = useState(0);
   const [donatedItems, setDonatedItems] = useState(0);
@@ -21,6 +22,7 @@ const DashboardHome = () => {
         // Dummy data
         const data = {
           rewardPoints: 1200,
+          carbonCredits: 150, // New dummy data for carbon credits
           soldItems: 45,
           pendingItems: 10,
           donatedItems: 5,
@@ -28,6 +30,7 @@ const DashboardHome = () => {
         };
 
         setRewardPoints(data.rewardPoints);
+        setCarbonCredits(data.carbonCredits); // Set carbon credits
         setSoldItems(data.soldItems);
         setPendingItems(data.pendingItems);
         setDonatedItems(data.donatedItems);
@@ -60,6 +63,15 @@ const DashboardHome = () => {
             <div>
               <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Reward Points</h2>
               <p className="text-2xl text-[hsl(var(--foreground))]">{rewardPoints}</p>
+            </div>
+          </div>
+        </div>
+        <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center">
+            <FaCloud className="text-[hsl(var(--primary))] text-3xl mr-4" />
+            <div>
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Carbon Credits</h2>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{carbonCredits}</p>
             </div>
           </div>
         </div>

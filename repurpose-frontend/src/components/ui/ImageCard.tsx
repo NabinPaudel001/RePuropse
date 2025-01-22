@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-const ImageCard = ({ src, alt, label }) => {
+interface ImageCardProps {
+  src: string;
+  alt: string;
+  label: string;
+}
+
+const ImageCard: React.FC<ImageCardProps> = ({ src, alt, label }) => {
   return (
     <div className="flex  flex-col items-center">
       {/* Card container with responsive fixed width and height */}

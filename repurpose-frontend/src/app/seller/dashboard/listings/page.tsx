@@ -1,5 +1,5 @@
 "use client";
-import Layout from "@/components/ui/layout";
+import Layout from "@/components/ui/Layout";
 import MyListings from "@/components/ui/listings";
 import React, { useEffect, useState } from "react";
 
@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
    return (
      <div>
        <Layout>
-        <MyListings />
+        <MyListings name="YourName" />
        </Layout>
      </div>
    )
