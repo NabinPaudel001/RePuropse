@@ -52,6 +52,9 @@ const OTPInput = ({ userID }: { userID: string }) => {
     try {
       const response = await apiRequest("/api/auth/verify-otp", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify that the body is JSON
+        },
         body: JSON.stringify({ userID, otp: enteredOtp }),
       });
 
@@ -80,14 +83,14 @@ const OTPInput = ({ userID }: { userID: string }) => {
     setTimer(60);
     setIsResendActive(false);
     setErrorMessage(""); // Clear error message on resend
-    
+
     // Call the resend OTP API
     try {
       const response = await apiRequest("/api/auth/resend-otp", {
         method: "POST",
         body: JSON.stringify({ userID }), // Sending the userID for OTP resend
       });
-  
+
       if (response.code === 200) {
         // OTP successfully resent
         setTimer(60); // Reset timer
@@ -101,7 +104,7 @@ const OTPInput = ({ userID }: { userID: string }) => {
       setErrorMessage("An error occurred while resending the OTP.");
     }
   };
-  
+
 
   return (
     <div className="otp-container flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -133,9 +136,8 @@ const OTPInput = ({ userID }: { userID: string }) => {
         Resend OTP in: {timer} seconds
       </div>
       <button
-        className={`resend-button px-4 py-2 bg-blue-500 text-white rounded-md ${
-          isResendActive ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed"
-        }`}
+        className={`resend-button px-4 py-2 bg-blue-500 text-white rounded-md ${isResendActive ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed"
+          }`}
         onClick={handleResend}
         disabled={!isResendActive}
       >

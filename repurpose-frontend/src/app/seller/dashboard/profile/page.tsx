@@ -11,7 +11,7 @@ import ProfilePage from '@/components/ui/profile';
  */
 const Page = () => {
   return (
-    <Layout children={null}>
+    <Layout>
       <ProfilePage/>
     </Layout>
   );

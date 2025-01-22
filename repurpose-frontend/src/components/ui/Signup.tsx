@@ -74,8 +74,13 @@ export default function SignupPage() {
       console.log("formData", formData)
       // Call the backend API to register the user
       const response = await apiRequest("/api/auth/register", {
-        method: "POST", body: JSON.stringify(formData)
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify that the body is JSON
+        },
+        body: JSON.stringify(formData),
       });
+
 
       console.log("Registration successful:", response);
       if (response.code === 201) {

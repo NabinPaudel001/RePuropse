@@ -29,3 +29,18 @@ export function setRefreshToken(token) {
     document.cookie = `refreshToken=${token}; secure; HttpOnly; path=/;`;
   }
 }
+
+// New function to get the user ID
+export function getUserId() {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("userId");
+  }
+  return null; // Return null if accessed during SSR
+}
+
+// New function to set the user ID
+export function setUserId(userId) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("userId", userId);
+  }
+}

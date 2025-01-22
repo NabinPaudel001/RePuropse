@@ -1,15 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import OTPInput from '@/components/ui/otp'; 
+import OTPInput from '@/components/ui/otp';
 import { apiRequest } from '../../middleware/errorInterceptor';
-import { setAccessToken } from "@/utils/tokens";
+import { setAccessToken, setUserId } from "@/utils/tokens";
+import { useSocket } from '../../contexts/SocketContext'
 
 export default function LoginPage() {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  const [showOTPInput, setShowOTPInput] = useState(false); // State to show OTP input
+  const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
+  const [showOTPInput, setShowOTPInput] = useState(false);
+  const [role, setRole] = useState(""); // Add role state
   const [userID, setUserID] = useState("")
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -17,45 +18,53 @@ export default function LoginPage() {
     password: "",
   });
 
-  // const handleLogin = (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   const role = "seller";
+  useEffect(() => {
+    if (socket && isConnected && userID && role) {
+      console.log('Socket connected vayo:', socket.id);
+      socket.emit("register", userID, role); // Emit the 'register' event to backend
+    }
+  }, [socket, isConnected, userID, role]); 
 
-  //   // Mock verification logic
-  //   if (email === "nabin@nabin.com" && password === "1245") {
-  //     setShowOTPInput(true); // Show OTP input if email is registered but not verified
-  //   } else {
-  //     console.log(`Logging in as ${role}`);
-  //     router.push(`/${role}/dashboard`);
-  //   }
-  // };
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-  
-      try {
-        console.log("formData", formData)
-        // Call the backend API to register the user
-        const response = await apiRequest("/api/auth/login", {
-          method: "POST", body: JSON.stringify(formData)
-        });
-  
-        console.log("Registration successful:", response);
-        if (response.code === 403) {
-          setUserID(response.data.id)
-          console.log("I am here");
-          setShowOTPInput(true); // Show OTP input after successful registration
-        }
-        if (response.code === 200) {
-          console.log("res ma token", response.data.token)
-                setAccessToken(response.data.token)
-                router.push(`/${response.data.role}/dashboard/home`);
-        }
-  
-      } catch (error) {
-        console.error("Error during signup:", error);
+    try {
+      console.log("formData", formData);
+      // Call the backend API to login the user
+      const response = await apiRequest("/api/auth/login", {
+        method: "POST",
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("Login successful:", response);
+
+      if (response.code === 403) {
+        setUserID(response.data.id);
+        setUserId(response.data.id);
+        setShowOTPInput(true); // Show OTP input after successful registration
       }
-    };
+
+      if (response.code === 200) {
+        console.log("Token:", response.data.token);
+        setUserID(response.data.id);
+        setUserId(response.data.id);
+        setRole(response.data.role);
+        setAccessToken(response.data.token); // Save token in localStorage
+
+        // Set login status to true, which triggers socket connection
+        setIsLoggedIn(true);
+
+        router.push(`/${response.data.role}/dashboard/home`);
+      }
+
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
 
   const handleInput = (event: any) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -80,7 +89,6 @@ export default function LoginPage() {
               <input
                 type="email"
                 id="email"
-                // value={email}
                 name="email"
                 onChange={handleInput}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
@@ -95,7 +103,6 @@ export default function LoginPage() {
                 type="password"
                 id="password"
                 name="password"
-                // value={password}
                 onChange={handleInput}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                 required
