@@ -5,7 +5,7 @@ export interface Event {
   group?: string;
   message?: string;
   photo?: StaticImageData;
-  product?: string 
+  product?: string;
 }
 
 export interface Notification {

@@ -26,7 +26,7 @@ const OTPInput = ({ userID }: { userID: string }) => {
       console.log('Socket connected vayo:', socket.id);
       socket.emit("register", userID, role); // Emit the 'register' event to backend
     }
-  }, [socket, isConnected, userID, role]); 
+  }, [socket, isConnected, userID, role]);
 
   useEffect(() => {
     const countdown = setInterval(() => {

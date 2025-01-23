@@ -19,7 +19,7 @@ const Header = () => {
   useEffect(() => {
     if (!socket || listenerAdded.current) return;
 
-    const handleNotification = (data: { message: string; productId: string }) => {
+    const handleNotification = (data: { message: string; productId: string; firstName: string; lastName: string; profilePicture:string }) => {
       console.log("New productId received:", data.productId);
 
       // Check if the productId already exists in previousProducts
@@ -34,8 +34,8 @@ const Header = () => {
       // Add new notification
       addNotification({
         id: Date.now(),
-        name: "New Notification",
-        profileImg: "/profile-pic.png",
+        name: `${data.firstName} ${data.lastName}`,
+        profileImg: `${data?.profilePicture || null}`,
         timeNotified: new Date().toLocaleTimeString(),
         event: { message: data.message, product: data.productId },
         notif: data.message,
@@ -57,7 +57,7 @@ const Header = () => {
   }, [notifications]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 text-[hsl(var(--primary-foreground))] h-16 pl-64 pr-6 w-full shadow-md z-10">
+    <div className="fixed top-0 left-0 right-0 text-[hsl(var(--primary-foreground))] h-16 pl-64 pr-6 w-full shadow-md z-20">
       <div className="flex justify-end items-center h-full space-x-4">
         <button
           type="button"
@@ -86,18 +86,25 @@ const Header = () => {
         </Link>
         <Link
           href="/seller/dashboard/profile"
-          className="flex items-center justify-center w-10 h-10"
+          className="flex items-center justify-center w-10 h-10 bg-[hsl(var(--secondary))] rounded-full text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))]"
           title="Profile"
           aria-label="Profile"
         >
-          <Image
-            src="/profile-pic.png"
-            alt="Profile Picture"
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
+          {user?.profilePicture ? (
+            <Image
+              src={user.profilePicture}
+              alt="Profile Picture"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
+          ) : (
+            <span className="text-xl font-semibold">
+              {user?.firstName?.charAt(0).toUpperCase() || "U"}
+            </span>
+          )}
         </Link>
+
         <button
           type="button"
           title="Logout"

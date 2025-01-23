@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const ModifyItems: React.FC = () => {
+const ModifyItems: React.FC = (id:any) => {
   const [products, setProducts] = useState<{ id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<{ id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] } | null>(null);
   const [productName, setProductName] = useState("");

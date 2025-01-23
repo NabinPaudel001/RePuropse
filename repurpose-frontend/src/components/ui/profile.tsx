@@ -5,8 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import PhoneInput from 'react-phone-input-2';
+import { useUser } from "@/contexts/UserContext";
 
 const ProfilePage = () => {
+  const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
@@ -58,40 +60,48 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[hsl(var(--background))]">
+    <div className="flex justify-center items-center min-h-screen bg-[hsl(var(--background))] w-full h-full">
       <div className="max-w-4xl w-full p-6">
         {/* Header Section */}
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
-            {/* Profile Picture */}
             <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
-              <Image
-                src={profilePicture}
-                alt="Profile"
-                layout="fill"
-                objectFit="cover"
-                onClick={toggleModal}
-                className="cursor-pointer"
-              />
-              
-              <div className="absolute inset-0 bg-black bg-opacity-25 flex justify-center items-center cursor-pointer">
+              {user?.profilePicture ? (
+                <Image
+                  src={user.profilePicture}
+                  alt="Profile"
+                  layout="fill"
+                  objectFit="cover"
+                  onClick={toggleModal}
+                  className="cursor-pointer"
+                />
+              ) : (
+                <div
+                  className="flex items-center justify-center w-full h-full bg-gray-300 text-5xl font-bold cursor-pointer"
+                  onClick={toggleModal}
+                >
+                  {user?.firstName?.[0]?.toUpperCase() || "?"}
+                </div>
+              )}
+              {/* <div className="absolute inset-0 bg-black bg-opacity-25 flex justify-center items-center cursor-pointer">
                 <FontAwesomeIcon icon={faCamera} className="text-white text-lg" />
-              </div>
+              </div> */}
             </div>
           </div>
 
+
           {/* Profile Info */}
           <div className="text-center p-4 -mt-6">
-            
-        {/* Status Section */}
-        <div className="mt-4 text-center">
-          <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
-            Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-          </p>
-        </div>
 
-            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{username}</h2>
-            <p className="text-[hsl(var(--muted-foreground))]">Cloth Seller</p>
+            {/* Status Section */}
+            <div className="mt-4 text-center">
+              <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
+                Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+              </p>
+            </div>
+
+            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{user?.firstName} {user?.lastName}</h2>
+            <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
             <div className="flex justify-center space-x-8 ">
               <div>
@@ -143,10 +153,10 @@ const ProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Email: contact@store.com
+            {user?.email}
           </p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: +123 456 7890
+            Phone: {user?.phoneNumber}
           </p>
         </div>
 
@@ -217,9 +227,9 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex justify-end space-x-2">
-             
-             
-            <button
+
+
+              <button
                 onClick={toggleEditModal}
                 className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
               >
@@ -231,7 +241,7 @@ const ProfilePage = () => {
               >
                 Cancel
               </button>
-              
+
             </div>
           </div>
         </div>
@@ -253,13 +263,13 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex-1">
-    <PhoneInput
-      country={'np'} // Set default country code to Nepal
-      value={phoneNumber}
-      onChange={handlePhoneChange}
-      inputClass="w-full px-3 py-2 border rounded-lg  text-[hsl(var(--foreground))]"
-    />
-  </div>
+              <PhoneInput
+                country={'np'} // Set default country code to Nepal
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                inputClass="w-full px-3 py-2 border rounded-lg  text-[hsl(var(--foreground))]"
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Address</label>
               <input
@@ -286,8 +296,8 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex justify-end space-x-2">
-              
-            <button
+
+              <button
                 onClick={handleKYCSubmit}
                 className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
               >
