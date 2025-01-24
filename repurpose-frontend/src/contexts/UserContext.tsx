@@ -33,7 +33,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     // Function to update user data
-    const updateUser = (updatedUser: User) => {
+    const updatedUser = (updatedUser: User) => {
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser)); // Store in localStorage
     };
@@ -45,7 +45,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser: updateUser, clearUser }}>
+        <UserContext.Provider value={{ user, setUser: updatedUser, clearUser }}>
             {children}
         </UserContext.Provider>
     );

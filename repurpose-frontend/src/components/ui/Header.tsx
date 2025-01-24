@@ -57,7 +57,7 @@ const Header = () => {
   }, [notifications]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 text-[hsl(var(--primary-foreground))] h-16 pl-64 pr-6 w-full shadow-md z-20">
+    <div className="fixed top-0 left-0 right-0 text-[hsl(var(--primary-foreground))] h-16 pl-64 pr-6 w-full shadow-md z-20 bg-white">
       <div className="flex justify-end items-center h-full space-x-4">
         <button
           type="button"

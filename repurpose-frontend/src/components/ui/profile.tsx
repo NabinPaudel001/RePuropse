@@ -6,13 +6,14 @@ import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-b
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import PhoneInput from 'react-phone-input-2';
 import { useUser } from "@/contexts/UserContext";
+import { apiRequest } from '@/middleware/errorInterceptor';
 
 const ProfilePage = () => {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
-  const [username, setUsername] = useState("Nabin Paudel");
+  const [username, setUsername] = useState("");
   const [profilePicture, setProfilePicture] = useState("/profile-picture.jpg");
   const [status, setStatus] = useState("unverified"); // Status can be 'verified', 'unverified', or 'pending'
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -32,16 +33,31 @@ const ProfilePage = () => {
     setIsKYCModalOpen(!isKYCModalOpen);
   };
 
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setProfilePicture(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+  const handleProfilePictureChange = async (file: File) => {
+    if (!file) return;
+
+    console.log("file ta xa", file)
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+
+    console.log("formDAta", formData)
+
+    try {
+      const response = await apiRequest("/api/user/profile-picture", {
+        method: 'PATCH',
+        body: formData
+      });
+
+      console.log("response", response)
+
+      if (response.success) {
+        console.log("profile picture changed")
+        setUser(response.data)
+      } else {
+        console.error("Failed to upload profile picture");
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
     }
   };
 
@@ -65,27 +81,44 @@ const ProfilePage = () => {
         {/* Header Section */}
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
-            <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
-              {user?.profilePicture ? (
-                <Image
-                  src={user.profilePicture}
-                  alt="Profile"
-                  layout="fill"
-                  objectFit="cover"
-                  onClick={toggleModal}
-                  className="cursor-pointer"
+            <div className='relative w-32 h-32 rounded-full'>
+
+              <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
+                {user?.profilePicture ? (
+                  <Image
+                    src={user.profilePicture}
+                    alt="Profile"
+                    layout="fill"
+                    objectFit="cover"
+                    onClick={toggleModal}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <div
+                    className="flex items-center justify-center w-full h-full bg-gray-300 text-5xl font-bold cursor-pointer"
+                  >
+                    {user?.firstName?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
+              </div>
+              <div
+                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center  cursor-pointer"
+                onClick={() => document.getElementById("profilePictureInput")?.click()}>
+                <FontAwesomeIcon icon={faCamera} className="text-white text-sm" />
+                <input
+                  type="file"
+                  id="profilePictureInput"
+                  accept="image/*"
+                  className='hidden'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleProfilePictureChange(file);
+                    }
+                  }}
                 />
-              ) : (
-                <div
-                  className="flex items-center justify-center w-full h-full bg-gray-300 text-5xl font-bold cursor-pointer"
-                  onClick={toggleModal}
-                >
-                  {user?.firstName?.[0]?.toUpperCase() || "?"}
-                </div>
-              )}
-              {/* <div className="absolute inset-0 bg-black bg-opacity-25 flex justify-center items-center cursor-pointer">
-                <FontAwesomeIcon icon={faCamera} className="text-white text-lg" />
-              </div> */}
+
+              </div>
             </div>
           </div>
 
@@ -95,9 +128,11 @@ const ProfilePage = () => {
 
             {/* Status Section */}
             <div className="mt-4 text-center">
-              <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
-                Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-              </p>
+              {user?.role === "store" && (
+                <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
+                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+                </p>
+              )}
             </div>
 
             <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{user?.firstName} {user?.lastName}</h2>
@@ -129,7 +164,7 @@ const ProfilePage = () => {
               >
                 Edit Profile
               </button>
-              {status !== "verified" && (
+              {user?.role === "store" && status !== "verified" && (
                 <button
                   className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
                   onClick={toggleKYCModal}
@@ -213,16 +248,6 @@ const ProfilePage = () => {
                 placeholder='Username'
                 value={username}
                 onChange={handleUsernameChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Profile Picture</label>
-              <input
-                placeholder='Citizenship Card'
-                type="file"
-                accept="image/*"
-                onChange={handleProfilePictureChange}
                 className="w-full p-2 border rounded"
               />
             </div>
