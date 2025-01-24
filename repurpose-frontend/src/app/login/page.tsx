@@ -40,7 +40,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         </button>
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Login</h1>
         {showOTPInput ? (
-          <OTPInput userID={email} /> // Render OTPInput component when OTP input should be shown
+          <OTPInput userID={email} userID="" /> // Render OTPInput component when OTP input should be shown
         ) : (
           <form onSubmit={handleLogin}>
             <div className="mb-4">

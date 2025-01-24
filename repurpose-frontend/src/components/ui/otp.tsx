@@ -2,9 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "../../middleware/errorInterceptor";
-import { setAccessToken } from "@/utils/tokens";
+import { setAccessToken, setRefreshToken, setUserId } from "@/utils/tokens";
+import { useSocket } from '../../contexts/SocketContext'
+import { useUser } from '@/contexts/UserContext';
 
 const OTPInput = ({ userID }: { userID: string }) => {
+  const { user, setUser } = useUser();
+  
+  const { socket, isConnected, setIsLoggedIn } = useSocket();
+  const [role, setRole] = useState(""); // Add role state
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const [isResendActive, setIsResendActive] = useState(false);
@@ -12,6 +19,14 @@ const OTPInput = ({ userID }: { userID: string }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+
+  useEffect(() => {
+    if (socket && isConnected && userID && role) {
+      console.log('Socket connected vayo:', socket.id);
+      socket.emit("register", userID, role); // Emit the 'register' event to backend
+    }
+  }, [socket, isConnected, userID, role]); 
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -52,13 +67,26 @@ const OTPInput = ({ userID }: { userID: string }) => {
     try {
       const response = await apiRequest("/api/auth/verify-otp", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify that the body is JSON
+        },
         body: JSON.stringify({ userID, otp: enteredOtp }),
       });
 
       console.log("response", response)
-      setAccessToken(response.data.token)
 
+      
       if (response.code === 200) {
+                setUserId(response.data.id);
+                setRole(response.data.role);
+                setAccessToken(response.data.token); // Save token in localStorage
+                setRefreshToken(response.data.refreshToken)
+                setUser(response.data);
+                console.log("her vai user", user)
+        
+                // Set login status to true, which triggers socket connection
+                setIsLoggedIn(true);
+        setAccessToken(response.data.token)
         if (response.data.role === "seller") {
           router.push("/seller/dashboard/home"); // Redirect to dashboard on success
         }
@@ -80,14 +108,14 @@ const OTPInput = ({ userID }: { userID: string }) => {
     setTimer(60);
     setIsResendActive(false);
     setErrorMessage(""); // Clear error message on resend
-    
+
     // Call the resend OTP API
     try {
       const response = await apiRequest("/api/auth/resend-otp", {
         method: "POST",
         body: JSON.stringify({ userID }), // Sending the userID for OTP resend
       });
-  
+
       if (response.code === 200) {
         // OTP successfully resent
         setTimer(60); // Reset timer
@@ -101,7 +129,7 @@ const OTPInput = ({ userID }: { userID: string }) => {
       setErrorMessage("An error occurred while resending the OTP.");
     }
   };
-  
+
 
   return (
     <div className="otp-container flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -133,9 +161,8 @@ const OTPInput = ({ userID }: { userID: string }) => {
         Resend OTP in: {timer} seconds
       </div>
       <button
-        className={`resend-button px-4 py-2 bg-blue-500 text-white rounded-md ${
-          isResendActive ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed"
-        }`}
+        className={`resend-button px-4 py-2 bg-blue-500 text-white rounded-md ${isResendActive ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed"
+          }`}
         onClick={handleResend}
         disabled={!isResendActive}
       >

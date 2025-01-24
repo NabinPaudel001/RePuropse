@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import Layout from '@/components/ui/Layout';
+import Layout from '@/components/ui/layout';
 import ProfilePage from '@/components/ui/profile';
 
 

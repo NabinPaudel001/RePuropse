@@ -11,6 +11,7 @@ interface ItemProps {
   materialName: string;
   ecoFriendly: string;
   onDelete?: () => void;
+  onClick?: () => void; // Add onClick prop to handle item click
 }
 
 const Items: React.FC<ItemProps> = ({
@@ -22,7 +23,8 @@ const Items: React.FC<ItemProps> = ({
   partName,
   materialName,
   ecoFriendly,
-  onDelete
+  onDelete,
+  onClick // Destructure onClick
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -45,16 +47,16 @@ const Items: React.FC<ItemProps> = ({
 
   return (
     <div className="w-[285px] h-auto border border-gray-300 rounded-lg overflow-hidden relative shadow-lg m-4">
-      <div className="w-[285px] h-[301px] relative cursor-pointer" onClick={handleNextImage}>
+      <div className="w-[285px] h-[301px] relative cursor-pointer" onClick={onClick}>
         <Image 
           src={imageUrl[currentImageIndex]} 
           alt={name} 
           layout="fill" 
           objectFit="cover" 
         />
-        <div className={`absolute top-2 right-2 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center ${discount ? 'bg-red-500' : 'bg-green-500'}`}>
+        {/* <div className={`absolute top-2 right-2 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center ${discount ? 'bg-red-500' : 'bg-green-500'}`}>
           {discount ? `-${discount}%` : 'NEW'}
-        </div>
+        </div> */}
       </div>
       <div className="p-4">
         <h2 className="text-xl font-bold my-2">{name}</h2>

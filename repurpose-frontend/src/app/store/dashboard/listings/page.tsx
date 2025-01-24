@@ -8,7 +8,7 @@ import Layout_store from "@/components/ui/layout_store";
    return (
      <div>
        <Layout_store>
-        <MyListings name="Available Items"/>
+        <MyListings />
        </Layout_store>
      </div>
    )

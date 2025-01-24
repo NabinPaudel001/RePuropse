@@ -12,7 +12,7 @@ import Layout_store from '@/components/ui/layout_store';
  */
 const Page = () => {
   return (
-    <Layout_store children={null}>
+    <Layout_store>
       <SettingsPage/>
     </Layout_store>
   );

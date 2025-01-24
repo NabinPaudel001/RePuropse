@@ -1,4 +1,4 @@
-import Layout from '@/components/ui/Layout'
+import Layout from '@/components/ui/layout'
 import ModifyItems from '@/components/ui/Modifyitem'
 import React from 'react'
 
