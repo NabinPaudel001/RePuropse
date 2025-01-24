@@ -4,11 +4,9 @@ import Layout from '@/components/ui/layout';
 import ProfilePage from '@/components/ui/profile';
 
 
-/**
- * A React functional component representing a page in the dashboard.
- * 
- * @returns {JSX.Element} A JSX element containing the page content.
- */
+
+// @returns {JSX.Element} A JSX element containing the page content.
+
 const Page = () => {
   return (
     <Layout>

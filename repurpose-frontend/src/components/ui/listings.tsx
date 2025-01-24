@@ -110,7 +110,6 @@ const MyListings: React.FC = () => {
 
   console.log("products", products)
 
-
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Items</h1>
@@ -132,17 +131,22 @@ const MyListings: React.FC = () => {
         ))}
       </div>
 
-
-      {/* {isModalOpen && selectedProduct && ( */}
-      {/* <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"> */}
-      {/* <div className="bg-white p-4 rounded-lg shadow-lg max-w-lg w-full overflow-y-auto max-h-[80vh]"> */}
-      {/* <button onClick={closeModal} className="text-red-500 float-right">Close</button> */}
-      {/* Assuming ProductPage is a component that takes productId as a prop */}
-      {/* <ProductPage productId={selectedProduct._id} /> */}
-      {/* <Link href=""></Link> */}
-      {/* </div> */}
-      {/* </div> */}
-      {/* // )} */}
+      {isModalOpen && selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded-lg shadow-lg max-w-lg w-full">
+            <button onClick={closeModal} className="text-red-500 float-right">Close</button>
+            <div className="flex justify-center items-center">
+              <button onClick={prevImage} className="text-gray-500 hover:text-gray-700">Prev</button>
+              <img
+                src={selectedProduct.images[currentImageIndex]}
+                alt={`Product Image ${currentImageIndex + 1}`}
+                className="h-64 w-64 object-cover mx-4"
+              />
+              <button onClick={nextImage} className="text-gray-500 hover:text-gray-700">Next</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
