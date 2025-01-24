@@ -113,7 +113,7 @@ const DashboardHome = () => {
             <FaLeaf className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
               <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Earnings Contributed to Environment</h2>
-              <p className="text-2xl text-[hsl(var(--foreground))]">${environmentEarnings}</p>
+              <p className="text-2xl text-[hsl(var(--foreground))]">NRP {environmentEarnings}</p>
             </div>
           </div>
         </div>

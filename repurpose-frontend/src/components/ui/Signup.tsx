@@ -127,7 +127,7 @@ export default function SignupPage() {
         <>
           {formData.role === "" ? (
             <div className="text-center bg-white p-12 rounded-3xl shadow-2xl max-w-3xl border border-gray-300">
-              <h1 className="text-4xl font-extrabold text-gray-800 mb-10">Select Your Role</h1>
+                <h1 className="text-4xl font-extrabold text-gray-800 mb-10">Select Your Role</h1>
               <div className="flex space-x-16">
                 <div className="flex flex-col items-center">
                   <div className="relative">
@@ -157,7 +157,7 @@ export default function SignupPage() {
             </div>
           ) : (
             <div className="w-full max-w-lg bg-white p-8 rounded-3xl shadow-2xl border border-gray-300">
-              <h1 className="text-3xl font-bold text-gray-800 mb-8">Sign Up as {role.charAt(0).toUpperCase() + role.slice(1)}</h1>
+              <h1 className="text-3xl font-bold text-gray-800 mb-8">Sign Up as {formData.role.charAt(0).toUpperCase() + formData.role.slice(1)}</h1>
               <form onSubmit={handleSignup}>
                 {formData.role === "seller" ? (
                   <>

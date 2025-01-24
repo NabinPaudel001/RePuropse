@@ -1,15 +1,14 @@
 "use client";
 import NotificationPage from "@/components/ui/notification";
-import Layout from "@/components/ui/layout";
+import Layout_store from "@/components/ui/layout_store";
 import React, { useEffect, useState } from "react";
 
- export default function Listing() {
-   return (
-     <div>
-       <Layout>
-       <NotificationPage />
-       </Layout>
-     </div>
-   )
- }
- 
+export default function Listing() {
+  return (
+    <div>
+      <Layout_store>
+        <NotificationPage />
+      </Layout_store>
+    </div>
+  )
+}
