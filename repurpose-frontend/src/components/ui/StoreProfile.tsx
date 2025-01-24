@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-brands-svg-icons';
@@ -13,17 +13,17 @@ const StoreProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
-  const [storeName, setStoreName] = useState("My Store");
-  const [status, setStatus] = useState("unverified"); // Status can be 'verified', 'unverified', or 'pending'
+  const [storeName, setStoreName] = useState(user?.storeName || "");
+  const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
   const [phoneNumber, setPhoneNumber] = useState("");
   const [ownerName, setOwnerName] = useState("");
+  const [storeId, setStoreId] = useState("");
   const [email, setEmail] = useState("");
   const [storeNumber, setStoreNumber] = useState("");
   const [businessRegNumber, setBusinessRegNumber] = useState("");
   const [storeAddress, setStoreAddress] = useState("");
-  const [ownerID, setOwnerID] = useState<File | null>(null);
-  const [businessRegCert, setBusinessRegCert] = useState<File | null>(null);
-  const [storefrontImage, setStorefrontImage] = useState<File | null>(null);
+  const [businessRegCertificate, setBusinessRegCert] = useState<File | null>(null);
+  const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
 
   const toggleModal = () => {
@@ -66,24 +66,92 @@ const StoreProfilePage = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchKYCData = async () => {
+      try {
+        const response = await apiRequest("/api/store/my-kyc", {
+          method: "GET",
+        });
 
-  const handleKYCSubmit = () => {
-    // Handle KYC submission logic here
-    console.log("KYC Submitted:", {
-      storeName,
-      ownerName,
-      email,
-      storeNumber,
-      phoneNumber,
-      businessRegNumber,
-      storeAddress,
-      ownerID,
-      businessRegCert,
-      storefrontImage,
-      passportPhoto
-    });
-    toggleKYCModal();
+        if (response.success) {
+          const {
+            _id,
+            storeName,
+            ownerName,
+            email,
+            storeNumber,
+            phoneNumber,
+            businessRegNumber,
+            storeAddress,
+            status,
+          } = response.data;
+
+          setStoreName(storeName || "");
+          setOwnerName(ownerName || "");
+          setEmail(email || "");
+          setStoreNumber(storeNumber || "");
+          setUser({ ...user, "storeName": storeName })
+          setPhoneNumber(phoneNumber || "");
+          setBusinessRegNumber(businessRegNumber || "");
+          setStoreAddress(storeAddress || "");
+          setStatus(status || "");
+          setStoreId(_id || "")
+        } else {
+          console.error("Failed to fetch KYC data:", response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching KYC data:", error);
+      }
+    };
+
+    // Fetch KYC data only if user has a storeStatus
+    if (user?.storeStatus && !status) {
+      fetchKYCData();
+    }
+  }, [user?.storeStatus, status]); // Dependency on user?.storeStatus and status
+
+
+  const handleKYCSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("storeName", storeName);
+      formData.append("ownerName", ownerName);
+      formData.append("email", email);
+      formData.append("storeNumber", storeNumber);
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("businessRegNumber", businessRegNumber);
+      formData.append("storeAddress", storeAddress);
+      if (businessRegCertificate) formData.append("businessRegCertificate", businessRegCertificate);
+      if (storeFrontImage) formData.append("storeFrontImage", storeFrontImage);
+      if (passportPhoto) formData.append("passportPhoto", passportPhoto);
+
+      let response;
+      if (status) {
+         response = await apiRequest(`/api/store/${storeId}`, {
+          method: "PATCH",
+          body: formData,
+        });
+      } 
+      else {
+         response = await apiRequest("/api/store/KYC", {
+          method: "POST",
+          body: formData,
+        });
+      }
+
+      if (response.success) {
+        console.log("KYC submission successful:", response.data);
+        setUser({ ...user, "storeName": storeName })
+        setStatus("pending");
+        toggleKYCModal();
+      } else {
+        console.error("KYC submission failed:", response.message);
+      }
+    } catch (error) {
+      console.error("Error submitting KYC data:", error);
+    }
   };
+
 
   const handlePhoneChange = (phone: string) => {
     setPhoneNumber(phone);
@@ -141,9 +209,11 @@ const StoreProfilePage = () => {
 
             {/* Status Section */}
             <div className="mt-4 text-center">
-              <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
-                Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-              </p>
+              {status && (
+                <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "pending" ? "text-yellow-500" : "text-yellow-500"}`}>
+                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+                </p>
+              )}
             </div>
 
             <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{user?.storeName}</h2>
@@ -180,7 +250,7 @@ const StoreProfilePage = () => {
                   className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
                   onClick={toggleKYCModal}
                 >
-                  {status === "unverified" ? "Fill KYC" : "Edit KYC"}
+                  {status === "pending" ? "Edit KYC" : "View KYC"}
                 </button>
               )}
             </div>
@@ -355,7 +425,7 @@ const StoreProfilePage = () => {
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      setStorefrontImage(e.target.files[0]);
+                      setStoreFrontImage(e.target.files[0]);
                     }
                   }}
                   className="w-full p-2 border rounded"

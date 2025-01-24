@@ -11,6 +11,7 @@ type User = {
     phoneNumber?: string;
     storeName?: string;
     email?: string
+    storeStatus?: string
 };
 
 type UserContextType = {
