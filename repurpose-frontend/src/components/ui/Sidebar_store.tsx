@@ -46,8 +46,8 @@ const Sidebar_store = () => {
               </Link>
             </li>
             <li>
-              <Link href="/store/dashboard/messages" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
-                <MdMessage className="mr-3" /> Messages
+              <Link href="/chats" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
+                <MdMessage className="mr-3" /> Chats
               </Link>
             </li>
             <li>
