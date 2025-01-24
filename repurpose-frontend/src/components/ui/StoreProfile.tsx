@@ -192,6 +192,7 @@ const StoreProfilePage = () => {
                   id="profilePictureInput"
                   accept="image/*"
                   className='hidden'
+                  title="Upload Profile Picture"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
