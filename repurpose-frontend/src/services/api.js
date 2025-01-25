@@ -53,7 +53,7 @@ export async function customFetch(url, options = {}) {
     return await response.json();
   } catch (error) {
     // Handle unexpected errors (e.g., network issues)
-    console.error("CustomFetch Error:", error);
+    console.log("CustomFetch Error:", error);
 
     const defaultMessage = "A network or server error occurred. Please try again later.";
     throw {

@@ -21,7 +21,7 @@ export default async function refreshAccessToken() {
       return { accessToken, refreshToken: newRefreshToken };
     }
   } catch (error) {
-    console.error('Failed to refresh access token:', error);
+    console.log('Failed to refresh access token:', error);
   }
 
   return null;

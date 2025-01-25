@@ -97,7 +97,7 @@ export default function AddItems() {
         alert(response.message || "Failed to add product.");
       }
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.log("Error adding product:", error);
       alert("An error occurred while adding the product.");
     }
   };

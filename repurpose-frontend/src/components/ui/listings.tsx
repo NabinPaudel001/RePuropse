@@ -58,7 +58,7 @@ const MyListings: React.FC = () => {
         }
       } catch (err) {
         setError("Failed to fetch products. Please try again.");
-        console.error(err);
+        console.log(err);
       } finally {
         setLoading(false); // Set loading to false once the request is complete
       }
@@ -66,39 +66,6 @@ const MyListings: React.FC = () => {
 
     fetchData();
   }, [sellerId]); // Fetch products whenever the sellerId changes
-
-  // const openModal = (product: Product) => {
-  //   setSelectedProduct(product);
-  //   setCurrentImageIndex((prevIndex) => (prevIndex - 1 + (selectedProduct?.images.length || 1)) % (selectedProduct?.images.length || 1));
-  //   setIsModalOpen(true);
-  // };
-
-  // const closeModal = () => {
-  //   setIsModalOpen(false);
-  //   setSelectedProduct(null);
-  // };
-
-  const openModal = (product: Product) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedProduct(null);
-  };
-
-  const nextImage = () => {
-    if (selectedProduct) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % selectedProduct.images.length);
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedProduct) {
-      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length);
-    }
-  };
 
   if (loading) {
     return <div>Loading products...</div>;
@@ -113,7 +80,7 @@ const MyListings: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Items</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <Link href={`/${user?.role}/dashboard/product/${product._id}`} key={product._id}>
             <Items
@@ -125,28 +92,10 @@ const MyListings: React.FC = () => {
               partName="Example Part" // Update with actual field if needed
               materialName="Example Material" // Update with actual field if needed
               ecoFriendly="Yes" // Update with actual field if needed
-              onClick={() => openModal(product)} // Handle item click to open modal
             />
           </Link>
         ))}
       </div>
-
-      {isModalOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg max-w-lg w-full">
-            <button onClick={closeModal} className="text-red-500 float-right">Close</button>
-            <div className="flex justify-center items-center">
-              <button onClick={prevImage} className="text-gray-500 hover:text-gray-700">Prev</button>
-              <img
-                src={selectedProduct.images[currentImageIndex]}
-                alt={`Product Image ${currentImageIndex + 1}`}
-                className="h-64 w-64 object-cover mx-4"
-              />
-              <button onClick={nextImage} className="text-gray-500 hover:text-gray-700">Next</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

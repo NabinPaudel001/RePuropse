@@ -54,10 +54,10 @@ const ProfilePage = () => {
         console.log("profile picture changed")
         setUser(response.data)
       } else {
-        console.error("Failed to upload profile picture");
+        console.log("Failed to upload profile picture");
       }
     } catch (error) {
-      console.error("Error uploading profile picture:", error);
+      console.log("Error uploading profile picture:", error);
     }
   };
 

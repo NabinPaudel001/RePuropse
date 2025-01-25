@@ -49,7 +49,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         setProduct(response.data); // Assuming API response structure matches Product
         console.log("response: ", response.data)
       } catch (error) {
-        console.error("Failed to fetch product data:", error);
+        console.log("Failed to fetch product data:", error);
       }
     };
 

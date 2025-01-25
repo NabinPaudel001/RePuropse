@@ -1,30 +1,59 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
+import { apiRequest } from "@/middleware/errorInterceptor";
 
 const VerifyKYC = () => {
-  const [kycData] = useState([
+  const [kycData, setKycData] = useState<
     {
-      id: 1,
-      dateCreated: "2025-01-20",
-      storeName: "ABC Store",
-      storeImage: "https://via.placeholder.com/50",
-      ownerName: "John Doe",
-      email: "john.doe@example.com",
-      storeAddress: "123 Main Street, Cityville",
-      phoneNumber: "+9779812345678",
-      storeNumber: "ST12345",
-      businessRegNumber: "BRN987654321",
-      businessRegCert: "https://via.placeholder.com/100",
-      storefrontImage: "https://via.placeholder.com/100",
-      passportPhoto: "https://via.placeholder.com/100",
-    },
-  ]);
+      _id: string;
+      createdAt: string;
+      storeName: string;
+      storeImage: string;
+      ownerName: string;
+      email: string;
+      storeAddress: string;
+      phoneNumber: string;
+      storeNumber: string;
+      businessRegNumber: string;
+      businessRegCertificate: string;
+      storeFrontImage: string;
+      passportPhoto: string;
+    }[]
+  >([]);
 
   const [selectedKYC, setSelectedKYC] = useState<typeof kycData[0] | null>(null);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [modificationReason, setModificationReason] = useState("");
   const [showModificationInput, setShowModificationInput] = useState(false);
+
+  const [currentImages, setCurrentImages] = useState("");
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+
+  const openImageModal = (images: string) => {
+    setCurrentImages(images);
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+  };
+
+  // Fetch KYC data on component mount
+  useEffect(() => {
+    const fetchKYCData = async () => {
+      try {
+        const response = await apiRequest("/api/store/pending", 'GET');
+        console.log("respone her", response)
+        setKycData(response.data); // Assuming the response contains the KYC data
+      } catch (error) {
+        console.error("Error fetching KYC data:", error);
+      }
+    };
+
+    fetchKYCData();
+  }, []);
 
   const handleViewDetails = (data: typeof kycData[0]) => {
     setSelectedKYC(data);
@@ -33,36 +62,73 @@ const VerifyKYC = () => {
     setModificationReason(""); // Clear the input field
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (selectedKYC) {
-      console.log(`KYC Approved for ID: ${selectedKYC.id}`);
+      try {
+        const response = await apiRequest(`/api/store/${selectedKYC._id}/approve`, {
+          method: 'PATCH'
+        });
+        console.log(`KYC Approved for ID: ${selectedKYC._id}`, response);
+        alert("KYC Approved successfully!");
+        setKycData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
+      } catch (error) {
+        console.error("Error approving KYC:", error);
+        alert("Failed to approve KYC. Please try again.");
+      }
     }
     setViewModalOpen(false);
   };
-    const handleReject = () => {
-      if (selectedKYC) {
-        console.log(`KYC Rejected for ID: ${selectedKYC.id}`);
+
+  const handleReject = async () => {
+    if (selectedKYC) {
+      try {
+        const response = await apiRequest(`/api/store/${selectedKYC._id}/reject`, "DELETE");
+        console.log(`KYC Rejected for ID: ${selectedKYC._id}`, response);
+        alert("KYC Rejected and deleted successfully!");
+        setKycData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
+      } catch (error) {
+        console.error("Error rejecting KYC:", error);
+        alert("Failed to reject KYC. Please try again.");
       }
-      setViewModalOpen(false);
-    };
+    }
+    setViewModalOpen(false);
+  };
 
   const handleRequestModificationClick = () => {
     setShowModificationInput(true); // Show the input field
   };
 
-  const handleSubmitModificationRequest = () => {
+  const handleSubmitModificationRequest = async () => {
+
     if (!modificationReason.trim()) {
+      alert("Modification reason is required.");
       return;
     }
+    console.log("modification reason", modificationReason)
+
     if (selectedKYC) {
-      console.log("Modification Requested:", {
-        id: selectedKYC.id,
-        reason: modificationReason,
-      });
+      try {
+        const response = await apiRequest(
+          `/api/store/${selectedKYC._id}/pending`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ modificationReason }), // Send as JSON
+          }
+        );
+        console.log("Modification Requested:", response);
+        alert("Modification request sent successfully!");
+      } catch (error) {
+        console.error("Error requesting modification:", error);
+        alert("Failed to request modification. Please try again.");
+      }
     }
+
     setModificationReason("");
-    setShowModificationInput(false); // Hide the input field
-    setViewModalOpen(false); // Close the modal
+    setShowModificationInput(false);
+    setViewModalOpen(false);
   };
 
   return (
@@ -86,17 +152,24 @@ const VerifyKYC = () => {
           <tbody>
             {kycData.map((data, index) => (
               <tr
-                key={data.id}
+                key={data._id}
                 className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
               >
                 <td className="px-4 py-2 text-center">{index + 1}</td>
-                <td className="px-4 py-2 text-center">{data.dateCreated}</td>
+                <td className="px-4 py-2 text-center">{new Date(data.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</td>
+
                 <td className="px-4 py-2 flex items-center space-x-3">
-                  <img
-                    src={data.storeImage}
-                    alt={`${data.storeName} logo`}
-                    className="w-8 h-8 rounded-full"
-                  />
+                  {data.storeFrontImage ? (
+                    <img
+                      src={data.storeFrontImage}
+                      alt={`${data.storeName} logo`}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-white">
+                      {data.storeName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <span>{data.storeName}</span>
                 </td>
                 <td className="px-4 py-2">{data.ownerName}</td>
@@ -123,7 +196,7 @@ const VerifyKYC = () => {
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <p>
-                <strong>Date Created:</strong> {selectedKYC.dateCreated}
+                <strong>Date Created:</strong> {new Date(selectedKYC.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}
               </p>
               <p>
                 <strong>Store Name:</strong> {selectedKYC.storeName}
@@ -149,17 +222,20 @@ const VerifyKYC = () => {
               <div>
                 <strong>Business Registration Certificate:</strong>
                 <img
-                  src={selectedKYC.businessRegCert}
+                  src={selectedKYC.businessRegCertificate}
                   alt="Business Registration Certificate"
-                  className="w-32 h-32 mt-2 rounded shadow"
+                  className="w-48 h-48 mt-2 rounded shadow"
+                  onClick={() => openImageModal(selectedKYC.businessRegCertificate)}
                 />
               </div>
               <div>
                 <strong>Storefront Image:</strong>
                 <img
-                  src={selectedKYC.storefrontImage}
+                  src={selectedKYC.storeFrontImage}
                   alt="Storefront"
-                  className="w-32 h-32 mt-2 rounded shadow"
+                  className="w-48 h-48 mt-2 rounded shadow"
+                  onClick={() => openImageModal(selectedKYC.storeFrontImage)}
+
                 />
               </div>
               <div>
@@ -167,7 +243,8 @@ const VerifyKYC = () => {
                 <img
                   src={selectedKYC.passportPhoto}
                   alt="Passport"
-                  className="w-32 h-32 mt-2 rounded shadow"
+                  className="w-48 h-48 mt-2 rounded shadow"
+                  onClick={() => openImageModal(selectedKYC.passportPhoto)}
                 />
               </div>
             </div>
@@ -220,6 +297,24 @@ const VerifyKYC = () => {
                 Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isImageModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="relative rounded shadow-lg p-4 w-3/4 lg:w-2/5">
+            <img
+              src={currentImages}
+              alt="Modal Image"
+              className="w-full rounded"
+            />
+            <button
+              onClick={closeImageModal}
+              className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full hover:bg-red-600"
+            >
+              ✕
+            </button>
           </div>
         </div>
       )}

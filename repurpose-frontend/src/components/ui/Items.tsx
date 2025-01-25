@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useUser } from '@/contexts/UserContext';
+
 
 interface ItemProps {
   imageUrl: string[];
@@ -26,6 +28,9 @@ const Items: React.FC<ItemProps> = ({
   onDelete,
   onClick // Destructure onClick
 }) => {
+
+    const { user, setUser } = useUser();
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const discountedPrice = discount ? originalPrice * (1 - discount / 100) : originalPrice;
@@ -68,17 +73,19 @@ const Items: React.FC<ItemProps> = ({
               <p className="text-base font-bold text-red-500">${discountedPrice.toFixed(2)}</p>
             </div>
           ) : (
-            <p className="text-base font-bold">${originalPrice.toFixed(2)}</p>
+            <p className="text-base font-bold">NRP {originalPrice.toFixed(2)}</p>
           )}
         </div>
         <p className="text-base font-bold my-2">RP: {rewardPoints}</p>
         <p className="text-sm text-gray-600">{`Part: ${partName}`}</p>
         <p className="text-sm text-gray-600">{`Material: ${materialName}`}</p>
         <p className="text-sm text-gray-600">{`Eco-Friendly: ${ecoFriendly}`}</p>
-        <div className="flex justify-between mt-4">
+        {user?.role === "seller" && (
+          <div className="flex justify-between mt-4">
           <button onClick={handleEdit} className="text-blue-500 hover:underline">Edit</button>
           <button onClick={handleDelete} className="text-red-500 hover:underline">Delete</button>
         </div>
+        )}
       </div>
     </div>
   );

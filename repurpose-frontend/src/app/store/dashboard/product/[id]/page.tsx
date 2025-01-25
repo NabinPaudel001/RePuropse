@@ -1,4 +1,4 @@
-import Layout from '@/components/ui/layout';
+import Layout_store from '@/components/ui/layout_store';
 import ProductPage from '@/components/ui/singleProduct';
 import React from 'react';
 
@@ -6,13 +6,12 @@ interface ModifyProps {
   params: { id: string }; // Expecting params with an `id` field
 }
 
-export default function Modify({ params }: ModifyProps) {
-  const { id } = params; // Destructure the `id` from params
-  console.log("ID in Modify component:", id);
+export default async function Modify({ params }: ModifyProps) {
+  const { id } = await params; 
 
   return (
-    <Layout>
+    <Layout_store>
       <ProductPage params={{ id }} />
-    </Layout>
+    </Layout_store>
   );
 }

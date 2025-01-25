@@ -21,9 +21,9 @@ export const logoutUser = async () => {
       // Redirect to login page
       window.location.href = "/";
     } else {
-      console.error("Failed to log out");
+      console.log("Failed to log out");
     }
   } catch (error) {
-    console.error("Error during logout:", error);
+    console.log("Error during logout:", error);
   }
 };

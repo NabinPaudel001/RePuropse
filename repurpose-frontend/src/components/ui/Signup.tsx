@@ -91,7 +91,7 @@ export default function SignupPage() {
       }
 
     } catch (error) {
-      console.error("Error during signup:", error);
+      console.log("Error during signup:", error);
     }
   };
 

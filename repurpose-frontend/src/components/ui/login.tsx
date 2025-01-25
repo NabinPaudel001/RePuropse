@@ -63,12 +63,12 @@ export default function LoginPage() {
 
         // Set login status to true, which triggers socket connection
         setIsLoggedIn(true);
-
+        
         router.push(`/${response.data.role}/dashboard/home`);
       }
 
     } catch (error) {
-      console.error("Error during login:", error);
+      console.log("Error during login:", error);
     }
   };
 

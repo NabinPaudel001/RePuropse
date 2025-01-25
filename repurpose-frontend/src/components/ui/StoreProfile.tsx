@@ -7,18 +7,20 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import PhoneInput from 'react-phone-input-2';
 import { useUser } from "@/contexts/UserContext";
 import { apiRequest } from '@/middleware/errorInterceptor';
+import Icons from '../shared/icons';
 
 const StoreProfilePage = () => {
   const { user, setUser } = useUser();
+  const [serverError, setServerError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
   const [storeName, setStoreName] = useState(user?.storeName || "");
   const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [ownerName, setOwnerName] = useState("");
+  const [ownerName, setOwnerName] = useState(user?.firstName || "");
   const [storeId, setStoreId] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(user?.email || "");
   const [storeNumber, setStoreNumber] = useState("");
   const [businessRegNumber, setBusinessRegNumber] = useState("");
   const [storeAddress, setStoreAddress] = useState("");
@@ -59,10 +61,14 @@ const StoreProfilePage = () => {
         console.log("profile picture changed")
         setUser(response.data)
       } else {
-        console.error("Failed to upload profile picture");
+        console.log("Failed to upload profile picture");
+        setServerError("An unexpected error occurred.");
+
       }
     } catch (error) {
-      console.error("Error uploading profile picture:", error);
+      console.log("Error uploading profile picture:", error);
+      // setServerError(error?.message || "An unexpected error occurred.");
+
     }
   };
 
@@ -95,12 +101,14 @@ const StoreProfilePage = () => {
           setBusinessRegNumber(businessRegNumber || "");
           setStoreAddress(storeAddress || "");
           setStatus(status || "");
-          setStoreId(_id || "")
+          setStoreId(response.data._id || "")
+
+          console.log("REsp", response)
         } else {
-          console.error("Failed to fetch KYC data:", response.message);
+          console.log("Failed to fetch KYC data:", response.message);
         }
       } catch (error) {
-        console.error("Error fetching KYC data:", error);
+        console.log("Error fetching KYC data:", error);
       }
     };
 
@@ -110,6 +118,7 @@ const StoreProfilePage = () => {
     }
   }, [user?.storeStatus, status]); // Dependency on user?.storeStatus and status
 
+  console.log("storeid", storeId)
 
   const handleKYCSubmit = async () => {
     try {
@@ -127,13 +136,13 @@ const StoreProfilePage = () => {
 
       let response;
       if (status) {
-         response = await apiRequest(`/api/store/${storeId}`, {
+        response = await apiRequest(`/api/store/${storeId}`, {
           method: "PATCH",
           body: formData,
         });
-      } 
+      }
       else {
-         response = await apiRequest("/api/store/KYC", {
+        response = await apiRequest("/api/store/KYC", {
           method: "POST",
           body: formData,
         });
@@ -145,10 +154,10 @@ const StoreProfilePage = () => {
         setStatus("pending");
         toggleKYCModal();
       } else {
-        console.error("KYC submission failed:", response.message);
+        console.log("KYC submission failed:", response.message);
       }
     } catch (error) {
-      console.error("Error submitting KYC data:", error);
+      console.log("Error submitting KYC data:", error);
     }
   };
 
@@ -184,7 +193,7 @@ const StoreProfilePage = () => {
                 )}
               </div>
               <div
-                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center  cursor-pointer"
+                className="absolute bottom-1 z-10 right-2 p-2 bg-gray-500 rounded-md w-8 h-8 flex items-center  cursor-pointer"
                 onClick={() => document.getElementById("profilePictureInput")?.click()}>
                 <FontAwesomeIcon icon={faCamera} className="text-white text-sm" />
                 <input
@@ -211,13 +220,21 @@ const StoreProfilePage = () => {
             {/* Status Section */}
             <div className="mt-4 text-center">
               {status && (
-                <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "pending" ? "text-yellow-500" : "text-yellow-500"}`}>
+                <p className={`text-sm font-bold ${status === "approved" ? "text-green-500" : status === "pending" ? "text-yellow-500" : "text-yellow-500"}`}>
                   Status: {status.charAt(0).toUpperCase() + status.slice(1)}
                 </p>
               )}
             </div>
+            <div className="flex gap-2 items-center justify-center w-full">
+              <p className="text-2xl text-center font-bold text-[hsl(var(--foreground))]">{user?.storeName}</p>
 
-            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{user?.storeName}</h2>
+              {status === 'approved' ? (
+                <Icons type="verified"></Icons>
+              ) : (
+                <span> </span>
+              )
+              }
+            </div>
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
             <div className="flex justify-center space-x-8 ">
@@ -246,12 +263,12 @@ const StoreProfilePage = () => {
               >
                 Edit Store
               </button>
-              {status !== "verified" && (
+              {status !== "approved" && (
                 <button
                   className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
                   onClick={toggleKYCModal}
                 >
-                  {status === "pending" ? "Edit KYC" : "View KYC"}
+                  {status === "pending" ? "Edit KYC" : "Fill KYC"}
                 </button>
               )}
             </div>
