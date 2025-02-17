@@ -12,12 +12,14 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import Image from "next/image";
 
 export default function ManageListed() {
   const [listedItems, setListedItems] = useState([
-    { id: 1, title: "Item A", category: "Electronics", price: "$100", status: "Active", listedBy: "User1" },
-    { id: 2, title: "Item B", category: "Clothing", price: "$50", status: "Pending", listedBy: "User2" },
-    { id: 3, title: "Item C", category: "Furniture", price: "$200", status: "Sold", listedBy: "User3" },
+    { id: 1, title: "Item A", category: "Electronics", price: "$100", status: "Active", listedBy: "User1", image: "/images/R.jpeg" },
+    { id: 2, title: "Item B", category: "Clothing", price: "$50", status: "Pending", listedBy: "User2", image: "/images/R.jpeg" },
+    { id: 3, title: "Item C", category: "Furniture", price: "$200", status: "Sold", listedBy: "User3", image: "/images/OIP.jpeg" },
   ]);
 
   return (
@@ -40,6 +42,7 @@ function ListedTable({ listedItems }) {
     <Table className="w-full border rounded-lg overflow-hidden">
       <TableHeader>
         <TableRow>
+          <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Price</TableHead>
@@ -52,6 +55,17 @@ function ListedTable({ listedItems }) {
         {listedItems.length > 0 ? (
           listedItems.map((item) => (
             <TableRow key={item.id}>
+              <TableCell>
+                <Dialog>
+                  <DialogTrigger>
+                    <Image src={item.image} alt={item.title} width={50} height={50} className="cursor-pointer rounded" />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>{item.title}</DialogTitle>
+                    <Image src={item.image} alt={item.title} width={500} height={400} className="rounded-lg" />
+                  </DialogContent>
+                </Dialog>
+              </TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.price}</TableCell>
@@ -64,7 +78,7 @@ function ListedTable({ listedItems }) {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan="6" className="text-center text-gray-500">
+            <TableCell colSpan="7" className="text-center text-gray-500">
               No listed items found
             </TableCell>
           </TableRow>

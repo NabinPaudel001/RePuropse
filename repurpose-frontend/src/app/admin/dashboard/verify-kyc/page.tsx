@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 export default function VerifyKYC() {
-  const [pendingKYC] = useState([
+  const [pendingKYC, setPendingKYC] = useState([
     {
       id: 1,
       dateCreated: "2025-02-15",
@@ -26,9 +26,9 @@ export default function VerifyKYC() {
     },
   ]);
 
-  const [verifiedKYC] = useState([
+  const [verifiedKYC, setVerifiedKYC] = useState([
     {
-      id: 1,
+      id: 2,
       dateCreated: "2025-02-10",
       storeName: "Gadget World",
       ownerName: "Jane Smith",
@@ -36,6 +36,11 @@ export default function VerifyKYC() {
       documents: ["/doc3.jpg", "/doc4.jpg"],
     },
   ]);
+
+  const handleVerify = (kyc) => {
+    setPendingKYC(pendingKYC.filter((item) => item.id !== kyc.id));
+    setVerifiedKYC([...verifiedKYC, { ...kyc, id: Date.now() }]);
+  };
 
   return (
     <Card className="p-5 shadow-lg">
@@ -46,7 +51,7 @@ export default function VerifyKYC() {
         </TabsList>
 
         <TabsContent value="pending">
-          <KYCList data={pendingKYC} showActions={true} />
+          <KYCList data={pendingKYC} showActions={true} onVerify={handleVerify} />
         </TabsContent>
         <TabsContent value="verified">
           <KYCList data={verifiedKYC} showActions={false} />
@@ -56,7 +61,7 @@ export default function VerifyKYC() {
   );
 }
 
-function KYCList({ data, showActions }) {
+function KYCList({ data, showActions, onVerify }) {
   return (
     <Table className="w-full border rounded-lg overflow-hidden">
       <TableHeader>
@@ -95,7 +100,12 @@ function KYCList({ data, showActions }) {
               </TableCell>
               {showActions && (
                 <TableCell>
-                  <Button className="bg-green-500 hover:bg-green-700 mr-2">Verify</Button>
+                  <Button
+                    className="bg-green-500 hover:bg-green-700 mr-2"
+                    onClick={() => onVerify(kyc)}
+                  >
+                    Verify
+                  </Button>
                   <Button className="bg-red-500 hover:bg-red-700">Reject</Button>
                 </TableCell>
               )}
