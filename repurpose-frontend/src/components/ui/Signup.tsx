@@ -5,25 +5,71 @@ import { FaStore, FaUserTie, FaEye, FaEyeSlash } from "react-icons/fa"; // Impor
 import PhoneInput from 'react-phone-input-2'; // Import the phone input library
 import 'react-phone-input-2/lib/style.css'; // Import the styles for the phone input
 import { Button } from "@/components/ui/button";
-import OTPInput from '@/components/ui/otp' // Import your OTPInput component
+import OTPInput from '@/components/ui/otp'; // Import your OTPInput component
 import { apiRequest } from '../../middleware/errorInterceptor';
 
+function validateSignupForm(values) {
+  let errors = {};
+
+  // Validate role
+  if (!values.role) {
+    errors.role = "(Role is required)";
+  }
+
+  // Validate first name
+  if (!values.firstName || values.firstName.trim().length < 3) {
+    errors.firstName = "(Invalid First Name)";
+  }
+
+  // Validate last name
+  if (!values.lastName || values.lastName.trim().length < 3) {
+    errors.lastName = "(Invalid Last Name)";
+  }
+
+  // Validate email
+  const emailPattern = /^([A-Za-z0-9_\-\.])+@([A-Za-z0-9_\-\.])+\.[A-Za-z]{2,4}$/;
+  if (!values.email || values.email.trim() === "") {
+    errors.email = "(Email is required)";
+  } else if (!emailPattern.test(values.email)) {
+    errors.email = "(Invalid Email)";
+  }
+
+  // Validate phone number (excluding country code)
+  const phoneNumberWithoutCountryCode = values.phoneNumber.replace(/^\+977/, '');
+  if (!phoneNumberWithoutCountryCode || phoneNumberWithoutCountryCode.length < 7 || phoneNumberWithoutCountryCode.length > 10) {
+    errors.phoneNumber = "(Invalid Phone Number)";
+  }
+
+  // Validate address
+  if (!values.address || values.address.trim().length < 5) {
+    errors.address = "(Invalid Address)";
+  }
+
+  // Validate store name (for store role)
+  const storeNamePattern = /^[A-Za-z0-9 ]{2,}$/;
+  if (values.role === "store" && (!values.storeName || !storeNamePattern.test(values.storeName))) {
+    errors.storeName = "(Invalid Store Name)";
+  }
+
+  // Validate password
+  const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!values.password || values.password.trim() === "") {
+    errors.password = "(Password is required)";
+  } else if (!passwordPattern.test(values.password)) {
+    errors.password = "(Invalid Password)";
+  }
+
+  return errors;
+}
 
 export default function SignupPage() {
-  const [role, setRole] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [contact, setContact] = useState(""); 
   const [showOTPInput, setShowOTPInput] = useState(false);
-  // const [firstName, setFirstName] = useState<String[]>([]);
-  // const [lastName, setLastName] = useState("");
-  const [storeName, setStoreName] = useState("");
-  // const [address, setAddress] = useState("");
-  const [userID, setUserID] = useState("")
+  const [userID, setUserID] = useState("");
 
   const [formData, setFormData] = useState({
     role: "",
@@ -36,12 +82,7 @@ export default function SignupPage() {
     storeName: "",
   });
 
-
   const router = useRouter();
-
-  // const handleRoleSelection = (selectedRole: string) => {
-  //   setRole(selectedRole);
-  // };
 
   const handleRoleSelection = (selectedRole: string) => {
     setFormData(prevFormData => ({
@@ -50,7 +91,6 @@ export default function SignupPage() {
     }));
   };
 
-
   const handleInput = (event: any) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
@@ -58,10 +98,18 @@ export default function SignupPage() {
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Validate form data
+    const errors = validateSignupForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+
     // Validate passwords
-    const errors = validatePassword(formData.password);
-    if (errors.length > 0) {
-      setPasswordErrors(errors);
+    const passwordValidationErrors = validatePassword(formData.password);
+    if (passwordValidationErrors.length > 0) {
+      setPasswordErrors(passwordValidationErrors);
       return;
     }
     if (formData.password !== confirmPassword) {
@@ -71,7 +119,7 @@ export default function SignupPage() {
 
     try {
       console.log(`Signing up as ${formData.role}`);
-      console.log("formData", formData)
+      console.log("formData", formData);
       // Call the backend API to register the user
       const response = await apiRequest("/api/auth/register", {
         method: "POST",
@@ -81,10 +129,9 @@ export default function SignupPage() {
         body: JSON.stringify(formData),
       });
 
-
       console.log("Registration successful:", response);
       if (response.code === 201) {
-        setUserID(response.data.id)
+        setUserID(response.data.id);
         console.log("I am here");
         setShowOTPInput(true); // Show OTP input after successful registration
         await sendOTPToEmail();
@@ -99,8 +146,6 @@ export default function SignupPage() {
     // Simulate an API call to send OTP to the user's email
     return new Promise((resolve) => setTimeout(resolve, 1000));
   };
-
-  console.log("formdata herr", formData);
 
   const validatePassword = (password: string) => {
     const errors = [];
@@ -122,33 +167,33 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       {showOTPInput ? (
-        <OTPInput userID={userID}/>
+        <OTPInput userID={userID} />
       ) : (
         <>
           {formData.role === "" ? (
             <div className="text-center bg-white p-12 rounded-3xl shadow-2xl max-w-3xl border border-gray-300">
-                <h1 className="text-4xl font-extrabold text-gray-800 mb-10">Select Your Role</h1>
+              <h1 className="text-4xl font-extrabold text-gray-800 mb-10">Select Your Role</h1>
               <div className="flex space-x-16">
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <FaUserTie className="text-9xl text-[hsl(var(--destructive))] mb-8 transition-transform transform hover:scale-110" />
+                    <FaUserTie className="text-9xl text-blue-500 mb-8 transition-transform transform hover:scale-110 hover:text-blue-600" />
                     <div className="absolute top-0 left-0 bg-[hsl(var(--destructive-foreground))] rounded-full w-28 h-28 blur-lg opacity-40"></div>
                   </div>
                   <button type="button"
                     onClick={() => handleRoleSelection("seller")}
-                    className="px-10 py-5 bg-[hsl(var(--destructive))] text-white rounded-full hover:bg-red-400 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="px-10 py-5 bg-blue-500 text-white rounded-full hover:bg-blue-800 hover:text-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     Seller
                   </button>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <FaStore className="text-9xl text-[hsl(var(--primary))] mb-8 transition-transform transform hover:scale-110" />
+                    <FaStore className="text-9xl text-[hsl(var(--primary))] mb-8 transition-transform transform hover:scale-110 hover:text-green-700" />
                     <div className="absolute top-0 left-0 bg-[hsl(var(--primary-foreground))] rounded-full w-28 h-28 blur-lg opacity-40"></div>
                   </div>
                   <button
                     onClick={() => handleRoleSelection("store")}
-                    className="px-10 py-5 bg-[hsl(var(--primary))] text-white rounded-full hover:bg-green-500 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="px-10 py-5 bg-[hsl(var(--primary))] text-white rounded-full hover:bg-green-800 text-xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     Store
                   </button>
@@ -164,14 +209,13 @@ export default function SignupPage() {
                     <div className="flex space-x-4 mb-4">
                       <div className="w-1/2">
                         <label htmlFor="firstName" className="block text-gray-700 font-medium mb-2">
-                          First Name
+                          First Name {formErrors.firstName && <span className="text-red-500">{formErrors.firstName}</span>}
                         </label>
                         <input
                           type="text"
                           id="firstName"
                           placeholder="First Name"
                           name="firstName"
-                          // value={firstName}
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
@@ -179,15 +223,13 @@ export default function SignupPage() {
                       </div>
                       <div className="w-1/2">
                         <label htmlFor="lastName" className="block text-gray-700 font-medium mb-2">
-                          Last Name
+                          Last Name {formErrors.lastName && <span className="text-red-500">{formErrors.lastName}</span>}
                         </label>
                         <input
                           type="text"
                           id="lastName"
                           placeholder="Last Name"
                           name="lastName"
-
-                          // value={lastName}
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                           required
@@ -196,15 +238,13 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4">
                       <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                        Email
+                        Email {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
                       </label>
                       <input
                         type="email"
                         id="email"
                         placeholder="Email"
                         name="email"
-
-                        // value={email}
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
                         required
@@ -212,7 +252,7 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4">
                       <label htmlFor="contact" className="block text-gray-700 font-medium mb-2">
-                        Contact
+                        Contact {formErrors.phoneNumber && <span className="text-red-500">{formErrors.phoneNumber}</span>}
                       </label>
                       <PhoneInput
                         country={'np'} // Default to Nepal
@@ -221,20 +261,32 @@ export default function SignupPage() {
                           ...prevFormData,
                           phoneNumber: value.startsWith('+') ? value : `+${value}`, // Ensure the '+' sign is included
                         }))}
-
                         inputClass="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="address" className="block text-gray-700 font-medium mb-2">
+                        Address {formErrors.address && <span className="text-red-500">{formErrors.address}</span>}
+                      </label>
+                      <input
+                        type="text"
+                        id="address"
+                        placeholder="Address"
+                        name="address"
+                        onChange={handleInput}
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
+                        required
                       />
                     </div>
                     <div className="mb-4 relative">
                       <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                        Password
+                        Password {formErrors.password && <span className="text-red-500">{formErrors.password}</span>}
                       </label>
                       <input
                         type={showPassword ? "text" : "password"}
                         id="password"
                         name="password"
                         placeholder="Password"
-                        // value={password}
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
                         required
@@ -268,6 +320,7 @@ export default function SignupPage() {
                       >
                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
+                      <small className="text-gray-500">Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.</small>
                     </div>
                     {passwordErrors.length > 0 && (
                       <ul className="text-red-500 mb-4 list-disc list-inside">
@@ -276,18 +329,18 @@ export default function SignupPage() {
                         ))}
                       </ul>
                     )}
+                    
                   </>
                 ) : (
                   <>
                     <div className="mb-4">
                       <label htmlFor="storeName" className="block text-gray-700 font-medium mb-2">
-                        Store Name
+                        Store Name {formErrors.storeName && <span className="text-red-500">{formErrors.storeName}</span>}
                       </label>
                       <input
                         type="text"
                         id="storeName"
                         placeholder="Store Name"
-                        // value={storeName}
                         name="storeName"
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
@@ -304,7 +357,6 @@ export default function SignupPage() {
                           id="ownerFirstName"
                           placeholder="First Name"
                           name="firstName"
-                          // value={ownerFirstName}
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
@@ -319,7 +371,6 @@ export default function SignupPage() {
                           id="ownerLastName"
                           placeholder="Last Name"
                           name="lastName"
-                          // value={ownerLastName}
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                           required
@@ -328,14 +379,13 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4">
                       <label htmlFor="address" className="block text-gray-700 font-medium mb-2">
-                        Address
+                        Address {formErrors.address && <span className="text-red-500">{formErrors.address}</span>}
                       </label>
                       <input
                         type="text"
                         id="address"
                         placeholder="Address"
                         name="address"
-                        // value={address}
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
@@ -343,7 +393,7 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4">
                       <label htmlFor="contact" className="block text-gray-700 font-medium mb-2">
-                        Contact
+                        Contact {formErrors.phoneNumber && <span className="text-red-500">{formErrors.phoneNumber}</span>}
                       </label>
                       <PhoneInput
                         country={'np'} // Default to Nepal
@@ -357,14 +407,13 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4">
                       <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                        Email
+                        Email {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
                       </label>
                       <input
                         type="email"
                         id="email"
                         placeholder="Email"
                         name="email"
-                        // value={email}
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
                         required
@@ -372,13 +421,12 @@ export default function SignupPage() {
                     </div>
                     <div className="mb-4 relative">
                       <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                        Password
+                        Password {formErrors.password && <span className="text-red-500">{formErrors.password}</span>}
                       </label>
                       <input
                         type={showPassword ? "text" : "password"}
                         id="password"
                         placeholder="Password"
-                        // value={password}
                         name="password"
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] shadow-sm"
@@ -412,6 +460,7 @@ export default function SignupPage() {
                       >
                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
+                      <small className="text-gray-500">Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.</small>
                     </div>
                     {passwordErrors.length > 0 && (
                       <ul className="text-red-500 mb-4 list-disc list-inside">
@@ -420,6 +469,7 @@ export default function SignupPage() {
                         ))}
                       </ul>
                     )}
+                    
                   </>
                 )}
                 <Button
@@ -429,9 +479,19 @@ export default function SignupPage() {
                   Sign Up
                 </Button>
               </form>
+              <div className="text-center mt-4">
+                      <span>Already have an account? </span>
+                      <button
+                        type="button"
+                        onClick={() => router.push('/login')}
+                        className="text-green-500 hover:underline"
+                      >
+                        Login
+                      </button>
+                    </div>
               <button
-                onClick={() => setRole("")}
-                className="mt-6 w-full py-2 text-primary hover:text-gray-700 underline transition-colors"
+                onClick={() => setFormData({ ...formData, role: "" })}
+                className=" w-full py-2 text-primary hover:text-gray-700 underline transition-colors"
               >
                 Back to Role Selection
               </button>
