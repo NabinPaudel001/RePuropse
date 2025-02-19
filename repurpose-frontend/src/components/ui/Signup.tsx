@@ -8,8 +8,30 @@ import { Button } from "@/components/ui/button";
 import OTPInput from '@/components/ui/otp'; // Import your OTPInput component
 import { apiRequest } from '../../middleware/errorInterceptor';
 
-function validateSignupForm(values) {
-  let errors = {};
+interface SignupFormValues {
+  role: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  address: string;
+  storeName?: string;
+}
+
+interface SignupFormErrors {
+  role?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  phoneNumber?: string;
+  address?: string;
+  storeName?: string;
+}
+
+function validateSignupForm(values: SignupFormValues): SignupFormErrors {
+  let errors: SignupFormErrors = {};
 
   // Validate role
   if (!values.role) {
@@ -65,7 +87,7 @@ function validateSignupForm(values) {
 export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
-  const [formErrors, setFormErrors] = useState({});
+  const [formErrors, setFormErrors] = useState<SignupFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showOTPInput, setShowOTPInput] = useState(false);

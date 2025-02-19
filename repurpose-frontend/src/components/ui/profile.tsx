@@ -15,10 +15,15 @@ const ProfilePage = () => {
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [profilePicture, setProfilePicture] = useState("/profile-picture.jpg");
-  const [status, setStatus] = useState("unverified"); // Status can be 'verified', 'unverified', or 'pending'
+  const [status, setStatus] = useState("unverified");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [address, setAddress] = useState("");
+  const [aboutMe, setAboutMe] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+  const [facebook, setFacebook] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [dribbble, setDribbble] = useState("");
+  const [github, setGithub] = useState("");
   const [legalDocument, setLegalDocument] = useState<File | null>(null);
 
   const toggleModal = () => {
@@ -36,11 +41,8 @@ const ProfilePage = () => {
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
 
-    console.log("file ta xa", file)
     const formData = new FormData();
     formData.append("profilePicture", file);
-
-    console.log("formDAta", formData)
 
     try {
       const response = await apiRequest("/api/user/profile-picture", {
@@ -48,11 +50,8 @@ const ProfilePage = () => {
         body: formData
       });
 
-      console.log("response", response)
-
       if (response.success) {
-        console.log("profile picture changed")
-        setUser(response.data)
+        setUser(response.data);
       } else {
         console.log("Failed to upload profile picture");
       }
@@ -66,7 +65,6 @@ const ProfilePage = () => {
   };
 
   const handleKYCSubmit = () => {
-    // Handle KYC submission logic here
     console.log("KYC Submitted:", { phoneNumber, fullName, address, legalDocument });
     toggleKYCModal();
   };
@@ -75,14 +73,19 @@ const ProfilePage = () => {
     setPhoneNumber(phone);
   };
 
+  // Manually set the role to 'seller'
+  const userWithRole = { ...user, role: 'seller' };
+  const isSeller = userWithRole?.role === 'seller';
+  const textColor = isSeller ? 'text-blue-600' : 'text-[hsl(var(--foreground))]';
+  const iconColor = isSeller ? 'text-blue-800' : 'text-[hsl(var(--primary))]';
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[hsl(var(--background))] w-full h-full">
+    <div className="flex justify-center items-center min-h-screen w-full h-full">
       <div className="max-w-4xl w-full p-6">
         {/* Header Section */}
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
             <div className='relative w-32 h-32 rounded-full'>
-
               <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
                 {user?.profilePicture ? (
                   <Image
@@ -102,7 +105,7 @@ const ProfilePage = () => {
                 )}
               </div>
               <div
-                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center  cursor-pointer"
+                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center cursor-pointer"
                 onClick={() => document.getElementById("profilePictureInput")?.click()}>
                 <FontAwesomeIcon icon={faCamera} className="text-white text-sm" />
                 <input
@@ -110,6 +113,7 @@ const ProfilePage = () => {
                   id="profilePictureInput"
                   accept="image/*"
                   className='hidden'
+                  title="Upload Profile Picture"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -117,15 +121,12 @@ const ProfilePage = () => {
                     }
                   }}
                 />
-
               </div>
             </div>
           </div>
 
-
           {/* Profile Info */}
           <div className="text-center p-4 -mt-6">
-
             {/* Status Section */}
             <div className="mt-4 text-center">
               {user?.role === "store" && (
@@ -135,38 +136,38 @@ const ProfilePage = () => {
               )}
             </div>
 
-            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">{user?.firstName} {user?.lastName}</h2>
+            <h2 className={`text-2xl font-bold ${textColor}`}>{user?.firstName} {user?.lastName}</h2>
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
             <div className="flex justify-center space-x-8 ">
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">259</p>
+                <p className={`font-bold ${textColor}`}>259</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Posts</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">129</p>
+                <p className={`font-bold ${textColor}`}>129</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">200</p>
+                <p className={`font-bold ${textColor}`}>200</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Follow</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">1500</p>
+                <p className={`font-bold ${textColor}`}>1500</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
               </div>
             </div>
 
             <div className="mt-4">
               <button
-                className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))] mr-2"
+                className={`px-4 py-2 ${iconColor} ${textColor} rounded-lg shadow hover:bg-gray-200 hover:text-gray-800 mr-2`}
                 onClick={toggleEditModal}
               >
                 Edit Profile
               </button>
               {user?.role === "store" && status !== "verified" && (
                 <button
-                  className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+                  className={`px-4 py-2 ${iconColor} ${textColor} rounded-lg shadow hover:bg-gray-200 hover:text-gray-800`}
                   onClick={toggleKYCModal}
                 >
                   {status === "unverified" ? "Fill KYC" : "Edit KYC"}
@@ -178,37 +179,40 @@ const ProfilePage = () => {
 
         {/* About Section */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
-          <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">About Me</h3>
+          <h3 className={`text-lg font-bold ${textColor} mb-2`}>About Me</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque posuere fermentum urna, eu condimentum mauris tempus ut. Donec fermentum blandit aliquet. Etiam dictum dapibus ultricies. Sed vel aliquet libero. Nunc a augue fermentum, pharetra ligula sed, aliquam lacus.
+            {aboutMe}
           </p>
         </div>
 
         {/* Contact Information */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
-          <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
+          <h3 className={`text-lg font-bold ${textColor} mb-2`}>Contact Information</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
             {user?.email}
           </p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: {user?.phoneNumber}
+            Phone: {phoneNumber}
+          </p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">
+            Address: {address}
           </p>
         </div>
 
         {/* Social Links */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
-          <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-4">Follow me on</h3>
+          <h3 className={`text-lg font-bold ${textColor} mb-4`}>Follow me on</h3>
           <div className="flex space-x-4 justify-center">
-            <a href="#" title="Facebook" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href={facebook} title="Facebook" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faFacebook} className="text-2xl" />
             </a>
-            <a href="#" title="Twitter" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href={twitter} title="Twitter" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
             </a>
-            <a href="#" title="Dribbble" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href={dribbble} title="Dribbble" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faDribbble} className="text-2xl" />
             </a>
-            <a href="#" title="GitHub" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a href={github} title="GitHub" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
               <FontAwesomeIcon icon={faGithub} className="text-2xl" />
             </a>
           </div>
@@ -228,7 +232,7 @@ const ProfilePage = () => {
             />
             <button
               onClick={toggleModal}
-              className="mt-4 px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+              className={`mt-4 px-4 py-2 ${iconColor} text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]`}
             >
               Close
             </button>
@@ -238,8 +242,8 @@ const ProfilePage = () => {
 
       {/* Modal for Editing Profile */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-h-full overflow-y-auto">
             <h3 className="text-lg font-bold mb-4">Edit Profile</h3>
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Username</label>
@@ -251,12 +255,79 @@ const ProfilePage = () => {
                 className="w-full p-2 border rounded"
               />
             </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">About Me</label>
+              <textarea
+                value={aboutMe}
+                onChange={(e) => setAboutMe(e.target.value)}
+                className="w-full p-2 border rounded"
+                rows={4}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Email</label>
+              <input
+                type="email"
+                value={user?.email}
+                readOnly
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Phone Number</label>
+              <PhoneInput
+                country={'np'}
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Address</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Social Links</label>
+              <div className="flex space-x-2">
+                <input
+                  type="url"
+                  placeholder="Facebook"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+                <input
+                  type="url"
+                  placeholder="Twitter"
+                  value={twitter}
+                  onChange={(e) => setTwitter(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+                <input
+                  type="url"
+                  placeholder="Dribbble"
+                  value={dribbble}
+                  onChange={(e) => setDribbble(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+                <input
+                  type="url"
+                  placeholder="GitHub"
+                  value={github}
+                  onChange={(e) => setGithub(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+              </div>
+            </div>
             <div className="flex justify-end space-x-2">
-
-
               <button
                 onClick={toggleEditModal}
-                className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+                className={`px-4 py-2 ${iconColor} text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]`}
               >
                 Save
               </button>
@@ -266,7 +337,6 @@ const ProfilePage = () => {
               >
                 Cancel
               </button>
-
             </div>
           </div>
         </div>
@@ -289,10 +359,10 @@ const ProfilePage = () => {
             </div>
             <div className="flex-1">
               <PhoneInput
-                country={'np'} // Set default country code to Nepal
+                country={'np'}
                 value={phoneNumber}
                 onChange={handlePhoneChange}
-                inputClass="w-full px-3 py-2 border rounded-lg  text-[hsl(var(--foreground))]"
+                inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
               />
             </div>
             <div className="mb-4">
@@ -321,10 +391,9 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex justify-end space-x-2">
-
               <button
                 onClick={handleKYCSubmit}
-                className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+                className={`px-4 py-2 ${iconColor} text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]`}
               >
                 Submit
               </button>
@@ -334,7 +403,6 @@ const ProfilePage = () => {
               >
                 Cancel
               </button>
-
             </div>
           </div>
         </div>
