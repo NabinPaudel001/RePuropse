@@ -41,18 +41,14 @@ const AdminDashboard = () => {
             href="/admin/issues"
             Icon={FaExclamationCircle}
             title="Manage Issues"
-            notificationCount={5}
+            notificationCount={1}
           />
           <DashboardCard
             href="/admin/rewards"
             Icon={FaStar}
             title="Manage Reward Points"
           />
-          <DashboardCard
-            href="/admin/carbon-credits"
-            Icon={FaCloud}
-            title="Manage Carbon Credits"
-          />
+          
           <DashboardCard
             href="/admin/listed-items"
             Icon={FaList}
