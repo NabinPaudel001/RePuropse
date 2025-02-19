@@ -7,6 +7,7 @@ import { MdMenu, MdClose, MdList, MdPerson, MdSettings, MdNotifications, MdMessa
 const Sidebar_store = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -71,7 +72,7 @@ const Sidebar_store = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/seller/dashboard/report" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
+                  <Link href="/store/dashboard/report" className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200">
                     <MdSupportAgent className="mr-3" /> Report
                   </Link>
                 </li>

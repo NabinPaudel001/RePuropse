@@ -1,8 +1,9 @@
 "use client";
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
 interface FormData {
   category: string;
+  title: string;
   description: string;
   attachment: File | null;
 }
@@ -10,11 +11,28 @@ interface FormData {
 export default function Report() {
   const [formData, setFormData] = useState<FormData>({
     category: '',
+    title: '',
     description: '',
     attachment: null,
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // Simulated user role for demonstration; change to 'store' to test store color theme.
+  const user = { role: 'seller' };
+
+  useEffect(() => {
+    // Apply CSS variables based on user role
+    if (user?.role === 'seller') {
+      document.documentElement.style.setProperty('--primary', '217 91% 60%'); // Blue theme
+      document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
+    } else if (user?.role) {
+      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%'); // Green theme
+      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
+    }
+  }, [user?.role]);
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     if (name === 'attachment' && files) {
       setFormData({ ...formData, [name]: files[0] });
@@ -27,6 +45,7 @@ export default function Report() {
     e.preventDefault();
     const data = new FormData();
     data.append('category', formData.category);
+    data.append('title', formData.title);
     data.append('description', formData.description);
     if (formData.attachment) {
       data.append('attachment', formData.attachment);
@@ -46,9 +65,9 @@ export default function Report() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="min-h-screen items-center ">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+        <h2 className="text-2xl font-bold text-center mb-4 text-[hsl(var(--primary))]">
           Report an Issue
         </h2>
         <form onSubmit={handleSubmit}>
@@ -73,6 +92,19 @@ export default function Report() {
             <option value="delivery">Delivery Issue</option>
             <option value="other">Other</option>
           </select>
+
+          <label className="block mb-2 font-bold" htmlFor="title">
+            Issue Title:
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            className="w-full p-2 mb-4 border rounded"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
 
           <label className="block mb-2 font-bold" htmlFor="description">
             Description:
@@ -101,10 +133,10 @@ export default function Report() {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className="w-full bg-[hsl(var(--primary))] text-white py-2 px-4 rounded hover:brightness-90"
           >
             Submit Report
-          </button> 
+          </button>
         </form>
       </div>
     </div>
