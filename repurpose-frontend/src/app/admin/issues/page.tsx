@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,15 +19,17 @@ import Image from "next/image";
 export default function ManageIssues() {
   const [issues, setIssues] = useState([
     { id: 1, title: "Login Bug", description: "Fix login bug", postedBy: "Alice", status: "Open", category: "Transaction", screenshot: "/images/R.jpeg" },
-    { id: 2, title: "UI Update", description: "Update UI design", postedBy: "Bob", status: "In Progress", category: "Violence", screenshot: "/images/ui-update.png" },
+    { id: 2, title: "UI Update", description: "Update UI design", postedBy: "Bob", status: "Progress", category: "Violence", screenshot: "/images/ui-update.png" },
     { id: 3, title: "DB Optimization", description: "Optimize database queries", postedBy: "Charlie", status: "Resolved", category: "Technical", screenshot: "/images/db-optimization.png" },
   ]);
 
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   
-  const filteredIssues = selectedCategory
-    ? issues.filter(issue => issue.category.toLowerCase() === selectedCategory.toLowerCase())
-    : issues;
+  const filteredIssues = issues.filter(issue => 
+    (selectedCategory ? issue.category.toLowerCase() === selectedCategory.toLowerCase() : true) &&
+    (selectedStatus === "all" ? true : issue.status.toLowerCase() === selectedStatus.replace(" ", "").toLowerCase())
+  );
 
   return (
     <Card className="p-5 shadow-lg">
@@ -53,15 +54,15 @@ export default function ManageIssues() {
           <ChevronDown className="absolute right-3 top-3 pointer-events-none text-gray-500" size={16} />
         </div>
       </div>
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="all" onValueChange={setSelectedStatus}>
         <TabsList className="mb-5">
           <TabsTrigger value="all">All Issues</TabsTrigger>
           <TabsTrigger value="open">Open</TabsTrigger>
-          <TabsTrigger value="progress">In Progress</TabsTrigger>
+          <TabsTrigger value="Progress">Progress</TabsTrigger>
           <TabsTrigger value="resolved">Resolved</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all">
+        <TabsContent value={selectedStatus}>
           <IssueTable issues={filteredIssues} setIssues={setIssues} />
         </TabsContent>
       </Tabs>
@@ -70,6 +71,14 @@ export default function ManageIssues() {
 }
 
 function IssueTable({ issues, setIssues }) {
+  const handleStatusChange = (id, newStatus) => {
+    setIssues((prevIssues) =>
+      prevIssues.map((issue) =>
+        issue.id === id ? { ...issue, status: newStatus } : issue
+      )
+    );
+  };
+
   const handleDelete = (id) => {
     setIssues((prevIssues) => prevIssues.filter((issue) => issue.id !== id));
   };
@@ -100,7 +109,17 @@ function IssueTable({ issues, setIssues }) {
               <TableCell>{issue.title}</TableCell>
               <TableCell>{issue.description}</TableCell>
               <TableCell>{issue.postedBy}</TableCell>
-              <TableCell>{issue.status}</TableCell>
+              <TableCell>
+                <select
+                  value={issue.status}
+                  onChange={(e) => handleStatusChange(issue.id, e.target.value)}
+                  className="border px-2 py-1 rounded-md bg-white"
+                >
+                  <option value="Open">Open</option>
+                  <option value="Progress">Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </select>
+              </TableCell>
               <TableCell>{issue.category}</TableCell>
               <TableCell>
                 <Dialog>
