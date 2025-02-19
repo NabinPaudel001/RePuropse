@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Providers from "./providers";
 import { AuthProvider } from '../contexts/AuthContext';
 import { SocketProvider } from '../contexts/SocketContext' // Import the SocketProvider
 import { NotificationProvider } from "@/contexts/NotificationContext";
@@ -32,13 +33,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <SocketProvider>
-            <UserProvider>
-              <NotificationProvider>
-                {children}
-              </NotificationProvider>
-            </UserProvider>
-          </SocketProvider>
+          <Providers>
+            <SocketProvider>
+              <UserProvider>
+                <NotificationProvider>
+                  {children} {/* Now all components have Redux access */}
+                </NotificationProvider>
+              </UserProvider>
+            </SocketProvider>
+          </Providers>
         </AuthProvider>
       </body>
     </html>

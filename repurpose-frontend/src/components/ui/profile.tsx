@@ -2,7 +2,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook, faTwitter, faDribbble, faGithub } from '@fortawesome/free-brands-svg-icons';
+import {
+  faFacebook,
+  faTwitter,
+  faDribbble,
+  faGithub,
+} from '@fortawesome/free-brands-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import PhoneInput from 'react-phone-input-2';
 import { useUser } from "@/contexts/UserContext";
@@ -13,43 +18,34 @@ const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [profilePicture, setProfilePicture] = useState("/profile-picture.jpg");
+
+  const [profilePicture] = useState("/profile-picture.jpg");
   const [status, setStatus] = useState("unverified");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [address, setAddress] = useState("");
-  const [aboutMe, setAboutMe] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+  const [aboutMe, setAboutMe] = useState(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  );
   const [facebook, setFacebook] = useState("");
   const [twitter, setTwitter] = useState("");
   const [dribbble, setDribbble] = useState("");
   const [github, setGithub] = useState("");
   const [legalDocument, setLegalDocument] = useState<File | null>(null);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const toggleEditModal = () => {
-    setIsEditModalOpen(!isEditModalOpen);
-  };
-
-  const toggleKYCModal = () => {
-    setIsKYCModalOpen(!isKYCModalOpen);
-  };
+  const toggleModal = () => setIsModalOpen((prev) => !prev);
+  const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
+  const toggleKYCModal = () => setIsKYCModalOpen((prev) => !prev);
 
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
-
     const formData = new FormData();
     formData.append("profilePicture", file);
-
     try {
       const response = await apiRequest("/api/user/profile-picture", {
         method: 'PATCH',
-        body: formData
+        body: formData,
       });
-
       if (response.success) {
         setUser(response.data);
       } else {
@@ -60,20 +56,14 @@ const ProfilePage = () => {
     }
   };
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  };
-
   const handleKYCSubmit = () => {
     console.log("KYC Submitted:", { phoneNumber, fullName, address, legalDocument });
     toggleKYCModal();
   };
 
-  const handlePhoneChange = (phone: string) => {
-    setPhoneNumber(phone);
-  };
+  const handlePhoneChange = (phone: string) => setPhoneNumber(phone);
 
-  // Manually set the role to 'seller'
+  // Manually set the role to 'seller' for styling purposes
   const userWithRole = { ...user, role: 'seller' };
   const isSeller = userWithRole?.role === 'seller';
   const textColor = isSeller ? 'text-blue-600' : 'text-[hsl(var(--foreground))]';
@@ -85,7 +75,7 @@ const ProfilePage = () => {
         {/* Header Section */}
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
-            <div className='relative w-32 h-32 rounded-full'>
+            <div className="relative w-32 h-32 rounded-full">
               <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
                 {user?.profilePicture ? (
                   <Image
@@ -97,22 +87,21 @@ const ProfilePage = () => {
                     className="cursor-pointer"
                   />
                 ) : (
-                  <div
-                    className="flex items-center justify-center w-full h-full bg-gray-300 text-5xl font-bold cursor-pointer"
-                  >
+                  <div className="flex items-center justify-center w-full h-full bg-gray-300 text-5xl font-bold cursor-pointer">
                     {user?.firstName?.[0]?.toUpperCase() || "?"}
                   </div>
                 )}
               </div>
               <div
-                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center cursor-pointer"
-                onClick={() => document.getElementById("profilePictureInput")?.click()}>
+                className="absolute bottom-1 right-2 p-2 bg-gray-500 rounded-md z-10 w-8 h-8 flex items-center justify-center cursor-pointer"
+                onClick={() => document.getElementById("profilePictureInput")?.click()}
+              >
                 <FontAwesomeIcon icon={faCamera} className="text-white text-sm" />
                 <input
                   type="file"
                   id="profilePictureInput"
                   accept="image/*"
-                  className='hidden'
+                  className="hidden"
                   title="Upload Profile Picture"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -127,19 +116,24 @@ const ProfilePage = () => {
 
           {/* Profile Info */}
           <div className="text-center p-4 -mt-6">
-            {/* Status Section */}
-            <div className="mt-4 text-center">
-              {user?.role === "store" && (
-                <p className={`text-sm font-bold ${status === "verified" ? "text-green-500" : status === "unverified" ? "text-red-500" : "text-yellow-500"}`}>
-                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-                </p>
-              )}
-            </div>
-
-            <h2 className={`text-2xl font-bold ${textColor}`}>{user?.firstName} {user?.lastName}</h2>
+            {user?.role === "store" && (
+              <p
+                className={`text-sm font-bold ${
+                  status === "verified"
+                    ? "text-green-500"
+                    : status === "unverified"
+                    ? "text-red-500"
+                    : "text-yellow-500"
+                }`}
+              >
+                Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+              </p>
+            )}
+            <h2 className={`text-2xl font-bold ${textColor}`}>
+              {user?.firstName} {user?.lastName}
+            </h2>
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
-
-            <div className="flex justify-center space-x-8 ">
+            <div className="flex justify-center space-x-8 mt-4">
               <div>
                 <p className={`font-bold ${textColor}`}>259</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Posts</p>
@@ -157,7 +151,6 @@ const ProfilePage = () => {
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
               </div>
             </div>
-
             <div className="mt-4">
               <button
                 className={`px-4 py-2 ${iconColor} ${textColor} rounded-lg shadow hover:bg-gray-200 hover:text-gray-800 mr-2`}
@@ -180,39 +173,47 @@ const ProfilePage = () => {
         {/* About Section */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className={`text-lg font-bold ${textColor} mb-2`}>About Me</h3>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            {aboutMe}
-          </p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">{aboutMe}</p>
         </div>
 
         {/* Contact Information */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className={`text-lg font-bold ${textColor} mb-2`}>Contact Information</h3>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            {user?.email}
-          </p>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: {phoneNumber}
-          </p>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Address: {address}
-          </p>
+      
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">Phone: {phoneNumber}</p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">Address: {address}</p>
         </div>
 
         {/* Social Links */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className={`text-lg font-bold ${textColor} mb-4`}>Follow me on</h3>
           <div className="flex space-x-4 justify-center">
-            <a href={facebook} title="Facebook" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a
+              href={facebook}
+              title="Facebook"
+              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
               <FontAwesomeIcon icon={faFacebook} className="text-2xl" />
             </a>
-            <a href={twitter} title="Twitter" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a
+              href={twitter}
+              title="Twitter"
+              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
               <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
             </a>
-            <a href={dribbble} title="Dribbble" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a
+              href={dribbble}
+              title="Dribbble"
+              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
               <FontAwesomeIcon icon={faDribbble} className="text-2xl" />
             </a>
-            <a href={github} title="GitHub" className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+            <a
+              href={github}
+              title="GitHub"
+              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
               <FontAwesomeIcon icon={faGithub} className="text-2xl" />
             </a>
           </div>
@@ -224,7 +225,7 @@ const ProfilePage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-4 rounded-lg shadow-lg">
             <Image
-              src={profilePicture}
+              src={user?.profilePicture || profilePicture}
               alt="Profile"
               width={300}
               height={300}
@@ -243,36 +244,21 @@ const ProfilePage = () => {
       {/* Modal for Editing Profile */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-h-full overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">Edit Profile</h3>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Username</label>
-              <input
-                type="text"
-                placeholder='Username'
-                value={username}
-                onChange={handleUsernameChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
+            
+
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">About Me</label>
               <textarea
+              placeholder='About Me'
                 value={aboutMe}
                 onChange={(e) => setAboutMe(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows={4}
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Email</label>
-              <input
-                type="email"
-                value={user?.email}
-                readOnly
-                className="w-full p-2 border rounded bg-gray-100"
-              />
-            </div>
+        
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Phone Number</label>
               <PhoneInput
@@ -285,6 +271,7 @@ const ProfilePage = () => {
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Address</label>
               <input
+              placeholder='Address'
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -345,19 +332,19 @@ const ProfilePage = () => {
       {/* Modal for KYC Information */}
       {isKYCModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">KYC Information</h3>
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Full Name</label>
               <input
                 type="text"
-                placeholder='Full Name'
+                placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full p-2 border rounded"
               />
             </div>
-            <div className="flex-1">
+            <div className="mb-4">
               <PhoneInput
                 country={'np'}
                 value={phoneNumber}
@@ -369,7 +356,7 @@ const ProfilePage = () => {
               <label className="block text-sm font-bold mb-2">Address</label>
               <input
                 type="text"
-                placeholder='Kathmandu,Nepal'
+                placeholder="Kathmandu, Nepal"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full p-2 border rounded"

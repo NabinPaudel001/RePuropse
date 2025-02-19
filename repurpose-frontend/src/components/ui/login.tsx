@@ -12,10 +12,13 @@ import { useUser } from "@/contexts/UserContext";
 interface LoginPageProps {
   onClose: () => void;
 }
+import { useSelector, useDispatch } from "react-redux";
+
 
 export default function LoginPage({ onClose }: LoginPageProps) {
   const { user, setUser } = useUser();
-  const { socket, isConnected, setIsLoggedIn } = useSocket();
+
+  const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [role, setRole] = useState("");
   const [userID, setUserID] = useState("");
@@ -62,6 +65,9 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         setAccessToken(response.data.token);
         setRefreshToken(response.data.refreshToken);
         setUser(response.data);
+        console.log("her vai user", user)
+
+        // Set login status to true, which triggers socket connection
         setIsLoggedIn(true);
         router.push(`/${response.data.role}/dashboard/home`);
       }

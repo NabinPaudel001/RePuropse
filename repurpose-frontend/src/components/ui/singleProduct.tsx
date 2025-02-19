@@ -4,12 +4,16 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/middleware/errorInterceptor";
 import { useUser } from '@/contexts/UserContext';
+import ProductRequests from "./ProductRequests";
+import ChatButton from "../chat/ChatButton";
+import { Store } from "@/types/types";
 
 interface ProductPageProps {
   params: { id: string };
 }
 
 interface Seller {
+  _id: string;
   profilePicture?: string;
   firstName: string;
   lastName: string;
@@ -17,12 +21,12 @@ interface Seller {
 }
 
 interface Product {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   images: string[];
   description: string;
-  seller: Seller; // Update the seller type here
+  seller: Seller;
   partName: string;
   materialName: string;
   ecoFriendly: string;
@@ -36,6 +40,11 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [hasRequested, setHasRequested] = useState<boolean>(false);
+  const [proposedPrice, setProposedPrice] = useState<number>(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [soldTo, setSoldTo] = useState<Store | null>(null);
   // const [currentImageIndex, setCurrentImageIndex] = useState(0);
   console.log("product id", params)
   const id = params?.id;
@@ -47,6 +56,8 @@ export default function ProductPage({ params }: ProductPageProps) {
       try {
         const response = await apiRequest(`/api/product/${id}`, "GET");
         setProduct(response.data); // Assuming API response structure matches Product
+        setProposedPrice(response.data.price);
+        setSoldTo(response.data?.soldTo || null);
         console.log("response: ", response.data)
       } catch (error) {
         console.log("Failed to fetch product data:", error);
@@ -56,18 +67,56 @@ export default function ProductPage({ params }: ProductPageProps) {
     fetchProduct();
   }, [id]);
 
+  // Check if the store has already requested this product
+  useEffect(() => {
+    if (!id || !user?.id) return;
+
+    const checkExistingRequest = async () => {
+      try {
+        const response = await apiRequest(`/api/product/purchase-requests/${id}/${user.id}`, "GET");
+        if (response.data.length > 0) {
+          setHasRequested(true);
+        }
+      } catch (error) {
+        console.log("Error checking existing request:", error);
+      }
+    };
+
+    checkExistingRequest();
+  }, [id, user]);
+
   if (!product) {
     return <div>Loading product data...</div>;
   }
 
-  // // Find the product by ID or use the first product as a default
+  console.log("sold to ko data", soldTo);
 
-  // const discountedPrice = product.discount ? product.originalPrice * (1 - product.discount / 100) : product.originalPrice;
-  // const rewardPoints = (discountedPrice * 0.10).toFixed(2);
+  const handleRequest = async () => {
+    setLoading(true);
+    try {
+      const response = await apiRequest(`/api/product/${id}/request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ proposedPrice }),
+      });
 
-  // const handleNextImage = () => {
-  //   setCurrentImageIndex((prevIndex) => (prevIndex + 1) % product.images.length);
-  // };
+      if (response.success) {
+        alert('Request sent!');
+        setHasRequested(true);
+
+      } else {
+        alert('Error sending request');
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowModal(false);
+      setLoading(false);
+    }
+  };
+
   const openModal = (imageIndex: number) => {
     setCurrentImageIndex(imageIndex);
     setIsModalOpen(true);
@@ -90,18 +139,18 @@ export default function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center md:w-3/4 w-[70%]">
       <div className="container mx-auto p-4">
-        <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-20">
+        <div className="flex flex-col w-full lg:flex-row space-y-4 lg:space-y-0 lg:space-x-20">
           {/* Left Side */}
           <div className="flex flex-col mt-5 items-center lg:w-1/2">
-            <div className="w-full h-96 bg-gray-400 relative cursor-pointer">
+            <div className="w-full h-96 relative cursor-pointer">
               <Image
                 src={product.images[currentImageIndex]}
                 alt={product.name}
                 layout="fill"
                 objectFit="cover"
-                className="w-full h-full"
+                className="w-full h-full rounded-lg"
                 onClick={() => openModal(0)}
               />
               {/* <div className={`absolute top-2 right-2 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center ${product.discount ? 'bg-red-500' : 'bg-green-500'}`}>
@@ -141,7 +190,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             )}
 
 
-            <div className="flex mt-4 gap-4">
+            <div className="flex mt-2 gap-4">
               <Button
                 onClick={prevImage}
                 variant="outline"
@@ -157,30 +206,64 @@ export default function ProductPage({ params }: ProductPageProps) {
                 Next
               </Button>
             </div>
-            <div className="mt-7 w-full">
-              <Button variant="outline" className="w-full px-4 py-2 bg-green-500 text-white">Add to Cart</Button>
-            </div>
+            {user?.role === 'store' && (
+              <>
+                <Button
+                  variant="outline"
+                  className={`w-full px-4 py-2 mt-4 ${hasRequested ? 'bg-gray-600' : 'bg-green-500'} text-white`}
+                  onClick={() => setShowModal(true)}
+                  disabled={hasRequested}
+                >
+                  {hasRequested ? "Requested" : "Request for Buy"}
+                </Button>
+
+                {showModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                      <h2 className="text-lg font-semibold mb-4">Confirm Purchase</h2>
+                      <p className="text-gray-600 mb-2">Listed Price: Rs. {product.price}</p>
+                      <input
+                        type="number"
+                        value={proposedPrice}
+                        onChange={(e) => setProposedPrice(Number(e.target.value))}
+                        className="border p-2 w-full mb-4"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button onClick={handleRequest} disabled={loading} className="bg-green-500 text-white">
+                          {loading ? 'Requesting...' : 'Confirm Request'}
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowModal(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </>
+            )}
+
           </div>
 
           {/* Right Side */}
           <div className="flex flex-col lg:w-full">
             <div className="px-1 p-4 flex-grow flex flex-col justify-between">
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold mb-2">{product.name}</h1>
+                <h1 className="text-3xl lg:text-5xl font-bold mb-2 text-gray-800">{product.name}</h1>
                 {/* <h4 className="text-xl lg:text-2xl mb-4 font-bold">{product.seller}</h4> */}
                 <div className="mb-4">
-                  <p className="text-sm text-gray-600">{`Part: ${product.partName}`}</p>
-                  <p className="text-sm text-gray-600">{`Material: ${product.materialName}`}</p>
-                  <p className="text-sm text-gray-600">{`Eco-Friendly: ${product.ecoFriendly}`}</p>
-                  <p className="text-base font-bold my-2">RP:</p>
+                  <p className="text-lg text-gray-600">{`Part: ${product.partName}`}</p>
+                  <p className="text-lg text-gray-600">{`Material: ${product.materialName}`}</p>
+                  <p className="text-lg text-gray-600">{`Eco-Friendly: ${product.ecoFriendly}`}</p>
+                  <p className="text-lg font-bold my-2">Rs: {product.price}</p>
                 </div>
                 {/* <div className="flex flex-col lg:flex-row items-start space-y-2 lg:space-y-0 lg:space-x-4 mb-4">
                   <p className="text-2xl lg:text-3xl font-semibold text-green-500">${discountedPrice.toFixed(2)}</p>
                   <span className="text-lg text-gray-700">({product.inStock ? 'In Stock' : 'Out of Stock'})</span>
                 </div> */}
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <p className="text-lg lg:text-xl">Reviews: ★★★★☆</p>
-                </div>
+                </div> */}
                 <div className="mb-4">
                   <p className="text-lg font-bold mb-3">Gender Style:</p>
                   <Button className={`px-4 mr-5 py-2 ${'female' === 'female' ? 'bg-green-500 text-white' : 'bg-transparent text-black'}`} variant="outline">
@@ -193,7 +276,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               </div>
               {user?.role === "store" && product.seller && (
                 <div>
-                  <div className="mb-2 mt-4 text-lg">Posted By:</div>
+                  <div className="mb-2 mt-4 text-lg">Contact With Seller:</div>
 
                   <div className="mt-2 p-4 rounded-lg bg-blue-100 shadow-md">
                     <div className="flex items-center space-x-4">
@@ -220,9 +303,10 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                       {/* Chat Button */}
                       <div className="ml-auto">
-                        <Button type="submit" className="lg:w-32 h-12">
+                        <ChatButton userId={product.seller._id} />
+                        {/* <Button type="submit" className="lg:w-32 h-12">
                           Chat
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   </div>
@@ -230,23 +314,16 @@ export default function ProductPage({ params }: ProductPageProps) {
                 </div>
 
               )}
-              {/* <div className="mt-4 lg:mt-0">
-                  <div className="mb-2 text-lg">Contact with the seller</div>
-                  <div className="flex w-full items-center space-x-2">
-                    <Button type="submit" className="w-full lg:w-32 h-12">Chat</Button>
-                  </div>
-                </div> */}
 
-
-
-            </div>
-            <div className="w-full">
-              <h2 className="text-2xl lg:text-3xl font-bold mb-2">Product Details</h2>
-              <p className="text-lg lg:text-xl lg:w-full">{product.description}</p>
             </div>
           </div>
+
         </div>
-        <div className="flex flex-col space-y-4 p-4 border rounded-lg shadow-md mt-8">
+        <div className="w-full mt-10">
+          <h2 className="text-2xl lg:text-3xl font-bold mb-2 text-gray-800">Product Description</h2>
+          <p className="text-lg lg:text-xl lg:w-full">{product.description}</p>
+        </div>
+        {/* <div className="flex flex-col space-y-4 p-4 border rounded-lg shadow-md mt-8">
           <h2 className="text-xl font-semibold mb-1">Product Review</h2>
           <div className="flex flex-col space-y-2 w-full">
             <textarea
@@ -274,7 +351,15 @@ export default function ProductPage({ params }: ProductPageProps) {
               </svg>
             </div>
           </div>
-        </div>
+        </div> */}
+        {user?.role === 'seller' && (
+          <ProductRequests
+            productId={id}
+            soldTo={soldTo}
+            setSoldTo={setSoldTo}
+          />
+        )}
+
       </div>
     </div>
   );

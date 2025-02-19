@@ -52,6 +52,7 @@ const MyListings: React.FC = () => {
         }
         if (user?.role === "seller") {
           const response = await apiRequest(`/api/product/seller/${sellerId}`, 'GET');
+          console.log("response", response)
           if (response.data) {
             setProducts(response.data); // Set products with the fetched data
           }
