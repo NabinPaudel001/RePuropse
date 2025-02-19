@@ -8,7 +8,7 @@ const Layout_store = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex">
       <Sidebar_store />
-      <div className="flex flex-col flex-grow ml-64">
+      <div className="flex flex-col flex-grow">
         <Header />
         <div className="flex justify-center items-center p-10 mt-16 min-h-[calc(100vh-4rem)]">
           {children}

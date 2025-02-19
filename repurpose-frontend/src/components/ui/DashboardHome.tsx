@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaStar, FaShoppingCart, FaClock, FaGift, FaLeaf, FaCloud } from 'react-icons/fa'; // Importing icons from Font Awesome
-import { useUser } from '@/contexts/UserContext';
-
 
 const DashboardHome = () => {
   const [rewardPoints, setRewardPoints] = useState(0);
@@ -14,9 +12,9 @@ const DashboardHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { user } = useUser();
-  console.log("ya her user", user)
-
+  // const { user } = useUser();
+  const user = { role: 'seller' };
+  console.log("ya her user", user);
 
   useEffect(() => {
     // Simulate fetching data with dummy data
@@ -51,6 +49,17 @@ const DashboardHome = () => {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    // Apply different CSS variables based on user role
+    if (user?.role === 'seller') {
+      document.documentElement.style.setProperty('--primary', '217 91% 60%');
+      document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
+    } else if (user?.role) {
+      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%');
+      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
+    }
+  }, [user?.role]);
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -60,7 +69,7 @@ const DashboardHome = () => {
   }
 
   return (
-    <div className="dashboard-home p-6 bg-[hsl(var(--background))] min-h-screen">
+    <div className="dashboard-home p-6 bg-[hsl(var(--background))] w-full h-full">
       <h1 className="text-4xl font-bold text-center mb-8 mt-0 text-[hsl(var(--primary))]">Dashboard</h1>
       <div className="dashboard-stats grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="stat-item bg-[hsl(var(--card))] p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">

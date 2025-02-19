@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import Navbar from "../components/ui/Navbar";
-import HeroSection from "@/components/ui/HeroSection";
+// import HeroSection from "@/components/ui/HeroSection";
+import Bind from "../components/Bind";
 import TitleSection from "../components/ui/TitleSection";
 import FeatureCard from "@/components/ui/FeatureCard";
 import Footer from "../components/ui/Footer";
@@ -68,7 +69,7 @@ export default function Home() {
   return (
     <div>
       <Navbar onLoginClick={openLoginPopup} />
-      <HeroSection />
+      <Bind/>
       <div className="px-10 md:px-12 py-3 md:py-3">
         <TitleSection title="More Reasons to Join" subtitle="" variant="left" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -95,7 +96,7 @@ export default function Home() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <button onClick={closeLoginPopup} className="text-red-500 float-right">Close</button>
-            <LoginPage />
+            <LoginPage onClose={closeLoginPopup} />
           </div>
         </div>
       )}
