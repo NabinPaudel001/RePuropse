@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 
 // TypeScript type for the user data (you can expand this based on your needs)
 type User = {
+    id: string;
     role?: string;
     firstName?: string;
     lastName?: string;

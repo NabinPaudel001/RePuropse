@@ -7,9 +7,12 @@ import { apiRequest } from '../../middleware/errorInterceptor';
 import { setAccessToken, setRefreshToken, setUserId } from "@/utils/tokens";
 import { useSocket } from '../../contexts/SocketContext'
 import { useUser } from '@/contexts/UserContext';
+import { useSelector, useDispatch } from "react-redux";
+
 
 export default function LoginPage() {
   const { user, setUser } = useUser();
+  const dispatch = useDispatch();
 
   const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
   const [showOTPInput, setShowOTPInput] = useState(false);
@@ -60,6 +63,8 @@ export default function LoginPage() {
         setRefreshToken(response.data.refreshToken)
         setUser(response.data);
         console.log("her vai user", user)
+
+        // dispatch(setUser({ ...response.data}));
 
         // Set login status to true, which triggers socket connection
         setIsLoggedIn(true);

@@ -14,6 +14,7 @@ export function setAccessToken(token) {
 }
 
 export function getRefreshToken() {
+  console.log("refresh token in cookie", document.cookie);
   if (typeof document !== "undefined") {
     const cookies = document.cookie.split("; ");
     const refreshTokenCookie = cookies.find((row) =>

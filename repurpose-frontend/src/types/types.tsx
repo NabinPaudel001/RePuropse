@@ -17,3 +17,14 @@ export interface Notification {
   notif: string;
   read: boolean;
 }
+
+export interface Store {
+  _id: string;
+  storeName: string;
+  ownerName: string;
+  email: string;
+  storeAddress: string;
+  phoneNumber: string;
+  storeNumber: string;
+  storeFrontImage: string;
+}

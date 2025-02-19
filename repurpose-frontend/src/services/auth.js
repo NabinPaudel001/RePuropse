@@ -5,9 +5,10 @@ export default async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
 
   try {
-    const response = await fetch('/api/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refreshToken }),
+    console.log('refreshToken:', refreshToken);
+    const response = await fetch('http://localhost:5000/api/auth/refresh', {
+      method: 'GET',
+      // body: JSON.stringify({ refreshToken }),
       headers: { 'Content-Type': 'application/json' },
     });
 

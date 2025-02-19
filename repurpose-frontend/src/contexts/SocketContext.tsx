@@ -2,6 +2,9 @@
 
 import { createContext, useState, useContext, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleSocket } from '../slices/socketSlice';
+// import { useUser } from '@/contexts/UserContext';
 
 // Define the context type
 interface SocketContextType {
@@ -30,6 +33,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Track login status
   const [messages, setMessages] = useState<{ roomId: string; messages: string[] }[]>([]);
+  const dispatch = useDispatch();
+  // const { user, setUser } = useUser();
+
 
   // Effect to manage socket connection
   useEffect(() => {
@@ -42,6 +48,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         newSocket.on("connect", () => {
           setIsConnected(true);
+          dispatch(toggleSocket());
           console.log("Socket connected:", newSocket.id);
         });
 
