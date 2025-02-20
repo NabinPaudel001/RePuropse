@@ -12,7 +12,14 @@ type User = {
     phoneNumber?: string;
     storeName?: string;
     email?: string
-    storeStatus?: string
+    storeStatus?: string,
+    about?: string;
+    socialMediaHandles?: {
+        facebook?: string;
+        instagram?: string;
+        tiktok?: string;
+        twitter?: string;
+    };
 };
 
 type UserContextType = {

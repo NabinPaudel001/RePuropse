@@ -14,8 +14,19 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+// Define the type for KYC data
+interface KYC {
+  id: number;
+  dateCreated: string;
+  storeName: string;
+  ownerName: string;
+  businessRegNo: string;
+  documents: string[];
+}
+
 export default function VerifyKYC() {
-  const [pendingKYC, setPendingKYC] = useState([
+  // Define state with proper typing
+  const [pendingKYC, setPendingKYC] = useState<KYC[]>([
     {
       id: 1,
       dateCreated: "2025-02-15",
@@ -26,7 +37,7 @@ export default function VerifyKYC() {
     },
   ]);
 
-  const [verifiedKYC, setVerifiedKYC] = useState([
+  const [verifiedKYC, setVerifiedKYC] = useState<KYC[]>([
     {
       id: 2,
       dateCreated: "2025-02-10",
@@ -37,9 +48,10 @@ export default function VerifyKYC() {
     },
   ]);
 
-  const handleVerify = (kyc) => {
-    setPendingKYC(pendingKYC.filter((item) => item.id !== kyc.id));
-    setVerifiedKYC([...verifiedKYC, { ...kyc, id: Date.now() }]);
+  // Function to handle verification
+  const handleVerify = (kyc: KYC) => {
+    setPendingKYC((prev) => prev.filter((item) => item.id !== kyc.id));
+    setVerifiedKYC((prev) => [...prev, { ...kyc, id: Date.now() }]);
   };
 
   return (
@@ -61,7 +73,14 @@ export default function VerifyKYC() {
   );
 }
 
-function KYCList({ data, showActions, onVerify }) {
+// Define props type for KYCList
+interface KYCListProps {
+  data: KYC[];
+  showActions: boolean;
+  onVerify?: (kyc: KYC) => void;
+}
+
+function KYCList({ data, showActions, onVerify }: KYCListProps) {
   return (
     <Table className="w-full border rounded-lg overflow-hidden">
       <TableHeader>
@@ -98,7 +117,7 @@ function KYCList({ data, showActions, onVerify }) {
                   ))}
                 </div>
               </TableCell>
-              {showActions && (
+              {showActions && onVerify && (
                 <TableCell>
                   <Button
                     className="bg-green-500 hover:bg-green-700 mr-2"

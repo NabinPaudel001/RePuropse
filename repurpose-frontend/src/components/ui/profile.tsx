@@ -12,6 +12,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import PhoneInput from 'react-phone-input-2';
 import { useUser } from "@/contexts/UserContext";
 import { apiRequest } from '@/middleware/errorInterceptor';
+import { headers } from 'next/headers';
 
 const ProfilePage = () => {
   const { user, setUser } = useUser();
@@ -21,21 +22,23 @@ const ProfilePage = () => {
 
   const [profilePicture] = useState("/profile-picture.jpg");
   const [status, setStatus] = useState("unverified");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
   const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
   const [address, setAddress] = useState("");
-  const [aboutMe, setAboutMe] = useState(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-  );
-  const [facebook, setFacebook] = useState("");
-  const [twitter, setTwitter] = useState("");
-  const [dribbble, setDribbble] = useState("");
-  const [github, setGithub] = useState("");
+  const [about, setAbout] = useState(user?.about || "");
+  const [facebook, setFacebook] = useState(user?.socialMediaHandles?.facebook || "");
+  const [instagram, setInstagram] = useState(user?.socialMediaHandles?.instagram || "");
+  const [tiktok, setTiktok] = useState(user?.socialMediaHandles?.tiktok || "");
+  const [twitter, setTwitter] = useState(user?.socialMediaHandles?.twitter || "");
   const [legalDocument, setLegalDocument] = useState<File | null>(null);
 
   const toggleModal = () => setIsModalOpen((prev) => !prev);
   const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
   const toggleKYCModal = () => setIsKYCModalOpen((prev) => !prev);
+
+  console.log("User:", user);
 
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
@@ -56,9 +59,43 @@ const ProfilePage = () => {
     }
   };
 
-  const handleKYCSubmit = () => {
-    console.log("KYC Submitted:", { phoneNumber, fullName, address, legalDocument });
-    toggleKYCModal();
+  // const handleKYCSubmit = () => {
+  //   // console.log("KYC Submitted:", { phoneNumber, fullName, address, legalDocument });
+  //   toggleKYCModal();
+  // };
+
+  const handleEditProfile = async () => {
+    const data = {
+      firstName,
+      lastName,
+      about,
+      phoneNumber,
+      address,
+      facebook,
+      instagram,
+      tiktok,
+      twitter,
+    };
+
+    console.log("Updating Profile:", data);
+    try {
+      const response = await apiRequest("/api/user/edit", {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log("Response:", response);
+      if (response.success) {
+        console.log("Profile Updated:", response.data);
+        setUser(response.data);
+        console.log("User:", user);
+      } else {
+        console.log("Failed to update profile");
+      }
+    } catch (error) {
+      console.log("Error updating profile:", error);
+    }
+    toggleEditModal();
   };
 
   const handlePhoneChange = (phone: string) => setPhoneNumber(phone);
@@ -118,13 +155,12 @@ const ProfilePage = () => {
           <div className="text-center p-4 -mt-6">
             {user?.role === "store" && (
               <p
-                className={`text-sm font-bold ${
-                  status === "verified"
-                    ? "text-green-500"
-                    : status === "unverified"
+                className={`text-sm font-bold ${status === "verified"
+                  ? "text-green-500"
+                  : status === "unverified"
                     ? "text-red-500"
                     : "text-yellow-500"
-                }`}
+                  }`}
               >
                 Status: {status.charAt(0).toUpperCase() + status.slice(1)}
               </p>
@@ -143,13 +179,14 @@ const ProfilePage = () => {
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
-                <p className={`font-bold ${textColor}`}>200</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Follow</p>
-              </div>
-              <div>
-                <p className={`font-bold ${textColor}`}>1500</p>
+                <p className={`font-bold ${textColor}`}>0</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
               </div>
+              <div>
+                <p className={`font-bold ${textColor}`}>200</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">Reward Points</p>
+              </div>
+
             </div>
             <div className="mt-4">
               <button
@@ -173,15 +210,15 @@ const ProfilePage = () => {
         {/* About Section */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className={`text-lg font-bold ${textColor} mb-2`}>About Me</h3>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">{aboutMe}</p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">{about}</p>
         </div>
 
         {/* Contact Information */}
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className={`text-lg font-bold ${textColor} mb-2`}>Contact Information</h3>
-      
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">Phone: {phoneNumber}</p>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm">Address: {address}</p>
+
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">Phone: {user?.phoneNumber}</p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">Email: {user?.email}</p>
         </div>
 
         {/* Social Links */}
@@ -189,32 +226,40 @@ const ProfilePage = () => {
           <h3 className={`text-lg font-bold ${textColor} mb-4`}>Follow me on</h3>
           <div className="flex space-x-4 justify-center">
             <a
-              href={facebook}
+              href={user?.socialMediaHandles?.facebook || "#"}
               title="Facebook"
+              target={user?.socialMediaHandles?.facebook ? "_blank" : ""}
+              rel='noreferrer'
               className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
             >
               <FontAwesomeIcon icon={faFacebook} className="text-2xl" />
             </a>
             <a
-              href={twitter}
-              title="Twitter"
-              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
-            >
-              <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
-            </a>
-            <a
-              href={dribbble}
-              title="Dribbble"
+              href={user?.socialMediaHandles?.instagram || "#"}
+              target={user?.socialMediaHandles?.instagram ? "_blank" : ""}
+              rel='noreferrer'
+              title="Instagram"
               className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
             >
               <FontAwesomeIcon icon={faDribbble} className="text-2xl" />
             </a>
             <a
-              href={github}
-              title="GitHub"
+              href={user?.socialMediaHandles?.tiktok || "#"}
+              title="Tiktok"
+              target={user?.socialMediaHandles?.tiktok ? "_blank" : ""}
+              rel='noreferrer'
               className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
             >
               <FontAwesomeIcon icon={faGithub} className="text-2xl" />
+            </a>
+            <a
+              href={user?.socialMediaHandles?.twitter || "#"}
+              target={user?.socialMediaHandles?.twitter ? "_blank" : ""}
+              rel='noreferrer'
+              title="Twitter"
+              className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
+              <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
             </a>
           </div>
         </div>
@@ -246,19 +291,42 @@ const ProfilePage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">Edit Profile</h3>
-            
+            <div className="mb-4">
+              <div className="flex space-x-4">
+                <div className="w-1/2">
+                  <label className="block text-sm font-bold mb-2">First Name</label>
+                  <input
+                    placeholder='First Name'
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-sm font-bold mb-2">Last Name</label>
+                  <input
+                    placeholder='Last Name'
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">About Me</label>
               <textarea
-              placeholder='About Me'
-                value={aboutMe}
-                onChange={(e) => setAboutMe(e.target.value)}
+                placeholder='About Me'
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows={4}
               />
             </div>
-        
+
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Phone Number</label>
               <PhoneInput
@@ -271,7 +339,7 @@ const ProfilePage = () => {
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Address</label>
               <input
-              placeholder='Address'
+                placeholder='Address'
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -288,6 +356,22 @@ const ProfilePage = () => {
                   onChange={(e) => setFacebook(e.target.value)}
                   className="w-1/4 p-2 border rounded"
                 />
+
+                <input
+                  type="url"
+                  placeholder="Instagram"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+
+                <input
+                  type="url"
+                  value={tiktok}
+                  placeholder="Tiktok"
+                  onChange={(e) => setTiktok(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
                 <input
                   type="url"
                   placeholder="Twitter"
@@ -295,25 +379,11 @@ const ProfilePage = () => {
                   onChange={(e) => setTwitter(e.target.value)}
                   className="w-1/4 p-2 border rounded"
                 />
-                <input
-                  type="url"
-                  placeholder="Dribbble"
-                  value={dribbble}
-                  onChange={(e) => setDribbble(e.target.value)}
-                  className="w-1/4 p-2 border rounded"
-                />
-                <input
-                  type="url"
-                  placeholder="GitHub"
-                  value={github}
-                  onChange={(e) => setGithub(e.target.value)}
-                  className="w-1/4 p-2 border rounded"
-                />
               </div>
             </div>
             <div className="flex justify-end space-x-2">
               <button
-                onClick={toggleEditModal}
+                onClick={handleEditProfile}
                 className={`px-4 py-2 ${iconColor} text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]`}
               >
                 Save
@@ -329,7 +399,7 @@ const ProfilePage = () => {
         </div>
       )}
 
-      {/* Modal for KYC Information */}
+      {/* Modal for KYC Information
       {isKYCModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
@@ -393,7 +463,7 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

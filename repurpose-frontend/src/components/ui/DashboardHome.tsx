@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaStar, FaShoppingCart, FaClock, FaGift, FaLeaf, FaCloud } from 'react-icons/fa'; // Importing icons from Font Awesome
+import { useUser } from "@/contexts/UserContext";
 
 const DashboardHome = () => {
+  const { user } = useUser();
   const [rewardPoints, setRewardPoints] = useState(0);
   const [carbonCredits, setCarbonCredits] = useState(0); // New state for carbon credits
   const [soldItems, setSoldItems] = useState(0);
@@ -13,7 +15,7 @@ const DashboardHome = () => {
   const [error, setError] = useState<string | null>(null);
 
   // const { user } = useUser();
-  const user = { role: 'seller' };
+  // const user = { role: 'seller' };
   console.log("ya her user", user);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ const DashboardHome = () => {
 
   useEffect(() => {
     // Apply different CSS variables based on user role
-    if (user?.role === 'seller') {
+    if (user?.role === 'store') {
       document.documentElement.style.setProperty('--primary', '217 91% 60%');
       document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
     } else if (user?.role) {

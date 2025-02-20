@@ -64,6 +64,7 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         setRole(response.data.role);
         setAccessToken(response.data.token);
         setRefreshToken(response.data.refreshToken);
+        console.log("User while login:", response.data);
         setUser(response.data);
         console.log("her vai user", user)
 

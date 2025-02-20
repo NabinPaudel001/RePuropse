@@ -28,6 +28,8 @@ const StoreProfilePage = () => {
   const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
 
+  console.log("user", user)
+
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -96,7 +98,7 @@ const StoreProfilePage = () => {
           setOwnerName(ownerName || "");
           setEmail(email || "");
           setStoreNumber(storeNumber || "");
-          setUser({ ...user, "storeName": storeName })
+          // setUser({ ...user, "storeName": storeName })
           setPhoneNumber(phoneNumber || "");
           setBusinessRegNumber(businessRegNumber || "");
           setStoreAddress(storeAddress || "");
@@ -150,7 +152,7 @@ const StoreProfilePage = () => {
 
       if (response.success) {
         console.log("KYC submission successful:", response.data);
-        setUser({ ...user, "storeName": storeName })
+        // setUser({ ...user, "storeName": storeName })
         setStatus("pending");
         toggleKYCModal();
       } else {
@@ -247,13 +249,14 @@ const StoreProfilePage = () => {
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
+                <p className="text-[hsl(var(--foreground))] font-bold">0</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
+              </div>
+              <div>
                 <p className="text-[hsl(var(--foreground))] font-bold">200</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Followers</p>
               </div>
-              <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">1500</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
-              </div>
+           
             </div>
 
             <div className="mt-4">
@@ -287,10 +290,10 @@ const StoreProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Email: contact@store.com
+            Email: {user?.email}
           </p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: +123 456 7890
+            Phone: {user?.phoneNumber}
           </p>
         </div>
 
