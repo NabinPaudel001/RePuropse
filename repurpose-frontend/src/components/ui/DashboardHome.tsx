@@ -54,11 +54,11 @@ const DashboardHome = () => {
   useEffect(() => {
     // Apply different CSS variables based on user role
     if (user?.role === 'store') {
-      document.documentElement.style.setProperty('--primary', '217 91% 60%');
-      document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
-    } else if (user?.role) {
       document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%');
       document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
+    } else if (user?.role) {
+      document.documentElement.style.setProperty('--primary', '217 91% 60%');
+      document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
     }
   }, [user?.role]);
 

@@ -3,16 +3,18 @@ import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
 import { apiRequest } from "@/middleware/errorInterceptor";
 import { Store } from "@/types/types";
-
+import { useUser } from "@/contexts/UserContext";
 
 
 interface ProductRequestsProps {
     productId: string;
     soldTo: Store | null;
     setSoldTo: React.Dispatch<React.SetStateAction<Store | null>>;
+    rewardPoints: number;
+    setRewardPoints: React.Dispatch<React.SetStateAction<number>>; // Include setRewardPoints in the props
 }
 
-const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, setSoldTo }) => {
+const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, setSoldTo, setRewardPoints, rewardPoints }) => {
     const [storeRequest, setStoreRequest] = useState<
         {
             _id: string;
@@ -34,6 +36,7 @@ const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, se
     const [selectedRequest, setSelectedRequest] = useState<typeof storeRequest[0] | null>(null);
     const [isViewModalOpen, setViewModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const { user, setUser } = useUser();
     // const [soldTo, setSoldTo] = useState<string | null>(null);
 
 
@@ -67,6 +70,13 @@ const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, se
             });
             console.log("response herrum ta", response);
             setSoldTo(response.data.store);
+            setRewardPoints(response.data.points.productRewardPoints)
+            if (user) {
+                setUser({
+                    ...user,
+                    totalRewardPoints: response.data.points.sellerTotalRewardPoints,
+                });
+            }
             setStoreRequest(storeRequest.filter(req => req._id !== requestId));
             setStoreRequest([]); // Clear pending requests
         } catch (error) {
@@ -80,7 +90,10 @@ const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, se
             {loading ? (
                 <p>Loading...</p>
             ) : soldTo ? (  // Show Sold status if the product is sold
-                <p className="text-center font-bold text-green-600">Sold to {soldTo.storeName}</p>
+                <div>
+                    <p className="text-center font-bold text-green-600">Sold to {soldTo.storeName}</p>
+                    <p className="text-center font-bold text-green-600">Earned Reward Points: {rewardPoints}</p>
+                </div>
             ) : storeRequest.length === 0 ? (
                 <div>
                     <h1 className="text-3xl font-bold mb-8 text-gray-800"> Store Requests</h1>

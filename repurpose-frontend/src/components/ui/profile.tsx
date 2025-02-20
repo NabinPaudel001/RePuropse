@@ -183,7 +183,7 @@ const ProfilePage = () => {
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
               </div>
               <div>
-                <p className={`font-bold ${textColor}`}>200</p>
+                <p className={`font-bold ${textColor}`}>{user?.totalRewardPoints || 0}</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Reward Points</p>
               </div>
 
@@ -219,6 +219,7 @@ const ProfilePage = () => {
 
           <p className="text-[hsl(var(--muted-foreground))] text-sm">Phone: {user?.phoneNumber}</p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">Email: {user?.email}</p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm">Location: {user?.address}</p>
         </div>
 
         {/* Social Links */}

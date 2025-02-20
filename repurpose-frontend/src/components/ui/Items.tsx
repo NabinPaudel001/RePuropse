@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/contexts/UserContext';
+import { apiRequest } from '@/middleware/errorInterceptor';
+import { Product } from '@/types/types';
 
 
 interface ItemProps {
+  _id: string;
   imageUrl: string[];
   name: string;
   description: string;
@@ -12,11 +15,12 @@ interface ItemProps {
   partName: string;
   materialName: string;
   ecoFriendly: string;
-  onDelete?: () => void;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>; 
   onClick?: () => void; // Add onClick prop to handle item click
 }
 
 const Items: React.FC<ItemProps> = ({
+  _id,
   imageUrl,
   name,
   description,
@@ -25,7 +29,7 @@ const Items: React.FC<ItemProps> = ({
   partName,
   materialName,
   ecoFriendly,
-  onDelete,
+  setProducts,
   onClick // Destructure onClick
 }) => {
 
@@ -40,14 +44,20 @@ const Items: React.FC<ItemProps> = ({
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imageUrl.length);
   };
 
-  const handleEdit = () => {
-    window.location.href = '/seller/dashboard/modify-items'; // Navigate to the modify item page
-  };
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      onDelete && onDelete();
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop click event from reaching the <Link>
+    try {
+      const response = await apiRequest(`/api/product/${_id}`, {
+        method: 'DELETE'
+      });
+      if (response.code === 200) {
+        alert("Product deleted successfully!");
+        setProducts((prev) => prev.filter((product) => product._id !== _id)); // Remove deleted product
+      }
+    } catch (err) {
+      console.error(err);
     }
+
   };
 
   return (
@@ -80,12 +90,12 @@ const Items: React.FC<ItemProps> = ({
         <p className="text-sm text-gray-600">{`Part: ${partName}`}</p>
         <p className="text-sm text-gray-600">{`Material: ${materialName}`}</p>
         <p className="text-sm text-gray-600">{`Eco-Friendly: ${ecoFriendly}`}</p>
-        {user?.role === "seller" && (
+        {/* {user?.role === "seller" && (
           <div className="flex justify-between mt-4">
-          <button onClick={handleEdit} className="text-blue-500 hover:underline">Edit</button>
+          <button className="text-blue-500 hover:underline">Edit</button>
           <button onClick={handleDelete} className="text-red-500 hover:underline">Delete</button>
         </div>
-        )}
+        )} */}
       </div>
     </div>
   );

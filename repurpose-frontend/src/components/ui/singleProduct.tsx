@@ -45,6 +45,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [soldTo, setSoldTo] = useState<Store | null>(null);
+  const [rewardPoints, setRewardPoints] = useState<number>(0);
   // const [currentImageIndex, setCurrentImageIndex] = useState(0);
   console.log("product id", params)
   const id = params?.id;
@@ -208,14 +209,26 @@ export default function ProductPage({ params }: ProductPageProps) {
             </div>
             {user?.role === 'store' && (
               <>
-                <Button
-                  variant="outline"
-                  className={`w-full px-4 py-2 mt-4 ${hasRequested ? 'bg-gray-600' : 'bg-green-500'} text-white`}
-                  onClick={() => setShowModal(true)}
-                  disabled={hasRequested}
-                >
-                  {hasRequested ? "Requested" : "Request for Buy"}
-                </Button>
+                {soldTo ? (
+                  soldTo.userID === user.id ? (
+                    <Button className="w-full px-4 py-2 mt-4 bg-green-500 text-white cursor-default">
+                      Bought
+                    </Button>
+                  ) : (
+                    <Button className="w-full px-4 py-2 mt-4 bg-gray-400 text-white cursor-not-allowed" disabled>
+                      NOT AVAILABLE
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    variant="outline"
+                    className={`w-full px-4 py-2 mt-4 ${hasRequested ? 'bg-gray-600' : 'bg-green-500'} text-white`}
+                    onClick={() => setShowModal(true)}
+                    disabled={hasRequested}
+                  >
+                    {hasRequested ? "Requested" : "Request for Buy"}
+                  </Button>
+                )}
 
                 {showModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -357,6 +370,8 @@ export default function ProductPage({ params }: ProductPageProps) {
             productId={id}
             soldTo={soldTo}
             setSoldTo={setSoldTo}
+            setRewardPoints={setRewardPoints}
+            rewardPoints={rewardPoints}
           />
         )}
 

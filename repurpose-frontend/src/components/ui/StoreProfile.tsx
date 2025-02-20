@@ -17,13 +17,13 @@ const StoreProfilePage = () => {
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
   const [storeName, setStoreName] = useState(user?.storeName || "");
   const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber);
   const [ownerName, setOwnerName] = useState(user?.firstName || "");
   const [storeId, setStoreId] = useState("");
   const [email, setEmail] = useState(user?.email || "");
   const [storeNumber, setStoreNumber] = useState("");
   const [businessRegNumber, setBusinessRegNumber] = useState("");
-  const [storeAddress, setStoreAddress] = useState("");
+  const [storeAddress, setStoreAddress] = useState(user?.address || "");
   const [businessRegCertificate, setBusinessRegCert] = useState<File | null>(null);
   const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);

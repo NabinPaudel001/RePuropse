@@ -7,18 +7,11 @@ import { getUserId } from "@/utils/tokens";
 import ProductPage from "@/components/ui/singleProduct"
 import Link from "next/link";
 import { useUser } from '@/contexts/UserContext';
+import { Product } from "@/types/types";
 
 
 // Define types for the product and the props of the MyListings component
-interface Product {
-  _id: number;
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  status: string;
-  discount: number;
-}
+
 
 const MyListings: React.FC = () => {
   const { user, setUser } = useUser();
@@ -85,14 +78,16 @@ const MyListings: React.FC = () => {
         {products.map((product) => (
           <Link href={`/${user?.role}/dashboard/product/${product._id}`} key={product._id}>
             <Items
-              imageUrl={product?.images} // Use the images array from the product
+              _id={product._id}
+              imageUrl={product?.images}
               name={product.name}
               description={product.description}
               originalPrice={product.price}
               discount={product.discount}
-              partName="Example Part" // Update with actual field if needed
-              materialName="Example Material" // Update with actual field if needed
-              ecoFriendly="Yes" // Update with actual field if needed
+              partName={product.partName}
+              materialName="Example Material"
+              ecoFriendly="Yes"
+              setProducts={setProducts} // Pass setProducts directly
             />
           </Link>
         ))}

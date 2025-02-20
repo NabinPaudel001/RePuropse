@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getUserId } from "@/utils/tokens";
+import { apiRequest } from "@/middleware/errorInterceptor";
 
-const ModifyItems: React.FC = (id:any) => {
-  const [products, setProducts] = useState<{ id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<{ id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] } | null>(null);
+const ModifyItems: React.FC = (id: any) => {
+  const [products, setProducts] = useState<{ _id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<{ _id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] } | null>(null);
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [proposedPrice, setProposedPrice] = useState("");
@@ -14,20 +16,28 @@ const ModifyItems: React.FC = (id:any) => {
   const [images, setImages] = useState<string[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const viewNames = ["Front View", "Side View", "Back View", "Top View", "Bottom View"];
+  const sellerId = getUserId(); // Get the sellerId from a utility function (JWT or other storage)
 
   useEffect(() => {
     const fetchData = async () => {
-      const mockData = [
-        { id: 1, name: "Product 1", description: "Description 1", price: "10", discount: "5", partName: "Interior", materialName: "Cotton", ecoFriendly: "Yes", images: ["/path/to/image1.jpg", "/path/to/image2.jpg"] },
-        { id: 2, name: "Product 2", description: "Description 2", price: "20", discount: "10", partName: "Exterior", materialName: "Wool", ecoFriendly: "No", images: ["/path/to/image3.jpg"] },
-      ];
-      setProducts(mockData);
+      const response = await apiRequest(`/api/product/seller/pending/${sellerId}`, {
+        method: 'GET'
+      });
+      console.log("response", response)
+      if (response.success) {
+        setProducts(response.data); // Set products with the fetched data
+      }
+      // const mockData = [
+      //   { id: 1, name: "Product 1", description: "Description 1", price: "10", discount: "5", partName: "Interior", materialName: "Cotton", ecoFriendly: "Yes", images: ["/path/to/image1.jpg", "/path/to/image2.jpg"] },
+      //   { id: 2, name: "Product 2", description: "Description 2", price: "20", discount: "10", partName: "Exterior", materialName: "Wool", ecoFriendly: "No", images: ["/path/to/image3.jpg"] },
+      // ];
+      // setProducts(mockData);
     };
 
     fetchData();
   }, []);
 
-  const handleEditProduct = (product: { id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }) => {
+  const handleEditProduct = (product: { _id: number; name: string; description: string; price: string; discount: string; partName: string; materialName: string; ecoFriendly: string; images: string[] }) => {
     setSelectedProduct(product);
     setProductName(product.name);
     setDescription(product.description);
@@ -78,7 +88,7 @@ const ModifyItems: React.FC = (id:any) => {
       return;
     }
     const updatedProducts = products.map((product) =>
-      product.id === selectedProduct?.id
+      product._id === selectedProduct?._id
         ? { ...product, name: productName, description, price: proposedPrice, discount, partName, materialName, ecoFriendly, images }
         : product
     );
@@ -95,6 +105,22 @@ const ModifyItems: React.FC = (id:any) => {
     setImagePreviews([]);
   };
 
+  const handleDelete = async (_id:any) => {
+    try {
+      const response = await apiRequest(`/api/product/${_id}`, {
+        method: 'DELETE'
+      });
+      if (response.code === 200) {
+        alert("Product deleted successfully!");
+        setProducts((prev) => prev.filter((product) => product._id !== _id)); // Remove deleted product
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+  console.log("products in modify items", products);
   return (
     <div className="p-6 bg-[hsl(var(--background))] min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center text-[hsl(var(--primary))]">Modify Items</h1>
@@ -105,7 +131,7 @@ const ModifyItems: React.FC = (id:any) => {
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Description</th>
             <th className="py-2 px-4 border-b">Price</th>
-            <th className="py-2 px-4 border-b">Discount</th>
+            {/* <th className="py-2 px-4 border-b">Discount</th> */}
             <th className="py-2 px-4 border-b">Part Name</th>
             <th className="py-2 px-4 border-b">Material Name</th>
             <th className="py-2 px-4 border-b">Eco-Friendly</th>
@@ -115,15 +141,15 @@ const ModifyItems: React.FC = (id:any) => {
         </thead>
         <tbody>
           {products.map((product, index) => (
-            <tr key={product.id}>
+            <tr key={product._id}>
               <td className="py-2 px-4 border-b text-center">{index + 1}</td>
               <td className="py-2 px-4 border-b">{product.name}</td>
               <td className="py-2 px-4 border-b">{product.description}</td>
               <td className="py-2 px-4 border-b">{product.price}</td>
-              <td className="py-2 px-4 border-b">{product.discount}</td>
+              {/* <td className="py-2 px-4 border-b">{product.discount}</td> */}
               <td className="py-2 px-4 border-b">{product.partName}</td>
               <td className="py-2 px-4 border-b">{product.materialName}</td>
-              <td className="py-2 px-4 border-b">{product.ecoFriendly}</td>
+              <td className="py-2 px-4 border-b">{product.ecoFriendly? "YES": "NO"}</td>
               <td className="py-2 px-4 border-b">
                 <img
                   src={product.images[0]}
@@ -131,13 +157,14 @@ const ModifyItems: React.FC = (id:any) => {
                   className="h-16 w-16 object-cover"
                 />
               </td>
-              <td className="py-2 px-4 border-b">
+              <td className="py-2 px-4 border-b flex gap-2">
                 <button type="button"
                   onClick={() => handleEditProduct(product)}
                   className="text-blue-500 hover:text-blue-700"
                 >
                   Edit
                 </button>
+                <button onClick={()=>handleDelete(product._id)} className="text-red-500 hover:underline">Delete</button>
               </td>
             </tr>
           ))}

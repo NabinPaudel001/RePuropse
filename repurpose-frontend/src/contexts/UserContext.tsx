@@ -13,7 +13,9 @@ type User = {
     storeName?: string;
     email?: string
     storeStatus?: string,
+    address?: string;
     about?: string;
+    totalRewardPoints?:number,
     socialMediaHandles?: {
         facebook?: string;
         instagram?: string;

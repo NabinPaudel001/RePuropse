@@ -1,3 +1,4 @@
+import exp from "constants";
 import { StaticImageData } from "next/image";
 
 export interface Event {
@@ -20,6 +21,7 @@ export interface Notification {
 
 export interface Store {
   _id: string;
+  userID: string;
   storeName: string;
   ownerName: string;
   email: string;
@@ -27,4 +29,17 @@ export interface Store {
   phoneNumber: string;
   storeNumber: string;
   storeFrontImage: string;
+}
+
+export interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  images: string[];
+  status: string;
+  discount: number;
+  partName: string;
+  materialName: string;
+  ecoFriendly: string;
 }

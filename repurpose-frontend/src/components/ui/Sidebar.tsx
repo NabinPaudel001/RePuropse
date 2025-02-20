@@ -167,7 +167,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    href="/chats"
+                    href="/seller/dashboard/chats"
                     className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
                   >
                     <MdMessage className="mr-3" /> Chats
