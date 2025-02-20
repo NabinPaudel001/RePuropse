@@ -36,7 +36,9 @@ export default function ManageIssues() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Manage Issues</h2>
         <div className="relative">
+          <label htmlFor="category-select" className="sr-only">Select a category</label>
           <select
+            id="category-select"
             className="border px-3 py-2 rounded-md appearance-none bg-white"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -70,8 +72,18 @@ export default function ManageIssues() {
   );
 }
 
-function IssueTable({ issues, setIssues }) {
-  const handleStatusChange = (id, newStatus) => {
+interface Issue {
+  id: number;
+  title: string;
+  description: string;
+  postedBy: string;
+  status: string;
+  category: string;
+  screenshot: string;
+}
+
+function IssueTable({ issues, setIssues }: { issues: Issue[], setIssues: React.Dispatch<React.SetStateAction<Issue[]>> }) {
+  const handleStatusChange = (id: number, newStatus: string) => {
     setIssues((prevIssues) =>
       prevIssues.map((issue) =>
         issue.id === id ? { ...issue, status: newStatus } : issue
@@ -79,7 +91,7 @@ function IssueTable({ issues, setIssues }) {
     );
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     setIssues((prevIssues) => prevIssues.filter((issue) => issue.id !== id));
   };
 
@@ -100,7 +112,7 @@ function IssueTable({ issues, setIssues }) {
       <TableBody>
         {issues.length === 0 ? (
           <TableRow>
-            <TableCell colSpan="8" className="text-center p-4 text-gray-500">No issues found</TableCell>
+            <TableCell colSpan={8} className="text-center p-4 text-gray-500">No issues found</TableCell>
           </TableRow>
         ) : (
           issues.map((issue) => (
@@ -110,7 +122,9 @@ function IssueTable({ issues, setIssues }) {
               <TableCell>{issue.description}</TableCell>
               <TableCell>{issue.postedBy}</TableCell>
               <TableCell>
+                <label htmlFor={`status-select-${issue.id}`} className="sr-only">Status</label>
                 <select
+                  id={`status-select-${issue.id}`}
                   value={issue.status}
                   onChange={(e) => handleStatusChange(issue.id, e.target.value)}
                   className="border px-2 py-1 rounded-md bg-white"

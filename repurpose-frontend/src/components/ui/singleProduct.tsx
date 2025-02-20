@@ -236,6 +236,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                       <h2 className="text-lg font-semibold mb-4">Confirm Purchase</h2>
                       <p className="text-gray-600 mb-2">Listed Price: Rs. {product.price}</p>
                       <input
+                      placeholder="Proposed Price"
                         type="number"
                         value={proposedPrice}
                         onChange={(e) => setProposedPrice(Number(e.target.value))}

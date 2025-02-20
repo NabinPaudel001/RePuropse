@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
-async function getSellerData(id) {
+async function getSellerData(id: string) {
   const sellers = [
     { id: "1", name: "John Doe", email: "john@example.com", contact: "9876543210", profilePic: "/images/OIP.jpeg", rewards: 500, soldItems: 10, pendingItems: 2 },
     { id: "2", name: "Jane Smith", email: "jane@example.com", contact: "9876543211", profilePic: "/images/R.jpeg", rewards: 300, soldItems: 5, pendingItems: 1 },
@@ -11,7 +11,11 @@ async function getSellerData(id) {
   return sellers.find((s) => s.id === id) || null;
 }
 
-export default async function SellerDetails({ params }) {
+interface Params {
+  id: string;
+}
+
+export default async function SellerDetails({ params }: { params: Params }) {
   const seller = await getSellerData(params.id);
 
   if (!seller) return notFound();

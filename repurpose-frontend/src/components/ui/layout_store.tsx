@@ -6,7 +6,7 @@ import Sidebar_store from '@/components/ui/Sidebar_store';
 
 const Layout_store = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex">
+    <div className="flex inset-0">
       <Sidebar_store />
       <div className="flex flex-col flex-grow">
         <Header />

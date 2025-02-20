@@ -44,7 +44,15 @@ export default function ManageUsers() {
   );
 }
 
-function SellerTable({ sellers }) {
+interface Seller {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  profilePic: string;
+}
+
+function SellerTable({ sellers }: { sellers: Seller[] }) {
   const router = useRouter();
 
   return (
@@ -74,7 +82,15 @@ function SellerTable({ sellers }) {
   );
 }
 
-function StoreTable({ stores }) {
+interface Store {
+  id: number;
+  storeName: string;
+  contact: string;
+  address: string;
+  profilePic: string;
+}
+
+function StoreTable({ stores }: { stores: Store[] }) {
   const router = useRouter();
 
   return (
