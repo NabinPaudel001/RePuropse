@@ -11,7 +11,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       {/* Removed ml-64 from here */}
       <div className="flex flex-col flex-grow">
         <Header />
-        <div className="flex  justify-center items-center p-10 mt-16 min-h-[calc(100vh-4rem)]">
+        <div className="flex justify-center items-center p-10 mt-16 min-h-[calc(100vh-4rem)]">
           {children}
         </div>
       </div>

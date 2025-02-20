@@ -37,7 +37,17 @@ export default function ManageListed() {
   );
 }
 
-function ListedTable({ listedItems }) {
+interface ListedItem {
+  id: number;
+  title: string;
+  category: string;
+  price: string;
+  status: string;
+  listedBy: string;
+  image: string;
+}
+
+function ListedTable({ listedItems }: { listedItems: ListedItem[] }) {
   return (
     <Table className="w-full border rounded-lg overflow-hidden">
       <TableHeader>
@@ -78,7 +88,7 @@ function ListedTable({ listedItems }) {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan="7" className="text-center text-gray-500">
+            <TableCell colSpan={7} className="text-center text-gray-500">
               No listed items found
             </TableCell>
           </TableRow>

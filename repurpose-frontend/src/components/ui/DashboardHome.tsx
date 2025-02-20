@@ -53,7 +53,7 @@ const DashboardHome = () => {
 
   useEffect(() => {
     // Apply different CSS variables based on user role
-    if (user?.role === 'store') {
+    if (user?.role === 'seller') {
       document.documentElement.style.setProperty('--primary', '217 91% 60%');
       document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
     } else if (user?.role) {

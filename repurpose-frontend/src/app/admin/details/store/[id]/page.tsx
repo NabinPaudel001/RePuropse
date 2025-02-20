@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
-async function getStoreData(id) {
+async function getStoreData(id: string) {
   const stores = [
     { id: "1", storeName: "SuperMart", owner: "John Doe", address: "Kathmandu", contact: "9800000001", email: "supermart@example.com", followers: 1200, about: "A one-stop shop for all your daily needs.", profilePic: "/images/OIP.jpeg" },
     { id: "2", storeName: "TechShop", owner: "Jane Smith", address: "Lalitpur", contact: "9800000002", email: "techshop@example.com", followers: 800, about: "Latest gadgets and accessories available here.", profilePic: "/images/R.jpeg" },
@@ -11,7 +11,11 @@ async function getStoreData(id) {
   return stores.find((s) => s.id === id) || null;
 }
 
-export default async function StoreDetails({ params }) {
+interface Params {
+  id: string;
+}
+
+export default async function StoreDetails({ params }: { params: Params }) {
   const store = await getStoreData(params.id);
 
   if (!store) return notFound();

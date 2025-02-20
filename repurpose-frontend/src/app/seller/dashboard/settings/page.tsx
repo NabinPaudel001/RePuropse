@@ -12,7 +12,7 @@ import { Settings } from 'lucide-react';
  */
 const Page = () => {
   return (
-    <Layout children={null}>
+    <Layout>
       <SettingsPage/>
     </Layout>
   );
