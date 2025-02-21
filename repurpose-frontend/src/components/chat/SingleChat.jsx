@@ -71,7 +71,7 @@ const SingleChat = ({
         console.log("hey");
         socket.emit("stop typing", selectedChat._id);
       } else {
-        console.error("Socket is not initialized!");
+        console.log("Socket is not initialized!");
       }
       try {
         const headers = {

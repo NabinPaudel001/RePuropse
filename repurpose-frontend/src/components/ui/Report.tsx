@@ -1,5 +1,6 @@
 "use client";
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useUser } from '@/contexts/UserContext';
 
 interface FormData {
   category: string;
@@ -16,17 +17,16 @@ export default function Report() {
     attachment: null,
   });
 
-  // Simulated user role for demonstration; change to 'store' to test store color theme.
-  const user = { role: 'seller' };
+  const { user } = useUser();
 
   useEffect(() => {
     // Apply CSS variables based on user role
     if (user?.role === 'seller') {
-      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%'); // Green theme
-      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
-    } else if (user?.role) {
       document.documentElement.style.setProperty('--primary', '217 91% 60%'); // Blue theme
       document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
+    } else if (user?.role) {
+      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%'); // Green theme
+      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
 
     }
   }, [user?.role]);

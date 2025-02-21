@@ -17,7 +17,7 @@ const StoreProfilePage = () => {
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
   const [storeName, setStoreName] = useState(user?.storeName || "");
   const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
-  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber);
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
   const [ownerName, setOwnerName] = useState(user?.firstName || "");
   const [storeId, setStoreId] = useState("");
   const [email, setEmail] = useState(user?.email || "");
@@ -245,7 +245,7 @@ const StoreProfilePage = () => {
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Products</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">129</p>
+                <p className="text-[hsl(var(--foreground))] font-bold">2</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
@@ -414,7 +414,7 @@ const StoreProfilePage = () => {
                   inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4">''
                 <label className="block text-sm font-bold mb-2">Business Registration Number (PAN/VAT)</label>
                 <input
                   type="text"

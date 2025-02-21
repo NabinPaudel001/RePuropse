@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function LoginPage({ onClose }: LoginPageProps) {
   const { user, setUser } = useUser();
+  const [serverError, setServerError] = useState("");
 
   const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
   const [showOTPInput, setShowOTPInput] = useState(false);
@@ -72,7 +73,8 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         setIsLoggedIn(true);
         router.push(`/${response.data.role}/dashboard/home`);
       }
-    } catch (error) {
+    } catch (error: any) {
+      setServerError(error.message)
       console.log("Error during login:", error);
     }
   };
@@ -91,7 +93,9 @@ export default function LoginPage({ onClose }: LoginPageProps) {
         <button onClick={onClose} className="absolute top-9 right-12 text-red-500 text-4xl hover:text-gray-700">
           &times;
         </button>
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Login</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Login
+        </h1>
+        {serverError && <p className="text-sm text-center text-red-500">{serverError}</p>}
         {showOTPInput ? (
           <OTPInput userID={userID} />
         ) : (
@@ -122,7 +126,10 @@ export default function LoginPage({ onClose }: LoginPageProps) {
                 required
               />
             </div>
-            <Button className="px-6 py-4">Login</Button>
+            <div className="flex justify-center items-center w-full">
+
+              <Button className="px-6 py-4">Login</Button>
+            </div>
           </form>
         )}
         <div className="mt-4 text-center">

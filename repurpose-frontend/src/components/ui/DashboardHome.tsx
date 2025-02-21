@@ -53,7 +53,7 @@ const DashboardHome = () => {
 
   useEffect(() => {
     // Apply different CSS variables based on user role
-    if (user?.role === 'store') {
+    if (user?.role === 'seller') {
       document.documentElement.style.setProperty('--primary', '217 91% 60%');
       document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
     } else if (user?.role) {
@@ -82,7 +82,7 @@ const DashboardHome = () => {
             <FaStar className="text-[hsl(var(--primary))] text-3xl mr-4" />
             <div>
               <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Reward Points</h2>
-              <p className="text-2xl text-[hsl(var(--foreground))]">{rewardPoints}</p>
+              <p className="text-2xl text-[hsl(var(--foreground))]">{user?.totalRewardPoints}</p>
             </div>
           </div>
         </div>

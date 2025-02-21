@@ -6,10 +6,12 @@ import {
   MdMenu,
   MdClose,
   MdList,
+  MdEdit,
   MdPerson,
   MdSettings,
   MdNotifications,
   MdMessage,
+  MdAdd,
   MdHome,
   MdSupportAgent
 } from "react-icons/md";
@@ -19,6 +21,7 @@ const Sidebar = () => {
   const [mounted, setMounted] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [openMenu, setOpenMenu] = useState("");
 
   // Set mounted flag and update state from localStorage after mount
   useEffect(() => {
@@ -49,6 +52,11 @@ const Sidebar = () => {
     if (isMobile) {
       setIsSidebarOpen(false);
     }
+  };
+
+   // Toggle sub-menu (e.g., Manage Items)
+   const toggleMenu = (menu: string) => {
+    setOpenMenu(openMenu === menu ? "" : menu);
   };
 
   // Don't render until mounted to ensure client and server markup match
@@ -113,6 +121,41 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li>
+                  <button
+                    className="flex items-center justify-between w-full text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
+                    onClick={(e) => {
+                      // Prevent the sidebar from closing when clicking the button
+                      e.stopPropagation();
+                      toggleMenu("ManageItems");
+                    }}
+                  >
+                    <span className="flex items-center">
+                      <MdEdit className="mr-3" /> Manage Items
+                    </span>
+                    <span>{openMenu === "ManageItems" ? "-" : "+"}</span>
+                  </button>
+                  {openMenu === "ManageItems" && (
+                    <ul className="ml-6 mt-2 space-y-2 text-base">
+                      <li>
+                        <Link
+                          href="/seller/dashboard/add-items"
+                          className="flex items-center hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
+                        >
+                          <MdAdd className="mr-2" /> Add Items
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/seller/dashboard/modify-items"
+                          className="flex items-center hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
+                        >
+                          <MdEdit className="mr-2" /> Modify Items
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+                <li>
                   <Link
                     href="/seller/dashboard/notifications"
                     className="flex items-center text-lg font-semibold hover:text-gray-200 transition-colors duration-200"
@@ -122,7 +165,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    href="/chats"
+                    href="/seller/dashboard/chats"
                     className="flex items-center text-lg font-semibold hover:text-[hsl(var(--primary-foreground))] transition-colors duration-200"
                   >
                     <MdMessage className="mr-3" /> Chats

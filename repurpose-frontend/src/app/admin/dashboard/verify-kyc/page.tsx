@@ -48,7 +48,7 @@ const VerifyKYC = () => {
         console.log("respone her", response)
         setKycData(response.data); // Assuming the response contains the KYC data
       } catch (error) {
-        console.error("Error fetching KYC data:", error);
+        console.log("Error fetching KYC data:", error);
       }
     };
 

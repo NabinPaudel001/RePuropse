@@ -39,16 +39,6 @@ export async function customFetch(url, options = {}) {
       }
     }
 
-    // Handle non-successful responses
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null); // Fallback for non-JSON responses
-      throw {
-        status: response.status,
-        message: errorData?.message || "An error occurred while processing the request.",
-        data: errorData,
-      };
-    }
-
     // Return the successful response as JSON
     return await response.json();
   } catch (error) {
