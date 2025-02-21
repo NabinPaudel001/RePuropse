@@ -18,7 +18,6 @@ import { useSelector, useDispatch } from "react-redux";
 export default function LoginPage({ onClose }: LoginPageProps) {
   const { user, setUser } = useUser();
   const [serverError, setServerError] = useState("");
-
   const { socket, isConnected, setIsLoggedIn } = useSocket(); // Use setIsLoggedIn from context
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [role, setRole] = useState("");

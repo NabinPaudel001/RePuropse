@@ -68,7 +68,10 @@ function validateSignupForm(values: SignupFormValues): SignupFormErrors {
 
   // Validate phone number (excluding country code)
   const phoneNumberWithoutCountryCode = values.phoneNumber.replace(/^\+977/, '');
-  if (!phoneNumberWithoutCountryCode || phoneNumberWithoutCountryCode.length < 7 || phoneNumberWithoutCountryCode.length > 10) {
+  if (!phoneNumberWithoutCountryCode) {
+    errors.phoneNumber = "(required)"
+  }
+  else if (phoneNumberWithoutCountryCode.length < 7 || phoneNumberWithoutCountryCode.length > 10) {
     errors.phoneNumber = "(Invalid Phone Number)";
   }
 
@@ -91,8 +94,16 @@ function validateSignupForm(values: SignupFormValues): SignupFormErrors {
     errors.password = "(Invalid Password)";
   }
 
+  // if (!values.confirmPassword || values.confirmPassword.trim() === "") {
+  //   console.log("con", values.confirmPassword);
+  //   errors.confirmPassword = "(required)"
+  // } else if (values.confirmPassword !== values.password) {
+  //   errors.confirmPassword = "(Passwords do not match) "
+  // }
+
   return errors;
 }
+
 
 export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -102,6 +113,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [userID, setUserID] = useState("");
+  const [serverError, setServerError] = useState("");
 
   const [formData, setFormData] = useState({
     role: "",
@@ -169,8 +181,10 @@ export default function SignupPage() {
         await sendOTPToEmail();
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.log("Error during signup:", error);
+      setServerError(error.message);
+      console.log(error.message)
     }
   };
 
@@ -195,6 +209,8 @@ export default function SignupPage() {
     }
     return errors;
   };
+
+  console.log("SER", serverError);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -253,7 +269,6 @@ export default function SignupPage() {
                           name="firstName"
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
-                          required
                         />
                       </div>
                       <div className="w-1/2">
@@ -261,8 +276,8 @@ export default function SignupPage() {
                           <label htmlFor="lastName" className="block text-gray-700 font-medium mb-2">
                             Last Name
                           </label>
+                          {formErrors.lastName && <span className="text-red-500">{formErrors.lastName}</span>}
                         </div>
-                        {formErrors.lastName && <span className="text-red-500">{formErrors.lastName}</span>}
                         <input
                           type="text"
                           id="lastName"
@@ -270,17 +285,18 @@ export default function SignupPage() {
                           name="lastName"
                           onChange={handleInput}
                           className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--destructive))] shadow-sm"
-                          required
                         />
                       </div>
                     </div>
                     <div className="mb-4">
                       <div className="flex justify-between">
                         <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+                          Email
                         </label>
-                        Email
+                        {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
+                        {serverError && <span className="text-red-500">{serverError}</span>}
+
                       </div>
-                      {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
                       <input
                         type="text"
                         id="email"
@@ -288,16 +304,15 @@ export default function SignupPage() {
                         name="email"
                         onChange={handleInput}
                         className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
-                      // required
                       />
                     </div>
                     <div className="mb-4">
-                      <div className="flex justify-between sm:flex-col">
+                      <div className="flex justify-between">
                         <label htmlFor="contact" className="block text-gray-700 font-medium mb-2">
                           Contact
                         </label>
+                        {formErrors.phoneNumber && <span className="text-red-500">{formErrors.phoneNumber}</span>}
                       </div>
-                      {formErrors.phoneNumber && <span className="text-red-500">{formErrors.phoneNumber}</span>}
                       <PhoneInput
                         country={'np'} // Default to Nepal
                         value={formData.phoneNumber} // Bind the input value to formData.phoneNumber
@@ -342,15 +357,17 @@ export default function SignupPage() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3 text-gray-500"
+                        className="absolute right-3 top-12 text-gray-500"
                       >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
                     </div>
                     <div className="mb-6 relative">
-                      <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
-                        Confirm Password
-                      </label>
+                      <div className="flex justify-between">
+                        <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
+                          Confirm Password
+                        </label>
+                      </div>
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         id="confirmPassword"
@@ -363,7 +380,7 @@ export default function SignupPage() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-3 text-gray-500"
+                        className="absolute right-3 top-12 text-gray-500"
                       >
                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
@@ -471,6 +488,7 @@ export default function SignupPage() {
                           Email
                         </label>
                         {formErrors.email && <span className="text-red-500">{formErrors.email}</span>}
+                        {serverError && <span className="text-red-500">{serverError}</span>}
                       </div>
                       <input
                         type="text"
@@ -509,7 +527,6 @@ export default function SignupPage() {
                         <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
                           Confirm Password
                         </label>
-                        {formErrors.password && <span className="text-red-500">{formErrors.password}</span>}
                       </div>
                       <input
                         type={showConfirmPassword ? "text" : "password"}
