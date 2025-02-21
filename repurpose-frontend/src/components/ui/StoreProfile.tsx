@@ -28,7 +28,7 @@ const StoreProfilePage = () => {
   const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
 
-  console.log("user", user)
+  console.log("user", user);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -45,11 +45,11 @@ const StoreProfilePage = () => {
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
 
-    console.log("file ta xa", file)
+    console.log("file ta xa", file);
     const formData = new FormData();
     formData.append("profilePicture", file);
 
-    console.log("formDAta", formData)
+    console.log("formDAta", formData);
 
     try {
       const response = await apiRequest("/api/user/profile-picture", {
@@ -57,20 +57,17 @@ const StoreProfilePage = () => {
         body: formData
       });
 
-      console.log("response", response)
+      console.log("response", response);
 
       if (response.success) {
-        console.log("profile picture changed")
-        setUser(response.data)
+        console.log("profile picture changed");
+        setUser(response.data);
       } else {
         console.log("Failed to upload profile picture");
         setServerError("An unexpected error occurred.");
-
       }
     } catch (error) {
       console.log("Error uploading profile picture:", error);
-      // setServerError(error?.message || "An unexpected error occurred.");
-
     }
   };
 
@@ -98,14 +95,13 @@ const StoreProfilePage = () => {
           setOwnerName(ownerName || "");
           setEmail(email || "");
           setStoreNumber(storeNumber || "");
-          // setUser({ ...user, "storeName": storeName })
           setPhoneNumber(phoneNumber || "");
           setBusinessRegNumber(businessRegNumber || "");
           setStoreAddress(storeAddress || "");
           setStatus(status || "");
-          setStoreId(response.data._id || "")
+          setStoreId(_id || "");
 
-          console.log("REsp", response)
+          console.log("REsp", response);
         } else {
           console.log("Failed to fetch KYC data:", response.message);
         }
@@ -114,13 +110,12 @@ const StoreProfilePage = () => {
       }
     };
 
-    // Fetch KYC data only if user has a storeStatus
     if (user?.storeStatus && !status) {
       fetchKYCData();
     }
-  }, [user?.storeStatus, status]); // Dependency on user?.storeStatus and status
+  }, [user?.storeStatus, status]);
 
-  console.log("storeid", storeId)
+  console.log("storeid", storeId);
 
   const handleKYCSubmit = async () => {
     try {
@@ -142,8 +137,7 @@ const StoreProfilePage = () => {
           method: "PATCH",
           body: formData,
         });
-      }
-      else {
+      } else {
         response = await apiRequest("/api/store/KYC", {
           method: "POST",
           body: formData,
@@ -152,7 +146,6 @@ const StoreProfilePage = () => {
 
       if (response.success) {
         console.log("KYC submission successful:", response.data);
-        // setUser({ ...user, "storeName": storeName })
         setStatus("pending");
         toggleKYCModal();
       } else {
@@ -162,7 +155,6 @@ const StoreProfilePage = () => {
       console.log("Error submitting KYC data:", error);
     }
   };
-
 
   const handlePhoneChange = (phone: string) => {
     setPhoneNumber(phone);
@@ -175,7 +167,6 @@ const StoreProfilePage = () => {
         <div className="bg-[hsl(var(--card))] shadow-md rounded-lg overflow-hidden">
           <div className="relative flex justify-center">
             <div className='relative w-32 h-32 rounded-full'>
-
               <div className="relative w-32 h-32 rounded-full border-4 border-[hsl(var(--card))] overflow-hidden">
                 {user?.profilePicture ? (
                   <Image
@@ -195,7 +186,7 @@ const StoreProfilePage = () => {
                 )}
               </div>
               <div
-                className="absolute bottom-1 z-10 right-2 p-2 bg-gray-500 rounded-md w-8 h-8 flex items-center  cursor-pointer"
+                className="absolute bottom-1 z-10 right-2 p-2 bg-gray-500 rounded-md w-8 h-8 flex items-center cursor-pointer"
                 onClick={() => document.getElementById("profilePictureInput")?.click()}>
                 <FontAwesomeIcon icon={faCamera} className="text-white text-sm" />
                 <input
@@ -211,14 +202,12 @@ const StoreProfilePage = () => {
                     }
                   }}
                 />
-
               </div>
             </div>
           </div>
 
           {/* Store Info */}
           <div className="text-center p-4 mt-6">
-
             {/* Status Section */}
             <div className="mt-4 text-center">
               {status && (
@@ -228,14 +217,13 @@ const StoreProfilePage = () => {
               )}
             </div>
             <div className="flex gap-2 items-center justify-center w-full">
-              <p className="text-2xl text-center font-bold text-[hsl(var(--foreground))]">{user?.storeName}</p>
+              <p className="text-2xl text-center font-bold text-[hsl(var(--foreground))]">{storeName}</p>
 
               {status === 'approved' ? (
                 <Icons type="verified"></Icons>
               ) : (
                 <span> </span>
-              )
-              }
+              )}
             </div>
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
@@ -256,7 +244,6 @@ const StoreProfilePage = () => {
                 <p className="text-[hsl(var(--foreground))] font-bold">200</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Followers</p>
               </div>
-           
             </div>
 
             <div className="mt-4">
@@ -290,10 +277,10 @@ const StoreProfilePage = () => {
         <div className="mt-6 bg-[hsl(var(--card))] shadow-md rounded-lg p-6">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Contact Information</h3>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Email: {user?.email}
+            Email: {email}
           </p>
           <p className="text-[hsl(var(--muted-foreground))] text-sm">
-            Phone: {user?.phoneNumber}
+            Phone: {phoneNumber}
           </p>
         </div>
 
@@ -319,23 +306,103 @@ const StoreProfilePage = () => {
 
       {/* Modal for Editing Store */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">Edit Store</h3>
             <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Store Name</label>
+              <div className="flex space-x-4">
+                <div className="w-1/2">
+                  <label className="block text-sm font-bold mb-2">Store Name</label>
+                  <input
+                    placeholder='Store Name'
+                    type="text"
+                    value={storeName}
+                    onChange={(e) => setStoreName(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-sm font-bold mb-2">Owner's Name</label>
+                  <input
+                    placeholder="Owner's Name"
+                    type="text"
+                    value={ownerName}
+                    onChange={(e) => setOwnerName(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">About Us</label>
+              <textarea
+                placeholder='About Us'
+                value={storeAddress}
+                onChange={(e) => setStoreAddress(e.target.value)}
+                className="w-full p-2 border rounded"
+                rows={4}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Phone Number</label>
+              <PhoneInput
+                country={'np'}
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Store Address</label>
               <input
+                placeholder='Store Address'
                 type="text"
-                placeholder='Store Name'
-                value={storeName}
-                onChange={(e) => setStoreName(e.target.value)}
+                value={storeAddress}
+                onChange={(e) => setStoreAddress(e.target.value)}
                 className="w-full p-2 border rounded"
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Social Links</label>
+              <div className="flex space-x-2">
+                <input
+                  type="url"
+                  placeholder="Facebook"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+
+                <input
+                  type="url"
+                  placeholder="Instagram"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+
+                <input
+                  type="url"
+                  placeholder="Twitter"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+                <input
+                  type="url"
+                  placeholder="Dribbble"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  className="w-1/4 p-2 border rounded"
+                />
+              </div>
             </div>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={toggleEditModal}
-                className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+                className="px-4 py-2 text-[hsl(var(--primary))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
               >
                 Save
               </button>
@@ -346,7 +413,7 @@ const StoreProfilePage = () => {
                 Cancel
               </button>
             </div>
-          </div>
+          </div> 
         </div>
       )}
 
