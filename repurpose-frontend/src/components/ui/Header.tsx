@@ -85,7 +85,7 @@ const Header = () => {
           </button>
         </Link>
         <Link
-          href="/seller/dashboard/profile"
+          href={`/${user?.role}/dashboard/profile`}
           className="flex items-center justify-center w-10 h-10 bg-[hsl(var(--secondary))] rounded-full text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))]"
           title="Profile"
           aria-label="Profile"
