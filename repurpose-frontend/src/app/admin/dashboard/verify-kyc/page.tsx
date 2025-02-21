@@ -1,10 +1,51 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FaEye } from "react-icons/fa";
 import { apiRequest } from "@/middleware/errorInterceptor";
+import { FaEye } from "react-icons/fa";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
-const VerifyKYC = () => {
-  const [kycData, setKycData] = useState<
+// Define the type for KYC data
+interface KYC {
+  _id: string;
+  createdAt: string;
+  storeName: string;
+  storeImage: string;
+  ownerName: string;
+  email: string;
+  storeAddress: string;
+  phoneNumber: string;
+  storeNumber: string;
+  businessRegNumber: string;
+  businessRegCertificate: string;
+  storeFrontImage: string;
+  passportPhoto: string;
+}
+
+export default function VerifyKYC() {
+  // Define state with proper typing
+  // const [pendingKYC, setPendingKYC] = useState<KYC[]>([
+  //   {
+  //     id: 1,
+  //     dateCreated: "2025-02-15",
+  //     storeName: "Tech Haven",
+  //     ownerName: "John Doe",
+  //     businessRegNo: "1234567890",
+  //     documents: ["/doc1.jpg", "/doc2.jpg"],
+  //   },
+  // ]);
+
+  const [pendingKYCData, setPendingKYCData] = useState<
     {
       _id: string;
       createdAt: string;
@@ -22,7 +63,37 @@ const VerifyKYC = () => {
     }[]
   >([]);
 
-  const [selectedKYC, setSelectedKYC] = useState<typeof kycData[0] | null>(null);
+  // const [verifiedKYC, setVerifiedKYC] = useState<KYC[]>([
+  //   {
+  //     id: 2,
+  //     dateCreated: "2025-02-10",
+  //     storeName: "Gadget World",
+  //     ownerName: "Jane Smith",
+  //     businessRegNo: "9876543210",
+  //     documents: ["/doc3.jpg", "/doc4.jpg"],
+  //   },
+  // ]);
+
+  const [verifiedKYCData, setVerifiedKYCData] = useState<
+    {
+      _id: string;
+      createdAt: string;
+      storeName: string;
+      storeImage: string;
+      ownerName: string;
+      email: string;
+      storeAddress: string;
+      phoneNumber: string;
+      storeNumber: string;
+      businessRegNumber: string;
+      businessRegCertificate: string;
+      storeFrontImage: string;
+      passportPhoto: string;
+    }[]
+  >([]);
+
+
+  const [selectedKYC, setSelectedKYC] = useState<typeof pendingKYCData[0] | null>(null);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [modificationReason, setModificationReason] = useState("");
   const [showModificationInput, setShowModificationInput] = useState(false);
@@ -40,13 +111,13 @@ const VerifyKYC = () => {
     setIsImageModalOpen(false);
   };
 
-  // Fetch KYC data on component mount
+  // Fetch Pending KYC data on component mount
   useEffect(() => {
     const fetchKYCData = async () => {
       try {
         const response = await apiRequest("/api/store/pending", 'GET');
-        console.log("respone her", response)
-        setKycData(response.data); // Assuming the response contains the KYC data
+        console.log("respone her pending data ko", response)
+        setPendingKYCData(response.data);
       } catch (error) {
         console.log("Error fetching KYC data:", error);
       }
@@ -55,7 +126,28 @@ const VerifyKYC = () => {
     fetchKYCData();
   }, []);
 
-  const handleViewDetails = (data: typeof kycData[0]) => {
+  // Fetch Verified KYC data on component mount
+  useEffect(() => {
+    const fetchKYCData = async () => {
+      try {
+        const response = await apiRequest("/api/store/verified", 'GET');
+        console.log("respone her verified data ko", response)
+        setVerifiedKYCData(response.data);
+      } catch (error) {
+        console.log("Error fetching KYC data:", error);
+      }
+    };
+
+    fetchKYCData();
+  }, []);
+
+  // Function to handle verification
+  const handleVerify = (kyc: KYC) => {
+    setPendingKYCData((prev) => prev.filter((item) => item._id !== kyc._id));
+    setVerifiedKYCData((prev) => [...prev, { ...kyc, id: Date.now() }]);
+  };
+
+  const handleViewDetails = (data: typeof pendingKYCData[0]) => {
     setSelectedKYC(data);
     setViewModalOpen(true);
     setShowModificationInput(false); // Reset modification state
@@ -70,8 +162,8 @@ const VerifyKYC = () => {
         });
         console.log(`KYC Approved for ID: ${selectedKYC._id}`, response);
         alert("KYC Approved successfully!");
-        setKycData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
-      } catch (error) {
+        setPendingKYCData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
+        setVerifiedKYCData((prev) => [...prev, selectedKYC]);      } catch (error) {
         console.error("Error approving KYC:", error);
         alert("Failed to approve KYC. Please try again.");
       }
@@ -85,7 +177,7 @@ const VerifyKYC = () => {
         const response = await apiRequest(`/api/store/${selectedKYC._id}/reject`, "DELETE");
         console.log(`KYC Rejected for ID: ${selectedKYC._id}`, response);
         alert("KYC Rejected and deleted successfully!");
-        setKycData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
+        setPendingKYCData((prev) => prev.filter((item) => item._id !== selectedKYC._id));
       } catch (error) {
         console.error("Error rejecting KYC:", error);
         alert("Failed to reject KYC. Please try again.");
@@ -132,62 +224,40 @@ const VerifyKYC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Verify KYC
-      </h1>
+    <>
+      <Card className="p-5 shadow-lg">
+        <Tabs defaultValue="pending">
+          <TabsList className="mb-5">
+            <TabsTrigger value="pending">Pending KYC</TabsTrigger>
+            <TabsTrigger value="verified">Verified KYC</TabsTrigger>
+          </TabsList>
 
-      <div className="overflow-x-auto shadow-lg rounded-lg">
-        <table className="table-auto w-full bg-white border border-gray-200">
-          <thead className="bg-gray-200 text-gray-700">
-            <tr>
-              <th className="px-4 py-2 text-center">S.N</th>
-              <th className="px-4 py-2 text-center">Date Created</th>
-              <th className="px-4 py-2 text-left">Store Name</th>
-              <th className="px-4 py-2 text-left">Owner Name</th>
-              <th className="px-4 py-2 text-left">Business Reg. No</th>
-              <th className="px-4 py-2 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {kycData.map((data, index) => (
-              <tr
-                key={data._id}
-                className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-              >
-                <td className="px-4 py-2 text-center">{index + 1}</td>
-                <td className="px-4 py-2 text-center">{new Date(data.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</td>
+          {/* <TabsContent value="pending">
+          <KYCList data={pendingKYCData} showActions={true} onVerify={handleVerify} />
+        </TabsContent>
+        <TabsContent value="verified">
+          <KYCList data={verifiedKYCData} showActions={true} />
+        </TabsContent> */}
 
-                <td className="px-4 py-2 flex items-center space-x-3">
-                  {data.storeFrontImage ? (
-                    <img
-                      src={data.storeFrontImage}
-                      alt={`${data.storeName} logo`}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-white">
-                      {data.storeName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <span>{data.storeName}</span>
-                </td>
-                <td className="px-4 py-2">{data.ownerName}</td>
-                <td className="px-4 py-2">{data.businessRegNumber}</td>
-                <td className="px-4 py-2 text-center flex items-center justify-center">
-                  <button
-                    onClick={() => handleViewDetails(data)}
-                    className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                  >
-                    <FaEye className="mr-2" /> View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <TabsContent value="pending">
+            <KYCList
+              data={pendingKYCData}
+              showActions={true}
+              onVerify={handleVerify}
+              handleViewDetails={handleViewDetails} // Pass function here
+            />
+          </TabsContent>
 
+          <TabsContent value="verified">
+            <KYCList
+              data={verifiedKYCData}
+              showActions={true}
+              handleViewDetails={handleViewDetails} // Pass function here
+            />
+          </TabsContent>
+
+        </Tabs>
+      </Card>
       {isViewModalOpen && selectedKYC && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto">
@@ -248,46 +318,51 @@ const VerifyKYC = () => {
                 />
               </div>
             </div>
+            {verifiedKYCData.some((kyc) => kyc._id === selectedKYC._id) ? (
+              <p className="text-green-600 text-center font-semibold mt-4"></p>
+            ) : (
 
-            <div className="flex flex-wrap justify-between items-center mt-6 space-y-4 md:space-y-0">
-              <button
-                onClick={handleApprove}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
-              >
-                Accept
-              </button>
-
-              <button
-                onClick={handleReject}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
-              >
-                Reject
-              </button>
-
-              {showModificationInput ? (
-                <div className="w-full">
-                  <textarea
-                    value={modificationReason}
-                    onChange={(e) => setModificationReason(e.target.value)}
-                    placeholder="Enter reason for modification..."
-                    className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-yellow-300"
-                  />
-                  <button
-                    onClick={handleSubmitModificationRequest}
-                    className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
-                  >
-                    Submit Request
-                  </button>
-                </div>
-              ) : (
+              <div className="flex flex-wrap justify-between items-center mt-6 space-y-4 md:space-y-0">
                 <button
-                  onClick={handleRequestModificationClick}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
+                  onClick={handleApprove}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
                 >
-                  Request Modification
+                  Accept
                 </button>
-              )}
-            </div>
+
+                <button
+                  onClick={handleReject}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                >
+                  Reject
+                </button>
+
+                {showModificationInput ? (
+                  <div className="w-full">
+                    <textarea
+                      value={modificationReason}
+                      onChange={(e) => setModificationReason(e.target.value)}
+                      placeholder="Enter reason for modification..."
+                      className="w-full px-4 py-2 my-4 rounded-lg focus:ring focus:ring-yellow-300 focus:outline-none"
+                      />
+                    <button
+                      onClick={handleSubmitModificationRequest}
+                      className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
+                    >
+                      Submit Request
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleRequestModificationClick}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
+                  >
+                    Request Modification
+                  </button>
+                )}
+              </div>
+            )}
+
 
             <div className="flex justify-end mt-4">
               <button
@@ -318,8 +393,75 @@ const VerifyKYC = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
-};
+}
 
-export default VerifyKYC;
+// Define props type for KYCList
+interface KYCListProps {
+  data: KYC[];
+  showActions: boolean;
+  onVerify?: (kyc: KYC) => void;
+  handleViewDetails?: (kyc: KYC) => void; // Add this
+}
+
+function KYCList({ data, showActions, onVerify, handleViewDetails }: KYCListProps) {
+  return (
+    <Table className="w-full border rounded-lg overflow-hidden">
+      <TableHeader>
+        <TableRow>
+          <TableHead>SN</TableHead>
+          <TableHead>Date Created</TableHead>
+          <TableHead>Store Name</TableHead>
+          <TableHead>Owner Name</TableHead>
+          <TableHead>Business Reg. No</TableHead>
+          {/* <TableHead>Documents</TableHead> */}
+          <TableHead>Action</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.length > 0 ? (
+          data.map((kyc, index) => (
+            <TableRow key={kyc._id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{kyc.createdAt}</TableCell>
+              <TableCell>{kyc.storeName}</TableCell>
+              <TableCell>{kyc.ownerName}</TableCell>
+              <TableCell>{kyc.businessRegNumber}</TableCell>
+              {/* <TableCell>
+                <div className="flex gap-2">
+                  {kyc.documents.map((doc, idx) => (
+                    <Image
+                      key={idx}
+                      src={doc}
+                      alt="Document"
+                      width={50}
+                      height={50}
+                      className="rounded border"
+                    />
+                  ))}
+                </div>
+              </TableCell> */}
+              {/* {showActions && onVerify && ( */}
+              <TableCell>
+                <button
+                  onClick={() => handleViewDetails && handleViewDetails(kyc)}
+                  className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
+                >
+                  <FaEye className="mr-2" /> View
+                </button>
+              </TableCell>
+              {/* )} */}
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={showActions ? 7 : 6} className="text-center text-gray-500">
+              No records found
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}

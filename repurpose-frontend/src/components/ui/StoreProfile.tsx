@@ -217,7 +217,7 @@ const StoreProfilePage = () => {
           </div>
 
           {/* Store Info */}
-          <div className="text-center p-4 -mt-6">
+          <div className="text-center p-4 mt-6">
 
             {/* Status Section */}
             <div className="mt-4 text-center">
@@ -414,7 +414,7 @@ const StoreProfilePage = () => {
                   inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
                 />
               </div>
-              <div className="mb-4">''
+              <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Business Registration Number (PAN/VAT)</label>
                 <input
                   type="text"

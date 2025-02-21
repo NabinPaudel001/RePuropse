@@ -152,7 +152,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Profile Info */}
-          <div className="text-center p-4 -mt-6">
+          <div className="text-center p-4 mt-6">
             {user?.role === "store" && (
               <p
                 className={`text-sm font-bold ${status === "verified"
