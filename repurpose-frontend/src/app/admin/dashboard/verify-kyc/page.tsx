@@ -97,7 +97,6 @@ export default function VerifyKYC() {
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [modificationReason, setModificationReason] = useState("");
   const [showModificationInput, setShowModificationInput] = useState(false);
-
   const [currentImages, setCurrentImages] = useState("");
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
@@ -111,7 +110,6 @@ export default function VerifyKYC() {
     setIsImageModalOpen(false);
   };
 
-  // Fetch Pending KYC data on component mount
   useEffect(() => {
     const fetchKYCData = async () => {
       try {
@@ -126,7 +124,6 @@ export default function VerifyKYC() {
     fetchKYCData();
   }, []);
 
-  // Fetch Verified KYC data on component mount
   useEffect(() => {
     const fetchKYCData = async () => {
       try {
@@ -163,7 +160,8 @@ export default function VerifyKYC() {
         console.log(`KYC Approved for ID: ${selectedKYC._id}`, response);
         alert("KYC Approved successfully!");
         setPendingKYCData((prev) => prev.filter((data) => data._id !== selectedKYC._id));
-        setVerifiedKYCData((prev) => [...prev, selectedKYC]);      } catch (error) {
+        setVerifiedKYCData((prev) => [...prev, selectedKYC]);
+      } catch (error) {
         console.error("Error approving KYC:", error);
         alert("Failed to approve KYC. Please try again.");
       }
@@ -344,7 +342,7 @@ export default function VerifyKYC() {
                       onChange={(e) => setModificationReason(e.target.value)}
                       placeholder="Enter reason for modification..."
                       className="w-full px-4 py-2 my-4 rounded-lg focus:ring focus:ring-yellow-300 focus:outline-none"
-                      />
+                    />
                     <button
                       onClick={handleSubmitModificationRequest}
                       className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"

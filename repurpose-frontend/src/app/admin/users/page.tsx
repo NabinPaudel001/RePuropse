@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { apiRequest } from "@/middleware/errorInterceptor";
+import { FaEye } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,15 +17,96 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function ManageUsers() {
-  const [sellers] = useState([
-    { id: 1, name: "John Doe", email: "john@example.com", contact: "9876543210", profilePic: "/images/john.jpg" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", contact: "9876543211", profilePic: "/images/jane.jpg" },
-  ]);
+ 
+  const [sellers, setSellers] = useState<
+    {
+      _id: string;
+      createdAt: string;
+      firstName: string;
+      lastName: string;
+      profilePicture: string;
+      email: string;
+      address: string;
+      phoneNumber: string;
+      totalRewardPoints: string;
+    }[]
+  >([]);
 
-  const [stores] = useState([
-    { id: 1, storeName: "SuperMart", contact: "9800000001", address: "Kathmandu", profilePic: "/images/supermart.jpg" },
-    { id: 2, storeName: "TechShop", contact: "9800000002", address: "Lalitpur", profilePic: "/images/techshop.jpg" },
-  ]);
+  const [stores, setStores] = useState<
+    {
+      _id: string;
+      createdAt: string;
+      storeName: string;
+      storeStatus: string;
+      firstName: string;
+      lastName: string;
+      profilePicture: string;
+      email: string;
+      address: string;
+      phoneNumber: string;
+    }[]
+    >([]);
+  
+    useEffect(() => {
+      const fetchKYCData = async () => {
+        try {
+          const response = await apiRequest("/api/user/sellers", 'GET');
+          console.log("respone her sellers ko", response)
+          setSellers(response.data);
+        } catch (error) {
+          console.log("Error fetching KYC data:", error);
+        }
+      };
+  
+      fetchKYCData();
+    }, []);
+  
+    useEffect(() => {
+      const fetchKYCData = async () => {
+        try {
+          const response = await apiRequest("/api/user/stores", 'GET');
+          console.log("respone her stores ko", response)
+          setStores(response.data);
+        } catch (error) {
+          console.log("Error fetching KYC data:", error);
+        }
+      };
+  
+      fetchKYCData();
+    }, []);
+
+  // Fetch Pending KYC data on component mount
+  useEffect(() => {
+    const fetchKYCData = async () => {
+      try {
+        const response = await apiRequest("/api/user/sellers", 'GET');
+        console.log("respone her sellers data", response)
+        setSellers(response.data);
+      } catch (error) {
+        console.log("Error fetching KYC data:", error);
+      }
+    };
+
+    fetchKYCData();
+  }, []);
+
+  const handleDelete = async (userId:string, role:string) => {
+    try {
+      const response = await apiRequest(`/api/user/${userId}`, {method: "DELETE"});
+      console.log(`Deleted user`, response);
+      if (role === "seller") {
+        alert("seller deleted successfully!");
+        setSellers((prev) => prev.filter((seller) => seller._id !== userId));
+      }
+      else if (role === "store") {
+        alert("store deleted successfully");
+        setStores((prev) => prev.filter((store) => store._id !== userId));
+      }
+    } catch (error) {
+      console.error("Error deleting User:", error);
+      alert("Error in Deleteing user. Please try again.");
+    }
+  }
 
   return (
     <Card className="p-5 shadow-lg">
@@ -34,10 +117,10 @@ export default function ManageUsers() {
         </TabsList>
 
         <TabsContent value="sellers">
-          <SellerTable sellers={sellers} />
+        <SellerTable sellers={sellers} handleDelete={handleDelete} />
         </TabsContent>
         <TabsContent value="stores">
-          <StoreTable stores={stores} />
+        <StoreTable stores={stores} handleDelete={handleDelete} />
         </TabsContent>
       </Tabs>
     </Card>
@@ -45,14 +128,19 @@ export default function ManageUsers() {
 }
 
 interface Seller {
-  id: number;
-  name: string;
+  _id: string;
+  createdAt: string;
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
   email: string;
-  contact: string;
-  profilePic: string;
+  address: string;
+  phoneNumber: string;
+  totalRewardPoints: string;
 }
 
-function SellerTable({ sellers }: { sellers: Seller[] }) {
+
+function SellerTable({ sellers, handleDelete }: { sellers: Seller[], handleDelete: (userId: string, role: string) => void }) {
   const router = useRouter();
 
   return (
@@ -67,13 +155,16 @@ function SellerTable({ sellers }: { sellers: Seller[] }) {
       </TableHeader>
       <TableBody>
         {sellers.map((seller) => (
-          <TableRow key={seller.id}>
-            <TableCell>{seller.name}</TableCell>
+          <TableRow key={seller._id}>
+            <TableCell>{seller.firstName} {seller.lastName}</TableCell>
             <TableCell>{seller.email}</TableCell>
-            <TableCell>{seller.contact}</TableCell>
+            <TableCell>{seller.phoneNumber}</TableCell>
             <TableCell>
-              <Button onClick={() => router.push(`./details/seller/${seller.id}`)}>View Details</Button>
-              <Button className="ml-2">Delete</Button>
+              {/* <Button onClick={() => router.push(`./details/seller/${seller.id}`)}>View Details</Button> */}
+              <Button
+                className="ml-2"
+                onClick={()=>handleDelete(seller._id, "seller")}
+              >Delete</Button>
             </TableCell>
           </TableRow>
         ))}
@@ -83,14 +174,20 @@ function SellerTable({ sellers }: { sellers: Seller[] }) {
 }
 
 interface Store {
-  id: number;
+  _id: string;
+  createdAt: string;
   storeName: string;
-  contact: string;
+  storeStatus: string;
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+  email: string;
   address: string;
-  profilePic: string;
+  phoneNumber: string;
 }
 
-function StoreTable({ stores }: { stores: Store[] }) {
+
+function StoreTable({ stores, handleDelete }: { stores: Store[], handleDelete: (userId: string, role: string) => void }) {
   const router = useRouter();
 
   return (
@@ -105,13 +202,17 @@ function StoreTable({ stores }: { stores: Store[] }) {
       </TableHeader>
       <TableBody>
         {stores.map((store) => (
-          <TableRow key={store.id}>
+          <TableRow key={store._id}>
             <TableCell>{store.storeName}</TableCell>
-            <TableCell>{store.contact}</TableCell>
+            <TableCell>{store.phoneNumber}</TableCell>
             <TableCell>{store.address}</TableCell>
             <TableCell>
-              <Button onClick={() => router.push(`./details/store/${store.id}`)}>View Details</Button>
-              <Button className="ml-2">Delete</Button>
+              {/* <Button onClick={() => router.push(`./details/store/${store.id}`)}>View Details</Button> */}
+              <Button
+                className="ml-2"
+                onClick={()=>handleDelete(store._id, "store")}
+              >
+                Delete</Button>
             </TableCell>
           </TableRow>
         ))}
