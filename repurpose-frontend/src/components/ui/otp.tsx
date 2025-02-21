@@ -96,8 +96,8 @@ const OTPInput = ({ userID }: { userID: string }) => {
       } else {
         setErrorMessage(response.message || "Invalid OTP. Please try again.");
       }
-    } catch (error) {
-      setErrorMessage("An error occurred while verifying the OTP.");
+    } catch (error:any) {
+      setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
     }
