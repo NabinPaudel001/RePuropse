@@ -402,7 +402,7 @@ const StoreProfilePage = () => {
             <div className="flex justify-end space-x-2">
               <button
                 onClick={toggleEditModal}
-                className="px-4 py-2 text-[hsl(var(--primary))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
+                className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
               >
                 Save
               </button>
