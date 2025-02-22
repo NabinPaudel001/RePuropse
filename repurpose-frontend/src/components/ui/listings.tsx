@@ -1,26 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Items from './Items'; // Import the Items component
-import { apiRequest } from '../../middleware/errorInterceptor'; // Assuming apiRequest is your helper function for making requests
-import { getUserId } from "@/utils/tokens";
-import ProductPage from "@/components/ui/singleProduct"
 import Link from "next/link";
-import { useUser } from '@/contexts/UserContext';
+import { useUser } from "@/contexts/UserContext";
+import { getUserId } from "@/utils/tokens";
+import { apiRequest } from "@/middleware/errorInterceptor";
+
+import Items from "./Items";
 import { Product } from "@/types/types";
 
-
-// Define types for the product and the props of the MyListings component
-
+// sadcn UI components
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 
 const MyListings: React.FC = () => {
-  const { user, setUser } = useUser();
-  const sellerId = getUserId(); // Get the sellerId from a utility function (JWT or other storage)
+  const { user } = useUser();
+  const sellerId = getUserId();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,68 +28,129 @@ const MyListings: React.FC = () => {
     }
 
     const fetchData = async () => {
-      setLoading(true); // Set loading to true before making the API request
-      setError(null); // Reset error state
-
-      console.log("user ko role", user?.role)
+      setLoading(true);
+      setError(null);
 
       try {
+        let response;
         if (user?.role === "store") {
-          const response = await apiRequest('/api/product/', 'GET');
-          if (response.data) {
-            setProducts(response.data); // Set products with the fetched data
-          }
+          response = await apiRequest("/api/product/", "GET");
+        } else if (user?.role === "seller") {
+          response = await apiRequest(`/api/product/seller/${sellerId}`, "GET");
         }
-        if (user?.role === "seller") {
-          const response = await apiRequest(`/api/product/seller/${sellerId}`, 'GET');
-          console.log("response", response)
-          if (response.data) {
-            setProducts(response.data); // Set products with the fetched data
-          }
+
+        if (response?.data) {
+          // Force or "hardcode" the status for testing.
+          // You can switch the below line to "pending", "booked", or "sold"
+          // or even assign statuses dynamically if you like.
+          const forcedStatus = "available";
+
+          // Map through your fetched products and override the status.
+          const updatedProducts = response.data.map((product: Product) => ({
+            ...product,
+            status: forcedStatus,
+          }));
+
+          setProducts(updatedProducts);
         }
       } catch (err) {
         setError("Failed to fetch products. Please try again.");
         console.log(err);
       } finally {
-        setLoading(false); // Set loading to false once the request is complete
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [sellerId]); // Fetch products whenever the sellerId changes
+  }, [sellerId, user?.role]);
 
-  if (loading) {
-    return <div>Loading products...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
-
-  console.log("products", products)
+  // Separate products by status
+  const availableProducts = products.filter(
+    (product) => product.status === "pending" || product.status === "booked"
+  );
+  const soldProducts = products.filter((product) => product.status === "sold");
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Items</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <Link href={`/${user?.role}/dashboard/product/${product._id}`} key={product._id}>
-            <Items
-              _id={product._id}
-              imageUrl={product?.images}
-              name={product.name}
-              description={product.description}
-              originalPrice={product.price}
-              discount={product.discount}
-              partName={product.partName}
-              materialName="Example Material"
-              ecoFriendly="Yes"
-              setProducts={setProducts} // Pass setProducts directly
-            />
-          </Link>
-        ))}
-      </div>
-    </div>
+    <Card className="p-5 shadow-lg">
+      <h1 className="text-2xl font-bold mb-4">My Listings</h1>
+
+      <Tabs defaultValue="available">
+        <TabsList className="mb-5">
+          <TabsTrigger value="available">Available</TabsTrigger>
+          <TabsTrigger value="sold">Sold</TabsTrigger>
+        </TabsList>
+
+        {/* Available (pending or booked) */}
+        <TabsContent value="available">
+          {loading && <div>Loading products...</div>}
+          {!loading && error && <div className="text-red-500 mb-4">{error}</div>}
+          {!loading && !error && (
+            <>
+              {availableProducts.length === 0 ? (
+                <div className="text-center py-4">No records found</div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                  {availableProducts.map((product) => (
+                    <Link
+                      href={`/${user?.role}/dashboard/product/${product._id}`}
+                      key={product._id}
+                    >
+                      <Items
+                        _id={product._id}
+                        imageUrl={product.images}
+                        name={product.name}
+                        description={product.description}
+                        originalPrice={product.price}
+                        discount={product.discount}
+                        partName={product.partName}
+                        materialName="Example Material"
+                        ecoFriendly="Yes"
+                        setProducts={setProducts}
+                      />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </TabsContent>
+
+        {/* Sold */}
+        <TabsContent value="sold">
+          {loading && <div>Loading products...</div>}
+          {!loading && error && <div className="text-red-500 mb-4">{error}</div>}
+          {!loading && !error && (
+            <>
+              {soldProducts.length === 0 ? (
+                <div className="text-center py-4">No records found</div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                  {soldProducts.map((product) => (
+                    <Link
+                      href={`/${user?.role}/dashboard/product/${product._id}`}
+                      key={product._id}
+                    >
+                      <Items
+                        _id={product._id}
+                        imageUrl={product.images}
+                        name={product.name}
+                        description={product.description}
+                        originalPrice={product.price}
+                        discount={product.discount}
+                        partName={product.partName}
+                        materialName="Example Material"
+                        ecoFriendly="Yes"
+                        setProducts={setProducts}
+                      />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
+    </Card>
   );
 };
 
