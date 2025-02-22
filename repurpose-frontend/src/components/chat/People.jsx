@@ -40,13 +40,13 @@ const People = ({ fetchchatsagain }) => {
   console.log("Redux value of chats herr hai", chats);
 
   return (
-    <div className="h-[80%] w-full flex flex-col items-center bg-white rounded-2xl shadow-md shadow-blue-300 overflow-y-scroll no-scrollbar px-5 py-2">
+    <div className="h-[100%] w-full flex flex-col items-center bg-white rounded-2xl shadow-md shadow-blue-300 overflow-y-scroll no-scrollbar py-2">
       {chats.length > 0 ? (
         chats.map((chat, index) => {
           return (
             <div
               key={index}
-              className={`w-full flex items-center h-[70px] hover:bg-violet-700 hover:rounded-md hover:text-white  border-b-2 cursor-pointer transition-colors  duration-100 ease-in-out  p-2 ${
+              className={`w-full flex items-center h-min-[70px] hover:bg-violet-700 hover:rounded-md hover:text-white  border-b-2 cursor-pointer transition-colors  duration-100 ease-in-out  p-2 ${
                 selectedChat == chat ? " bg-gray-300 text-white rounded-md" : ""
               }`}
               onClick={(e) => dispatch(setSelectedChat(chat))}
@@ -56,15 +56,15 @@ const People = ({ fetchchatsagain }) => {
                 <div className="flex items-center gap-x-5 max-lg:gap-x-3">
                   <div className="w-[40px] h-[40px] max-lg:w-[35px] max-lg:h-[35px] rounded-full">
                     <img
-                      src={chat?.users[1].profilePicture}
+                      src={chat?.users[1]?.profilePicture}
                       className="w-full h-full rounded-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="text-lg max-lg:text-base font-semibold">
-                      {chat.users[1].firstName} {chat.users[1].lastName}
+                    <div className="text-lg max-lg:text-base font-semibold px-3 md:">
+                      {chat.users[1]?.firstName} {chat.users[1]?.lastName}
                     </div>
-                    <div className="text-sm max-lg:text-xs text-gray-600">
+                    <div className="text-sm max-lg:text-xs text-gray-600 overflow-hidden px-3 mb-2 md:px-3">
                       {chat?.latestMessage?.content}
                     </div>
                   </div>
@@ -73,13 +73,13 @@ const People = ({ fetchchatsagain }) => {
                 <div className="flex items-center gap-x-5 max-lg:gap-x-3">
                   <div className="w-[40px] h-[40px] max-lg:w-[35px] max-lg:h-[35px] rounded-full">
                     <img
-                      src={chat?.users[0].profilePicture}
+                      src={chat?.users[0]?.profilePicture}
                       className="w-full h-full rounded-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col ">
                     <div className="text-lg max-lg:text-base font-semibold">
-                      {chat?.users[0].firstName} {chat?.users[0].lastName}
+                      {chat?.users[0]?.firstName} {chat?.users[0]?.lastName}
                     </div>
                     <div className="text-sm max-lg:text-xs text-gray-600">
                       {chat?.latestMessage?.content}

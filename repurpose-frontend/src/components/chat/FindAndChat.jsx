@@ -8,8 +8,8 @@ import People from './People'
 
 const FindAndChat = ({ fetchchatsagain }) => {
   return (
-    <div className="flex flex-col justify-between items-center h-full w-[25%]">
-      <Search />
+    <div className="flex flex-col justify-between items-center h-full w-[25%] md:w-[30%] xl:w[30%]">
+      {/* <Search /> */}
       {/* <Groups/> */}
       {/* <CreateGroup  /> */}
       <People
