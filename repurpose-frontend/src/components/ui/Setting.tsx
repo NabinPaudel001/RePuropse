@@ -15,11 +15,12 @@ const SettingsPage = () => {
 
   useEffect(() => {
     if (userRole === 'seller') {
-      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%'); // Green theme
-      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%');
-    } else {
       document.documentElement.style.setProperty('--primary', '217 91% 60%'); // Blue theme
       document.documentElement.style.setProperty('--primary-foreground', '0 0% 100%');
+      
+    } else {
+      document.documentElement.style.setProperty('--primary', '140.1 75.2% 30.3%'); // Green theme
+      document.documentElement.style.setProperty('--primary-foreground', '355.7 100% 97.3%'); 
     }
   }, [userRole]);
 

@@ -28,6 +28,13 @@ const StoreProfilePage = () => {
   const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
 
+
+  // Error states for validation
+  const [storeNameError, setStoreNameError] = useState(false);
+  const [ownerNameError, setOwnerNameError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [storeAddressError, setStoreAddressError] = useState(false);
+
   console.log("user", user);
 
   const toggleModal = () => {
@@ -158,6 +165,56 @@ const StoreProfilePage = () => {
 
   const handlePhoneChange = (phone: string) => {
     setPhoneNumber(phone);
+  };
+
+  // Validate phone number: strip non-digits and remove country code if present (e.g., "977")
+  const validatePhoneNumber = (phone: string) => {
+    const digits = phone.replace(/\D/g, '');
+    let localNumber = digits;
+    if (digits.startsWith("977")) {
+      localNumber = digits.substring(3);
+    }
+    return localNumber.length >= 7 && localNumber.length <= 10;
+  };
+
+  // Validate the Edit Store form before saving
+  const handleEditSave = () => {
+    let isValid = true;
+
+    if (!storeName.trim()) {
+      setStoreNameError(true);
+      isValid = false;
+    } else {
+      setStoreNameError(false);
+    }
+
+    if (!ownerName.trim()) {
+      setOwnerNameError(true);
+      isValid = false;
+    } else {
+      setOwnerNameError(false);
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      setPhoneError(true);
+      isValid = false;
+    } else {
+      setPhoneError(false);
+    }
+
+    if (!storeAddress.trim()) {
+      setStoreAddressError(true);
+      isValid = false;
+    } else {
+      setStoreAddressError(false);
+    }
+
+    // If all validations pass, proceed with saving
+    if (isValid) {
+      // You can add your API update call here.
+      console.log("All fields validated. Saving changes...");
+      toggleEditModal();
+    }
   };
 
   return (
@@ -304,15 +361,17 @@ const StoreProfilePage = () => {
         </div>
       </div>
 
-      {/* Modal for Editing Store */}
-      {isEditModalOpen && (
+    {/* Modal for Editing Store */}
+    {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">Edit Store</h3>
             <div className="mb-4">
               <div className="flex space-x-4">
                 <div className="w-1/2">
-                  <label className="block text-sm font-bold mb-2">Store Name</label>
+                  <label className="block text-sm font-bold mb-2">
+                    Store Name {storeNameError && <span className="text-red-500">(Required)</span>}
+                  </label>
                   <input
                     placeholder='Store Name'
                     type="text"
@@ -322,7 +381,9 @@ const StoreProfilePage = () => {
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-sm font-bold mb-2">Owner's Name</label>
+                  <label className="block text-sm font-bold mb-2">
+                    Owner's Name {ownerNameError && <span className="text-red-500">(Required)</span>}
+                  </label>
                   <input
                     placeholder="Owner's Name"
                     type="text"
@@ -338,7 +399,7 @@ const StoreProfilePage = () => {
               <label className="block text-sm font-bold mb-2">About Us</label>
               <textarea
                 placeholder='About Us'
-                value={storeAddress}
+                value={storeAddress} // Assuming "About Us" content is stored separately; adjust as needed.
                 onChange={(e) => setStoreAddress(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows={4}
@@ -346,7 +407,9 @@ const StoreProfilePage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Phone Number</label>
+              <label className="block text-sm font-bold mb-2">
+                Phone Number {phoneError && <span className="text-red-500">(Inavlid Number)</span>}
+              </label>
               <PhoneInput
                 country={'np'}
                 value={phoneNumber}
@@ -355,7 +418,9 @@ const StoreProfilePage = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Store Address</label>
+              <label className="block text-sm font-bold mb-2">
+                Store Address {storeAddressError && <span className="text-red-500">(Required)</span>}
+              </label>
               <input
                 placeholder='Store Address'
                 type="text"
@@ -364,6 +429,7 @@ const StoreProfilePage = () => {
                 className="w-full p-2 border rounded"
               />
             </div>
+            {/* Social Links section remains as-is or can be updated with separate states if needed */}
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">Social Links</label>
               <div className="flex space-x-2">
@@ -374,7 +440,6 @@ const StoreProfilePage = () => {
                   onChange={(e) => setStoreName(e.target.value)}
                   className="w-1/4 p-2 border rounded"
                 />
-
                 <input
                   type="url"
                   placeholder="Instagram"
@@ -382,7 +447,6 @@ const StoreProfilePage = () => {
                   onChange={(e) => setStoreName(e.target.value)}
                   className="w-1/4 p-2 border rounded"
                 />
-
                 <input
                   type="url"
                   placeholder="Twitter"
@@ -401,7 +465,7 @@ const StoreProfilePage = () => {
             </div>
             <div className="flex justify-end space-x-2">
               <button
-                onClick={toggleEditModal}
+                onClick={handleEditSave}
                 className="px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg shadow hover:bg-[hsl(var(--primary-foreground))] hover:text-[hsl(var(--primary))]"
               >
                 Save
@@ -416,7 +480,6 @@ const StoreProfilePage = () => {
           </div> 
         </div>
       )}
-
       {/* Modal for KYC Information */}
       {isKYCModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
