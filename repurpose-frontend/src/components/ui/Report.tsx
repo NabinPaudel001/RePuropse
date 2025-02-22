@@ -1,6 +1,7 @@
 "use client";
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useUser } from '@/contexts/UserContext';
+import { apiRequest } from '@/middleware/errorInterceptor';
 
 interface FormData {
   category: string;
@@ -51,18 +52,27 @@ export default function Report() {
     if (formData.attachment) {
       data.append('attachment', formData.attachment);
     }
+    try {
 
-    // Send the form data to the backend
-    const response = await fetch('/api/report', {
-      method: 'POST',
-      body: data,
-    });
 
-    if (response.ok) {
+      // Send the form data to the backend
+      const response = await apiRequest('/api/user/report', {
+        method: 'POST',
+        body: data,
+      });
       alert('Issue reported successfully!');
-    } else {
-      alert('Failed to report the issue.');
+      console.log("report successfully submitted", response)
+      // Reset form data
+      setFormData({
+        category: '',
+        title: '',
+        description: '',
+        attachment: null,
+      });
+    } catch (error) {
+      console.log("Error summiting the report", error)
     }
+
   };
 
   return (
