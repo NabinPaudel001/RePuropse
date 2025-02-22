@@ -43,7 +43,7 @@ const MyListings: React.FC = () => {
           // Force or "hardcode" the status for testing.
           // You can switch the below line to "pending", "booked", or "sold"
           // or even assign statuses dynamically if you like.
-          const forcedStatus = "pending";
+          const forcedStatus = "available";
 
           // Map through your fetched products and override the status.
           const updatedProducts = response.data.map((product: Product) => ({
