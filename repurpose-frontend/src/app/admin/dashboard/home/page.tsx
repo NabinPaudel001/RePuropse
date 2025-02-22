@@ -25,7 +25,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Bento Box Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {/** Reusable Card Component */}
           <DashboardCard
             href="/admin/users"
@@ -43,11 +43,11 @@ const AdminDashboard = () => {
             title="Manage Issues"
             notificationCount={1}
           />
-          <DashboardCard
+          {/* <DashboardCard
             href="/admin/rewards"
             Icon={FaStar}
             title="Manage Reward Points"
-          />
+          /> */}
           
           <DashboardCard
             href="/admin/listed-items"
