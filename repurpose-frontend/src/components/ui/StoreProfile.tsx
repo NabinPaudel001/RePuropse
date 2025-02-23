@@ -18,7 +18,8 @@ const StoreProfilePage = () => {
   const [storeName, setStoreName] = useState(user?.storeName || "");
   const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
-  const [ownerName, setOwnerName] = useState(user?.firstName || "");
+  // Keep the original ownerName if needed elsewhere but for editing we now use first and last names.
+  const [ownerName, setOwnerName] = useState(user?.firstName || ""); 
   const [about, setAbout] = useState(user?.about || "");
   const [storeId, setStoreId] = useState("");
   const [email, setEmail] = useState(user?.email || "");
@@ -29,12 +30,15 @@ const StoreProfilePage = () => {
   const [storeFrontImage, setStoreFrontImage] = useState<File | null>(null);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
 
-
-  // Error states for validation
-  const [storeNameError, setStoreNameError] = useState(false);
-  const [ownerNameError, setOwnerNameError] = useState(false);
+  // Error states for validation (removed storeNameError since store name is not editable here)
+  const [ownerFirstNameError, setOwnerFirstNameError] = useState(false);
+  const [ownerLastNameError, setOwnerLastNameError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [storeAddressError, setStoreAddressError] = useState(false);
+
+  // New state for owner first and last names in the edit modal
+  const [ownerFirstName, setOwnerFirstName] = useState(user?.firstName || "");
+  const [ownerLastName, setOwnerLastName] = useState(user?.lastName || "");
 
   console.log("user", user);
   const [requestedItems, setRequestedItems] = useState(0);
@@ -61,14 +65,11 @@ const StoreProfilePage = () => {
         const response = await apiRequest('/api/user/store/dashboard-stats/', {
           method: 'GET'
         });
-
-        console.log("response in store Dashboard stats", response)
-
+        console.log("response in store Dashboard stats", response);
         setRequestedItems(response.data.totalRequestedItems);
         setBoughtItems(response.data.totalBoughtItems);
       } catch (error) {
-        // setError("Failed to load data", error);
-        console.log("Error in Fetch store Dashboard stats", error)
+        console.log("Error in Fetch store Dashboard stats", error);
       } finally {
         setLoading(false);
       }
@@ -82,8 +83,6 @@ const StoreProfilePage = () => {
     console.log("file ta xa", file);
     const formData = new FormData();
     formData.append("profilePicture", file);
-
-    console.log("formDAta", formData);
 
     try {
       const response = await apiRequest("/api/user/profile-picture", {
@@ -208,18 +207,20 @@ const StoreProfilePage = () => {
   const handleEditSave = () => {
     let isValid = true;
 
-    if (!storeName.trim()) {
-      setStoreNameError(true);
+    // Validate Owner First Name
+    if (!ownerFirstName.trim()) {
+      setOwnerFirstNameError(true);
       isValid = false;
     } else {
-      setStoreNameError(false);
+      setOwnerFirstNameError(false);
     }
 
-    if (!ownerName.trim()) {
-      setOwnerNameError(true);
+    // Validate Owner Last Name
+    if (!ownerLastName.trim()) {
+      setOwnerLastNameError(true);
       isValid = false;
     } else {
-      setOwnerNameError(false);
+      setOwnerLastNameError(false);
     }
 
     if (!validatePhoneNumber(phoneNumber)) {
@@ -238,7 +239,7 @@ const StoreProfilePage = () => {
 
     // If all validations pass, proceed with saving
     if (isValid) {
-      // You can add your API update call here.
+      // Here you can add your API update call.
       console.log("All fields validated. Saving changes...");
       toggleEditModal();
     }
@@ -302,7 +303,6 @@ const StoreProfilePage = () => {
             </div>
             <div className="flex gap-2 items-center justify-center w-full">
               <p className="text-2xl text-center font-bold text-[hsl(var(--foreground))]">{storeName}</p>
-
               {status === 'approved' ? (
                 <Icons type="verified"></Icons>
               ) : (
@@ -312,7 +312,6 @@ const StoreProfilePage = () => {
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
             <div className="flex justify-center space-x-8 ">
-
               <div>
                 <p className="text-[hsl(var(--foreground))] font-bold">{BoughtItems}</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Bought</p>
@@ -321,7 +320,6 @@ const StoreProfilePage = () => {
                 <p className="text-[hsl(var(--foreground))] font-bold">{requestedItems}</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Requested</p>
               </div>
-
             </div>
 
             <div className="mt-4">
@@ -391,25 +389,25 @@ const StoreProfilePage = () => {
               <div className="flex space-x-4">
                 <div className="w-1/2">
                   <label className="block text-sm font-bold mb-2">
-                    Store Name {storeNameError && <span className="text-red-500">(Required)</span>}
+                    Owner First Name {ownerFirstNameError && <span className="text-red-500">(Required)</span>}
                   </label>
                   <input
-                    placeholder='Store Name'
+                    placeholder='Owner First Name'
                     type="text"
-                    value={storeName}
-                    onChange={(e) => setStoreName(e.target.value)}
+                    value={ownerFirstName}
+                    onChange={(e) => setOwnerFirstName(e.target.value)}
                     className="w-full p-2 border rounded"
                   />
                 </div>
                 <div className="w-1/2">
                   <label className="block text-sm font-bold mb-2">
-                    Owner's Name {ownerNameError && <span className="text-red-500">(Required)</span>}
+                    Owner Last Name {ownerLastNameError && <span className="text-red-500">(Required)</span>}
                   </label>
                   <input
-                    placeholder="Owner's Name"
+                    placeholder="Owner Last Name"
                     type="text"
-                    value={ownerName}
-                    onChange={(e) => setOwnerName(e.target.value)}
+                    value={ownerLastName}
+                    onChange={(e) => setOwnerLastName(e.target.value)}
                     className="w-full p-2 border rounded"
                   />
                 </div>
@@ -420,7 +418,7 @@ const StoreProfilePage = () => {
               <label className="block text-sm font-bold mb-2">About Us</label>
               <textarea
                 placeholder='About Us'
-                value={about} // Assuming "About Us" content is stored separately; adjust as needed.
+                value={about}
                 onChange={(e) => setStoreAddress(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows={4}
@@ -429,7 +427,7 @@ const StoreProfilePage = () => {
 
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2">
-                Phone Number {phoneError && <span className="text-red-500">(Inavlid Number)</span>}
+                Phone Number {phoneError && <span className="text-red-500">(Invalid Number)</span>}
               </label>
               <PhoneInput
                 country={'np'}
@@ -559,7 +557,7 @@ const StoreProfilePage = () => {
               </div>
               <div className="flex-1 mb-4">
                 <PhoneInput
-                  country={'np'} // Set default country code to Nepal
+                  country={'np'}
                   value={phoneNumber}
                   onChange={handlePhoneChange}
                   inputClass="w-full px-3 py-2 border rounded-lg text-[hsl(var(--foreground))]"
