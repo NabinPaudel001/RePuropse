@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/ui/Navbar";
+import { useSearchParams } from 'next/navigation';
 // import HeroSection from "@/components/ui/HeroSection";
 import Bind from "../components/Bind";
 import TitleSection from "../components/ui/TitleSection";
@@ -62,10 +63,17 @@ const faqItems = [
 
 export default function Home() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Automatically open the login popup if ?login=true is in the URL
+  useEffect(() => {
+    if (searchParams.get("login") === "true") {
+      setIsLoginPopupOpen(true);
+    }
+  }, [searchParams]);
 
   const openLoginPopup = () => setIsLoginPopupOpen(true);
   const closeLoginPopup = () => setIsLoginPopupOpen(false);
-
   return (
     <div>
       <Navbar onLoginClick={openLoginPopup} />
@@ -79,7 +87,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="px-8 md:px-8 py- md:py-3 border-primary">
+      <div id="faq-section" className="px-8 md:px-8 py- md:py-3 border-primary">
         <TitleSection title="Frequently Asked Questions" subtitle="" variant="left" />
         <Accordion type="single" collapsible className="w-full max-w-4xl py-4">
           {faqItems.map((item, index) => (

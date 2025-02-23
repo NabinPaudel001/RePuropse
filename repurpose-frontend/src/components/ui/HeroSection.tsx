@@ -1,4 +1,3 @@
-// HeroSection.js
 import React from "react";
 import { Button } from "@/components/ui/button";
 
@@ -7,6 +6,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onGetStartedClick }: HeroSectionProps) {
+  const handleLearnMoreClick = () => {
+    const faqSection = document.getElementById("faq-section");
+    if (faqSection) {
+      faqSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="p-6 md:p-12">
       <div className="max-w-4xl mx-auto text-center">
@@ -28,7 +34,11 @@ export default function HeroSection({ onGetStartedClick }: HeroSectionProps) {
           <Button className="px-6 py-6" onClick={onGetStartedClick}>
             Get Started
           </Button>
-          <Button className="px-6 py-6 border border-primary text-primary" variant={"outline"}>
+          <Button
+            className="px-6 py-6 border border-primary text-primary"
+            variant={"outline"}
+            onClick={handleLearnMoreClick}
+          >
             Learn More
           </Button>
         </div>
