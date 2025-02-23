@@ -172,7 +172,9 @@ export default function VerifyKYC() {
   const handleReject = async () => {
     if (selectedKYC) {
       try {
-        const response = await apiRequest(`/api/store/${selectedKYC._id}/reject`, "DELETE");
+        const response = await apiRequest(`/api/store/${selectedKYC._id}/reject`, {
+          method: "DELETE"
+        });
         console.log(`KYC Rejected for ID: ${selectedKYC._id}`, response);
         alert("KYC Rejected and deleted successfully!");
         setPendingKYCData((prev) => prev.filter((item) => item._id !== selectedKYC._id));
