@@ -87,7 +87,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="px-8 md:px-8 py- md:py-3 border-primary">
+      <div id="faq-section" className="px-8 md:px-8 py- md:py-3 border-primary">
         <TitleSection title="Frequently Asked Questions" subtitle="" variant="left" />
         <Accordion type="single" collapsible className="w-full max-w-4xl py-4">
           {faqItems.map((item, index) => (
