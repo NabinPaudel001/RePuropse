@@ -38,21 +38,26 @@ const AvailableItems: React.FC = () => {
       console.log("user ko role", user?.role)
 
       try {
-        if (user?.role === "store") {
-          const response = await apiRequest('/api/product/', 'GET');
+        // if (user?.role === "store") {
+        //   const response = await apiRequest('/api/product/', 'GET');
+        //   if (response.data) {
+        //     setProducts(response.data); // Set products with the fetched data
+        //   }
+        // }
+        // if (user?.role === "seller") {
+        //   const response = await apiRequest(`/api/product/seller/${sellerId}`, 'GET');
+        //   console.log("response", response)
+        //   if (response.data) {
+        //     setProducts(response.data); // Set products with the fetched data
+        //   }
+        // }
+
+        const response = await apiRequest('/api/product/all/availableForMe', 'GET');
           if (response.data) {
-            setProducts(response.data); // Set products with the fetched data
+            setProducts(response.data); 
           }
-        }
-        if (user?.role === "seller") {
-          const response = await apiRequest(`/api/product/seller/${sellerId}`, 'GET');
-          console.log("response", response)
-          if (response.data) {
-            setProducts(response.data); // Set products with the fetched data
-          }
-        }
-      } catch (err) {
-        setError("Failed to fetch products. Please try again.");
+      } catch (err:any) {
+        setError(err.message||"Failed to fetch products. Please try again.");
         console.log(err);
       } finally {
         setLoading(false); // Set loading to false once the request is complete
@@ -66,15 +71,14 @@ const AvailableItems: React.FC = () => {
     return <div>Loading products...</div>;
   }
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
-
   console.log("products", products)
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Items</h1>
+      {error && (
+        <p className="text xl font-semibold text-gray-500">{error}</p>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <Link href={`/${user?.role}/dashboard/product/${product._id}`} key={product._id}>

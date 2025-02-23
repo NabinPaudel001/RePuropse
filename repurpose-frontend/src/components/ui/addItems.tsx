@@ -90,8 +90,9 @@ export default function AddItems() {
         body: formData,
       });
   
-      if (response.code === 200) {
+      if (response.success) {
         alert("Product added successfully!");
+        console.log("Calling resetForm..."); // Debugging log
         resetForm();
       } else {
         alert(response.message || "Failed to add product.");
@@ -106,11 +107,11 @@ export default function AddItems() {
 
 
   const resetForm = () => {
+    console.log("Resetting form..."); // Debugging log
     setFormState({
       productName: "",
       description: "",
       proposedPrice: "",
-      // discount: "",
       partName: "Interior",
       materialName: "Cotton",
       ecoFriendly: "Yes",
@@ -118,6 +119,7 @@ export default function AddItems() {
     setImages([]);
     setImagePreviews([]);
   };
+  
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-[hsl(var(--background))]">

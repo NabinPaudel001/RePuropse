@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -34,11 +34,48 @@ const ProfilePage = () => {
   const [twitter, setTwitter] = useState(user?.socialMediaHandles?.twitter || "");
   const [legalDocument, setLegalDocument] = useState<File | null>(null);
 
+  //stats
+  const [rewardPoints, setRewardPoints] = useState(0);
+  const [totalEarning, setTotalEarning] = useState(0);
+  const [soldItems, setSoldItems] = useState(0);
+  const [pendingItems, setPendingItems] = useState(0);
+  const [environmentEarnings, setEnvironmentEarnings] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+
   const toggleModal = () => setIsModalOpen((prev) => !prev);
   const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
   const toggleKYCModal = () => setIsKYCModalOpen((prev) => !prev);
 
   console.log("User:", user);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user) return; // Ensure user is available before fetching
+
+      try {
+        setLoading(true);
+        const response = await apiRequest('/api/user/seller/dashboard-stats/', {
+          method: 'GET'
+        });
+
+        console.log("response in seller Dashboard stats", response)
+
+        setRewardPoints(parseFloat(response.data.totalRewardPoints.toFixed(2)));
+        setTotalEarning(response.data.totalEarning);
+        setSoldItems(response.data.totalSoldItems);
+        setPendingItems(response.data.totalPendingItems);
+        setEnvironmentEarnings(response.data.totalContributionToEnvironment);
+      } catch (error) {
+        // setError("Failed to load data", error);
+        console.log("Error in Fetch seller Dashboard stats", error)
+      } finally {
+        setLoading(false);
+      }
+
+    };
+    fetchDashboardData();
+  }, [user]);
 
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
@@ -171,23 +208,25 @@ const ProfilePage = () => {
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
             <div className="flex justify-center space-x-8 mt-4">
               <div>
-                <p className={`font-bold ${textColor}`}>259</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Posts</p>
-              </div>
-              <div>
-                <p className={`font-bold ${textColor}`}>129</p>
+                <p className={`font-bold ${textColor}`}>{soldItems}</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
               </div>
               <div>
-                <p className={`font-bold ${textColor}`}>0</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
+                <p className={`font-bold ${textColor}`}>{totalEarning}</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">Earning</p>
               </div>
               <div>
-                <p className={`font-bold ${textColor}`}>{user?.totalRewardPoints || 0}</p>
+                <p className={`font-bold ${textColor}`}>{environmentEarnings}</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">COE</p>
+              </div>
+              <div>
+                <p className={`font-bold ${textColor}`}>{rewardPoints}</p>
                 <p className="text-[hsl(var(--muted-foreground))] text-sm">Reward Points</p>
               </div>
 
             </div>
+
+
             <div className="mt-4">
               <button
                 className={`px-4 py-2 ${iconColor} ${textColor} rounded-lg shadow hover:bg-gray-200 hover:text-gray-800 mr-2`}

@@ -19,6 +19,7 @@ const StoreProfilePage = () => {
   const [status, setStatus] = useState(""); // Status can be 'verified', 'unverified', or 'pending'
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
   const [ownerName, setOwnerName] = useState(user?.firstName || "");
+  const [about, setAbout] = useState(user?.about || "");
   const [storeId, setStoreId] = useState("");
   const [email, setEmail] = useState(user?.email || "");
   const [storeNumber, setStoreNumber] = useState("");
@@ -36,6 +37,9 @@ const StoreProfilePage = () => {
   const [storeAddressError, setStoreAddressError] = useState(false);
 
   console.log("user", user);
+  const [requestedItems, setRequestedItems] = useState(0);
+  const [BoughtItems, setBoughtItems] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -48,6 +52,29 @@ const StoreProfilePage = () => {
   const toggleKYCModal = () => {
     setIsKYCModalOpen(!isKYCModalOpen);
   };
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user) return; // Ensure user is available before fetching
+      try {
+        setLoading(true);
+        const response = await apiRequest('/api/user/store/dashboard-stats/', {
+          method: 'GET'
+        });
+
+        console.log("response in store Dashboard stats", response)
+
+        setRequestedItems(response.data.totalRequestedItems);
+        setBoughtItems(response.data.totalBoughtItems);
+      } catch (error) {
+        // setError("Failed to load data", error);
+        console.log("Error in Fetch store Dashboard stats", error)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, [user]);
 
   const handleProfilePictureChange = async (file: File) => {
     if (!file) return;
@@ -285,22 +312,16 @@ const StoreProfilePage = () => {
             <p className="text-[hsl(var(--muted-foreground))]">{user?.role}</p>
 
             <div className="flex justify-center space-x-8 ">
+
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">259</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Products</p>
+                <p className="text-[hsl(var(--foreground))] font-bold">{BoughtItems}</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">Bought</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">2</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Sold</p>
+                <p className="text-[hsl(var(--foreground))] font-bold">{requestedItems}</p>
+                <p className="text-[hsl(var(--muted-foreground))] text-sm">Requested</p>
               </div>
-              <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">0</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Donations</p>
-              </div>
-              <div>
-                <p className="text-[hsl(var(--foreground))] font-bold">200</p>
-                <p className="text-[hsl(var(--muted-foreground))] text-sm">Followers</p>
-              </div>
+
             </div>
 
             <div className="mt-4">
@@ -361,8 +382,8 @@ const StoreProfilePage = () => {
         </div>
       </div>
 
-    {/* Modal for Editing Store */}
-    {isEditModalOpen && (
+      {/* Modal for Editing Store */}
+      {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
             <h3 className="text-lg font-bold mb-4">Edit Store</h3>
@@ -399,7 +420,7 @@ const StoreProfilePage = () => {
               <label className="block text-sm font-bold mb-2">About Us</label>
               <textarea
                 placeholder='About Us'
-                value={storeAddress} // Assuming "About Us" content is stored separately; adjust as needed.
+                value={about} // Assuming "About Us" content is stored separately; adjust as needed.
                 onChange={(e) => setStoreAddress(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows={4}
@@ -477,7 +498,7 @@ const StoreProfilePage = () => {
                 Cancel
               </button>
             </div>
-          </div> 
+          </div>
         </div>
       )}
       {/* Modal for KYC Information */}

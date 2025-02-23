@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { apiRequest } from "@/middleware/errorInterceptor";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,20 +16,68 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
+import { json } from "stream/consumers";
+
+interface Reports {
+  _id: string;
+  createdAt: string;
+  title: string;
+  description: string;
+  status: string;
+  attachmentUrl: string;
+  category: string;
+  postedBy: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
+}
 
 export default function ManageIssues() {
-  const [issues, setIssues] = useState([
-    { id: 1, title: "Login Bug", description: "Fix login bug", postedBy: "Alice", status: "Open", category: "Transaction", screenshot: "/images/R.jpeg" },
-    { id: 2, title: "UI Update", description: "Update UI design", postedBy: "Bob", status: "Progress", category: "Violence", screenshot: "/images/ui-update.png" },
-    { id: 3, title: "DB Optimization", description: "Optimize database queries", postedBy: "Charlie", status: "Resolved", category: "Technical", screenshot: "/images/db-optimization.png" },
-  ]);
+  // const [issues, setIssues] = useState([
+  //   { id: 1, title: "Login Bug", description: "Fix login bug", postedBy: "Alice", status: "Open", category: "Transaction", screenshot: "/images/R.jpeg" },
+  //   { id: 2, title: "UI Update", description: "Update UI design", postedBy: "Bob", status: "Progress", category: "Violence", screenshot: "/images/ui-update.png" },
+  //   { id: 3, title: "DB Optimization", description: "Optimize database queries", postedBy: "Charlie", status: "Resolved", category: "Technical", screenshot: "/images/db-optimization.png" },
+  // ]);
+  const [reports, setReports] = useState<
+    {
+      _id: string;
+      createdAt: string;
+      title: string;
+      description: string;
+      status: string;
+      attachmentUrl: string;
+      category: string;
+      postedBy: {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+      }
+    }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchReportsData = async () => {
+      try {
+        const response = await apiRequest("/api/user/reports", 'GET');
+        console.log("respone her pending data ko", response)
+        setReports(response.data);
+      } catch (error) {
+        console.log("Error fetching KYC data:", error);
+      }
+    };
+
+    fetchReportsData();
+  }, []);
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  
-  const filteredIssues = issues.filter(issue => 
-    (selectedCategory ? issue.category.toLowerCase() === selectedCategory.toLowerCase() : true) &&
-    (selectedStatus === "all" ? true : issue.status.toLowerCase() === selectedStatus.replace(" ", "").toLowerCase())
+
+  const filteredReports = reports.filter(report =>
+    (selectedCategory ? report.category.toLowerCase() === selectedCategory.toLowerCase() : true) &&
+    (selectedStatus === "all" ? true : report.status.toLowerCase() === selectedStatus.replace(" ", "").toLowerCase())
   );
 
   return (
@@ -65,102 +114,128 @@ export default function ManageIssues() {
         </TabsList>
 
         <TabsContent value={selectedStatus}>
-          <IssueTable issues={filteredIssues} setIssues={setIssues} />
+          <IssueTable reports={filteredReports} setReports={setReports} />
         </TabsContent>
       </Tabs>
     </Card>
   );
 }
 
-interface Issue {
-  id: number;
-  title: string;
-  description: string;
-  postedBy: string;
-  status: string;
-  category: string;
-  screenshot: string;
-}
+// interface Issue {
+//   id: number;
+//   title: string;
+//   description: string;
+//   postedBy: string;
+//   status: string;
+//   category: string;
+//   screenshot: string;
+// }
 
-function IssueTable({ issues, setIssues }: { issues: Issue[], setIssues: React.Dispatch<React.SetStateAction<Issue[]>> }) {
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setIssues((prevIssues) =>
-      prevIssues.map((issue) =>
-        issue.id === id ? { ...issue, status: newStatus } : issue
-      )
-    );
+function IssueTable({ reports, setReports }: { reports: Reports[], setReports: React.Dispatch<React.SetStateAction<Reports[]>> }) {
+  // const handleStatusChange = (_id: string, newStatus: string) => {
+  //   setReports((prevReports: any) =>
+  //     prevReports.map((report: any) =>
+  //       report._id === _id ? { ...report, status: newStatus } : report
+  //     )
+  //   );
+  // };
+
+  const handleStatusChange = async (_id: string, newStatus: string) => {
+    try {
+      // Make API request to update the status on the backend
+      const response = await apiRequest(`/api/user/reports/status/${_id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+        headers: { 'Content-Type': 'application/json' }
+
+      });
+      // If the request is successful, update the local state
+      if (response.success) {
+        setReports((prevReports: any) =>
+          prevReports.map((report: any) =>
+            report._id === _id ? { ...report, status: newStatus } : report
+          )
+        );
+      } else {
+        console.log("Error updating status:", response.message);
+      }
+    } catch (error) {
+      console.log("Error while changing status:", error);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setIssues((prevIssues) => prevIssues.filter((issue) => issue.id !== id));
-  };
 
   return (
     <Table className="w-full border rounded-lg overflow-hidden p-4">
       <TableHeader>
         <TableRow>
-          <TableHead>Issue ID</TableHead>
+          <TableHead>S.N</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Posted By</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Screenshot</TableHead>
-          <TableHead>Actions</TableHead>
+          {/* <TableHead>Actions</TableHead> */}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {issues.length === 0 ? (
+        {reports.length === 0 ? (
           <TableRow>
             <TableCell colSpan={8} className="text-center p-4 text-gray-500">No issues found</TableCell>
           </TableRow>
         ) : (
-          issues.map((issue) => (
-            <TableRow key={issue.id}>
-              <TableCell>{issue.id}</TableCell>
-              <TableCell>{issue.title}</TableCell>
-              <TableCell>{issue.description}</TableCell>
-              <TableCell>{issue.postedBy}</TableCell>
+          reports.map((report, index) => (
+            <TableRow key={report._id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{report.title}</TableCell>
+              <TableCell>{report.description}</TableCell>
+              <TableCell>{report.postedBy.email}</TableCell>
               <TableCell>
-                <label htmlFor={`status-select-${issue.id}`} className="sr-only">Status</label>
+                <label htmlFor={`status-select-${report._id}`} className="sr-only">Status</label>
                 <select
-                  id={`status-select-${issue.id}`}
-                  value={issue.status}
-                  onChange={(e) => handleStatusChange(issue.id, e.target.value)}
+                  id={`status-select-${report._id}`}
+                  value={report.status}
+                  onChange={(e) => handleStatusChange(report._id, e.target.value)}
                   className="border px-2 py-1 rounded-md bg-white"
                 >
-                  <option value="Open">Open</option>
-                  <option value="Progress">Progress</option>
-                  <option value="Resolved">Resolved</option>
+                  <option value="open">Open</option>
+                  <option value="progress">Progress</option>
+                  <option value="resolved">Resolved</option>
                 </select>
               </TableCell>
-              <TableCell>{issue.category}</TableCell>
+              <TableCell>{report.category}</TableCell>
               <TableCell>
-                <Dialog>
-                  <DialogTrigger>
-                    <Image
-                      src={issue.screenshot}
-                      alt={issue.title}
-                      width={50}
-                      height={50}
-                      className="cursor-pointer rounded"
-                    />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>{issue.title}</DialogTitle>
-                    <Image
-                      src={issue.screenshot}
-                      alt={issue.title}
-                      width={500}
-                      height={400}
-                      className="rounded-lg"
-                    />
-                  </DialogContent>
-                </Dialog>
+                {report.attachmentUrl ? (
+                  <Dialog>
+                    <DialogTrigger>
+                      <Image
+                        src={report.attachmentUrl}
+                        alt={report.title}
+                        width={50}
+                        height={50}
+                        className="cursor-pointer rounded"
+                      />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogTitle>{report.title}</DialogTitle>
+                      <Image
+                        src={report.attachmentUrl}
+                        alt={report.title}
+                        width={500}
+                        height={400}
+                        className="rounded-lg"
+                      />
+                    </DialogContent>
+                  </Dialog>
+                ) : (
+                  <span className="text-gray-500">Not provided</span>
+                )}
               </TableCell>
-              <TableCell>
-                <Button className="ml-2 bg-red-500 hover:bg-red-600" onClick={() => handleDelete(issue.id)}>Delete</Button>
-              </TableCell>
+
+              {/* <TableCell>
+                <Button className="ml-2 bg-red-500 hover:bg-red-600" onClick={() => handleDelete(report._id)}>Delete</Button>
+              </TableCell> */}
             </TableRow>
           ))
         )}
