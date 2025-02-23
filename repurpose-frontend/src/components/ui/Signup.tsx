@@ -565,12 +565,13 @@ export default function SignupPage() {
               <div className="text-center mt-4">
                 <span>Already have an account? </span>
                 <button
-                  type="button"
-                  onClick={() => router.push('/login')}
-                  className="text-green-500 hover:underline"
+                    type="button"
+                    onClick={() => router.push('/?login=true')}
+                    className="text-green-500 hover:underline"
                 >
                   Login
                 </button>
+
               </div>
               <button
                 onClick={() => setFormData({ ...formData, role: "" })}
