@@ -27,6 +27,11 @@ const MyListings: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [soldError, setSoldError] = useState<string | null>(null);
+  const [availabeError, setAvailabeError] = useState<string | null>(null);
+
+  const [requestedError, setRequestedError] = useState<string | null>(null);
+  const [boughtError, setBoughtError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.role === "store") {
@@ -55,7 +60,7 @@ const MyListings: React.FC = () => {
 
         } catch (error:any) {
           console.log("Error in requested Response", error)
-          setError(error.message || "Failed to fetch products. Please try again.");
+          setRequestedError(error.message || "Failed to fetch products. Please try again.");
         }
         finally {
           setLoading(false);
@@ -68,7 +73,7 @@ const MyListings: React.FC = () => {
           setBoughtProducts(boughtResponse.data)          // console.log()
         } catch (error: any) {
           console.log("Error in bought products", error)
-          setError(error.message || "Failed to fetch products. Please try again.");
+          setBoughtError(error.message || "Failed to fetch products. Please try again.");
         }
         finally {
           setLoading(false);
@@ -80,7 +85,7 @@ const MyListings: React.FC = () => {
           setAvailableProducts(availableResponse.data);
         } catch(error:any) {
           console.log("Error in availabe products", error)
-          setError(error.message || "Failed to fetch products. Please try again.");
+          setAvailabeError(error.message || "Failed to fetch products. Please try again.");
         }
         finally {
           setLoading(false);
@@ -92,7 +97,7 @@ const MyListings: React.FC = () => {
           setSoldProducts(soldResponse.data);
         } catch(error:any) {
           console.log("Error in availabe products", error)
-          setError(error.message || "Failed to fetch products. Please try again.");
+          setSoldError(error.message || "Failed to fetch products. Please try again.");
         }
         finally {
           setLoading(false);
@@ -148,6 +153,7 @@ const MyListings: React.FC = () => {
         <TabsContent value="available">
           {loading && <div>Loading products...</div>}
           {!loading && error && <div className="text-gray-500 font-semibold mb-4">{error}</div>}
+          {!loading && availabeError && <div className="text-gray-500 mb-4">{availabeError}</div>}
           {!loading && !error && (
             <>
               {availableProducts.length === 0 ? (
@@ -183,6 +189,7 @@ const MyListings: React.FC = () => {
         <TabsContent value="sold">
           {loading && <div>Loading products...</div>}
           {!loading && error && <div className="text-red-500 mb-4">{error}</div>}
+          {!loading && soldError && <div className="text-gray-500 mb-4">{soldError}</div>}
           {!loading && !error && (
             <>
               {soldProducts.length === 0 ? (
@@ -217,6 +224,7 @@ const MyListings: React.FC = () => {
         <TabsContent value="requested">
           {loading && <div>Loading products...</div>}
           {!loading && error && <div className="text-red-500 mb-4">{error}</div>}
+          {!loading && requestedError && <div className="text-gray-500 mb-4">{requestedError}</div>}
           {!loading && !error && (
             <>
               {requestedProducts.length === 0 ? (
@@ -251,6 +259,7 @@ const MyListings: React.FC = () => {
         <TabsContent value="bought">
           {loading && <div>Loading products...</div>}
           {!loading && error && <div className="text-red-500 mb-4">{error}</div>}
+          {!loading && boughtError && <div className="text-gray-500 mb-4">{boughtError}</div>}
           {!loading && !error && (
             <>
               {boughtProducts.length === 0 ? (
