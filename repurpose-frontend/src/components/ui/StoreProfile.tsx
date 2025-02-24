@@ -166,7 +166,7 @@ const StoreProfilePage = () => {
 
       let response;
       if (status) {
-        response = await apiRequest(`/api/store/${storeId}`, {
+        response = await apiRequest('/api/store/', {
           method: "PATCH",
           body: formData,
         });

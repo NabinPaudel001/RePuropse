@@ -38,7 +38,7 @@ const Items: React.FC<ItemProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const discountedPrice = discount ? originalPrice * (1 - discount / 100) : originalPrice;
-  const rewardPoints = (discountedPrice * 0.10).toFixed(2);
+  // const rewardPoints = (discountedPrice * 0.10).toFixed(2);
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imageUrl.length);
@@ -86,7 +86,7 @@ const Items: React.FC<ItemProps> = ({
             <p className="text-base font-bold">NRP {originalPrice.toFixed(2)}</p>
           )}
         </div>
-        <p className="text-base font-bold my-2">RP: {rewardPoints}</p>
+        {/* <p className="text-base font-bold my-2">RP: {rewardPoints}</p> */}
         <p className="text-sm text-gray-600">{`Part: ${partName}`}</p>
         <p className="text-sm text-gray-600">{`Material: ${materialName}`}</p>
         <p className="text-sm text-gray-600">{`Eco-Friendly: ${ecoFriendly}`}</p>

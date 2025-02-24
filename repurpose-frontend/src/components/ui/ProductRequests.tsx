@@ -91,8 +91,8 @@ const ProductRequests: React.FC<ProductRequestsProps> = ({ productId, soldTo, se
                 <p>Loading...</p>
             ) : soldTo ? (  // Show Sold status if the product is sold
                 <div>
-                    <p className="text-center font-bold text-green-600">Sold to {soldTo.storeName}</p>
-                    <p className="text-center font-bold text-green-600">Earned Reward Points: {rewardPoints}</p>
+                    <p className="text-center text-2xl font-bold text-green-600">Sold to {soldTo.storeName}</p>
+                    <p className="text-center text-2xl font-bold text-green-600">Earned Reward Points: {rewardPoints}</p>
                 </div>
             ) : storeRequest.length === 0 ? (
                 <div>

@@ -59,6 +59,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         setProduct(response.data); // Assuming API response structure matches Product
         setProposedPrice(response.data.price);
         setSoldTo(response.data?.soldTo || null);
+        setRewardPoints(response.data?.rewardPoints || 0)
         console.log("response: ", response.data)
       } catch (error) {
         console.log("Failed to fetch product data:", error);
